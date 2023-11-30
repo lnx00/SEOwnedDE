@@ -117,7 +117,7 @@
     <ClCompile Include="src\App\Features\SeedPred\SeedPred.cpp" />
     <ClCompile Include="src\App\Hooks\FX_FireBullets.cpp" />
     <ClCompile Include="src\App\Features\proj_sim\proj_sim.cpp" />
-    <ClCompile Include="src\App\Features\stickyjump\stickyjump.cpp" />
+    <ClCompile Include="src\App\Features\StickyJump\StickyJump.cpp" />
     <ClCompile Include="src\App\Features\chat\chat.cpp" />
     <ClCompile Include="src\App\Hooks\C_TFWeapon_ShouldDraw.cpp" />
     <ClCompile Include="src\App\Hooks\CBaseHudChatLine_InsertAndColorizeText.cpp" />
@@ -304,6 +304,6 @@
     <ClInclude Include="src\App\Features\ProjectileSimulation\ProjectileSimulation.h" />
     <ClInclude Include="src\App\Features\SeedPred\SeedPred.h" />
     <ClInclude Include="src\App\Features\proj_sim\proj_sim.hpp" />
-    <ClInclude Include="src\App\Features\stickyjump\stickyjump.hpp" />
+    <ClInclude Include="src\App\Features\StickyJump\StickyJump.h" />
   </ItemGroup>
 </Project>

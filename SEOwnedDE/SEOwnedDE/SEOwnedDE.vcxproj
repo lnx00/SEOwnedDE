@@ -128,7 +128,7 @@
     <ClCompile Include="src\App\Features\SpectatorList\SpectatorList.cpp" />
     <ClCompile Include="src\App\Features\SpyCamera\SpyCamera.cpp" />
     <ClCompile Include="src\App\Features\SpyWarning\SpyWarning.cpp" />
-    <ClCompile Include="src\App\Features\stickyjump\stickyjump.cpp" />
+    <ClCompile Include="src\App\Features\StickyJump\StickyJump.cpp" />
     <ClCompile Include="src\App\Features\TeamWellBeing\TeamWellBeing.cpp" />
     <ClCompile Include="src\App\Features\Triggerbot\AutoAirblast\AutoAirblast.cpp" />
     <ClCompile Include="src\App\Features\Triggerbot\AutoBackstab\AutoBackstab.cpp" />
@@ -251,7 +251,7 @@
     <ClInclude Include="src\App\Features\SpectatorList\SpectatorList.h" />
     <ClInclude Include="src\App\Features\SpyCamera\SpyCamera.h" />
     <ClInclude Include="src\App\Features\SpyWarning\SpyWarning.h" />
-    <ClInclude Include="src\App\Features\stickyjump\stickyjump.hpp" />
+    <ClInclude Include="src\App\Features\StickyJump\StickyJump.h" />
     <ClInclude Include="src\App\Features\TeamWellBeing\TeamWellBeing.h" />
     <ClInclude Include="src\App\Features\Triggerbot\AutoAirblast\AutoAirblast.h" />
     <ClInclude Include="src\App\Features\Triggerbot\AutoBackstab\AutoBackstab.h" />

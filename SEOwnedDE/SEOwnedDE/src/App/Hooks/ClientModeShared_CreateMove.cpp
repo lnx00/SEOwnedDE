@@ -10,7 +10,7 @@
 #include "../Features/Triggerbot/Triggerbot.h"
 #include "../Features/AutoVaccinator/AutoVaccinator.h"
 #include "../Features/SeedPred/SeedPred.h"
-#include "../Features/stickyjump/stickyjump.hpp"
+#include "../Features/StickyJump/StickyJump.h"
 
 MAKE_HOOK(
 	ClientModeShared_CreateMove, Memory::GetVFunc(I::ClientModeShared, 21),

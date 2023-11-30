@@ -1,4 +1,4 @@
-#include "stickyjump.hpp"
+#include "StickyJump.h"
 
 #include "../MovementSimulation/MovementSimulation.h"
 
