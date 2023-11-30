@@ -116,7 +116,7 @@
     <ClCompile Include="src\App\Features\ProjectileSim\ProjectileSim.cpp" />
     <ClCompile Include="src\App\Features\SeedPred\SeedPred.cpp" />
     <ClCompile Include="src\App\Hooks\FX_FireBullets.cpp" />
-    <ClCompile Include="src\App\Features\StickyJump\StickyJump.cpp" />
+    <ClCompile Include="src\App\Features\StickyJump\StickyJump1.cpp" />
     <ClCompile Include="src\App\Features\chat\chat.cpp" />
     <ClCompile Include="src\App\Hooks\C_TFWeapon_ShouldDraw.cpp" />
     <ClCompile Include="src\App\Hooks\CBaseHudChatLine_InsertAndColorizeText.cpp" />

@@ -127,7 +127,7 @@
     <ClCompile Include="src\App\Features\SpectatorList\SpectatorList.cpp" />
     <ClCompile Include="src\App\Features\SpyCamera\SpyCamera.cpp" />
     <ClCompile Include="src\App\Features\SpyWarning\SpyWarning.cpp" />
-    <ClCompile Include="src\App\Features\StickyJump\StickyJump.cpp" />
+    <ClCompile Include="src\App\Features\StickyJump\StickyJump1.cpp" />
     <ClCompile Include="src\App\Features\TeamWellBeing\TeamWellBeing.cpp" />
     <ClCompile Include="src\App\Features\Triggerbot\AutoAirblast\AutoAirblast.cpp" />
     <ClCompile Include="src\App\Features\Triggerbot\AutoBackstab\AutoBackstab.cpp" />
