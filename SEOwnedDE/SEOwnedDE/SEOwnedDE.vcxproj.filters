@@ -113,7 +113,7 @@
     <ClCompile Include="src\App\Hooks\R_ComputeLightingOrigin.cpp" />
     <ClCompile Include="src\App\Features\Players\Players.cpp" />
     <ClCompile Include="src\SDK\TF2\c_tf_player.cpp" />
-    <ClCompile Include="src\App\Features\ProjectileSimulation\ProjectileSimulation.cpp" />
+    <ClCompile Include="src\App\Features\ProjectileSim\ProjectileSim.cpp" />
     <ClCompile Include="src\App\Features\SeedPred\SeedPred.cpp" />
     <ClCompile Include="src\App\Hooks\FX_FireBullets.cpp" />
     <ClCompile Include="src\App\Features\StickyJump\StickyJump.cpp" />
@@ -300,7 +300,7 @@
     <ClInclude Include="src\App\Features\AutoVaccinator\AutoVaccinator.h" />
     <ClInclude Include="src\App\Features\Players\Players.h" />
     <ClInclude Include="src\SDK\TF2\vphysics.h" />
-    <ClInclude Include="src\App\Features\ProjectileSimulation\ProjectileSimulation.h" />
+    <ClInclude Include="src\App\Features\ProjectileSim\ProjectileSim.h" />
     <ClInclude Include="src\App\Features\SeedPred\SeedPred.h" />
     <ClInclude Include="src\App\Features\StickyJump\StickyJump.h" />
   </ItemGroup>

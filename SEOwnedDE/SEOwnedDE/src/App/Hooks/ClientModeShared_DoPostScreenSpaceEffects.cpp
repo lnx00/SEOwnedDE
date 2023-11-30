@@ -3,7 +3,7 @@
 #include "../Features/CFG.h"
 #include "../Features/AimUtils/AimUtils.h"
 #include "../Features/VisualUtils/VisualUtils.h"
-#include "../Features/ProjectileSimulation/ProjectileSimulation.h"
+#include "../Features/ProjectileSim//ProjectileSim.h"
 
 void RenderLine(const Vector &v1, const Vector &v2, Color_t c, bool bZBuffer)
 {

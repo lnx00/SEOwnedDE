@@ -4,7 +4,7 @@
 #include "../../MovementSimulation/MovementSimulation.h"
 #include "../../AimUtils/AimUtils.h"
 #include "../../VisualUtils/VisualUtils.h"
-#include "../../ProjectileSimulation/ProjectileSimulation.h"
+#include "../../ProjectileSim/ProjectileSim.h"
 
 static std::vector<Vec3> vecPositions = {};
 static int nLastAimedPos = 0; //0 feet 1 body 2 head

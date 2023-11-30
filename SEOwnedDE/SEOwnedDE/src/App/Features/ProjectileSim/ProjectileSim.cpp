@@ -1,4 +1,4 @@
-#include "ProjectileSimulation.h"
+#include "ProjectileSim.h"
 
 IPhysicsEnvironment *env{};
 IPhysicsObject *obj{};
