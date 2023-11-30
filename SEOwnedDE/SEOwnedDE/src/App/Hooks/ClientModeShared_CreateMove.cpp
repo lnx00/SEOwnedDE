@@ -117,7 +117,7 @@ MAKE_HOOK(
 	F::EnginePrediction->End();
 
 	auto_vaccinator::run(pCmd);
-	F::SeedPred->adjustAngles(pCmd);
+	F::SeedPred->AdjustAngles(pCmd);
 	stickyjump::run(pCmd);
 
 	F::Misc->Crits(pCmd);

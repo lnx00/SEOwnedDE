@@ -13,11 +13,11 @@ bool waiting_for_pp{ false };
 float guess_delta{ 0.0f };
 float response_time{ 0.0f };
 
-void CSeedPred::askForPlayerPerf()
+void CSeedPred::AskForPlayerPerf()
 {
 	if (!CFG::Exploits_SeedPred_Active)
 	{
-		reset();
+		Reset();
 
 		return;
 	}
@@ -26,7 +26,7 @@ void CSeedPred::askForPlayerPerf()
 
 	if (!weapon || !(weapon->GetDamageType() & DMG_BULLET) || F::AimUtils->GetWeaponType(weapon) != EWeaponType::HITSCAN || weapon->GetWeaponSpread() <= 0.0f)
 	{
-		reset();
+		Reset();
 
 		return;
 	}
@@ -35,7 +35,7 @@ void CSeedPred::askForPlayerPerf()
 	{
 		if (local->deadflag())
 		{
-			reset();
+			Reset();
 
 			return;
 		}
@@ -53,7 +53,7 @@ void CSeedPred::askForPlayerPerf()
 	waiting_for_pp = true;
 }
 
-bool CSeedPred::parsePlayerPerf(bf_read &msg_data)
+bool CSeedPred::ParsePlayerPerf(bf_read &msgData)
 {
 	if (!CFG::Exploits_SeedPred_Active)
 	{
@@ -62,8 +62,8 @@ bool CSeedPred::parsePlayerPerf(bf_read &msg_data)
 
 	char raw_msg[256]{};
 
-	msg_data.ReadString(raw_msg, sizeof(raw_msg), true);
-	msg_data.Seek(0);
+	msgData.ReadString(raw_msg, sizeof(raw_msg), true);
+	msgData.Seek(0);
 
 	std::string msg(raw_msg);
 
@@ -123,14 +123,14 @@ bool CSeedPred::parsePlayerPerf(bf_read &msg_data)
 	return false;
 }
 
-int CSeedPred::getSeed()
+int CSeedPred::GetSeed()
 {
 	float time{ (server_time + sync_offset + response_time) * 1000.0f };
 
 	return *reinterpret_cast<int *>((char *)&time) & 255;
 }
 
-void CSeedPred::reset()
+void CSeedPred::Reset()
 {
 	synced = false;
 	server_time = 0.0f;
@@ -143,7 +143,7 @@ void CSeedPred::reset()
 	response_time = 0.0f;
 }
 
-void CSeedPred::adjustAngles(CUserCmd *cmd)
+void CSeedPred::AdjustAngles(CUserCmd *cmd)
 {
 	if (!CFG::Exploits_SeedPred_Active || !synced || !cmd || !G::bFiring)
 	{
@@ -181,7 +181,7 @@ void CSeedPred::adjustAngles(CUserCmd *cmd)
 
 	Vec3 average_spread{};
 
-	auto seed{ getSeed() };
+	auto seed{ GetSeed() };
 
 	for (auto bullet{ 0 }; bullet < bullets_per_shot; bullet++)
 	{
@@ -250,7 +250,7 @@ void CSeedPred::adjustAngles(CUserCmd *cmd)
 	G::bSilentAngles = true;
 }
 
-void CSeedPred::paint()
+void CSeedPred::Paint()
 {
 	if (!CFG::Exploits_SeedPred_Active || I::EngineVGui->IsGameUIVisible() || SDKUtils::BInEndOfMatch() || server_time <= 0.0f)
 	{

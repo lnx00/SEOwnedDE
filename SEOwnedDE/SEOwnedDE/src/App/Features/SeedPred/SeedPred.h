@@ -5,12 +5,12 @@
 class CSeedPred
 {
 public:
-	void askForPlayerPerf();
-	bool parsePlayerPerf(bf_read &msg_data);
-	int getSeed();
-	void reset();
-	void adjustAngles(CUserCmd *cmd);
-	void paint();
+	void AskForPlayerPerf();
+	bool ParsePlayerPerf(bf_read &msgData);
+	int GetSeed();
+	void Reset();
+	void AdjustAngles(CUserCmd *cmd);
+	void Paint();
 };
 
 MAKE_SINGLETON_SCOPED(CSeedPred, SeedPred, F);
