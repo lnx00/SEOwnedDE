@@ -400,7 +400,7 @@ bool playerHasResUber(medigun_resist_types_t res, C_TFPlayer *player)
 	return false;
 }
 
-void CAutoVaccinator::run(CUserCmd *cmd)
+void CAutoVaccinator::Run(CUserCmd *cmd)
 {
 	if (!CFG::AutoVaccinator_Active || !G::bCanPrimaryAttack)
 	{
@@ -548,7 +548,7 @@ void CAutoVaccinator::run(CUserCmd *cmd)
 	}
 }
 
-void CAutoVaccinator::processPlayerHurt(IGameEvent *event)
+void CAutoVaccinator::ProcessPlayerHurt(IGameEvent *event)
 {
 	if (!CFG::AutoVaccinator_Active)
 	{
@@ -649,7 +649,7 @@ void CAutoVaccinator::processPlayerHurt(IGameEvent *event)
 	}
 }
 
-void CAutoVaccinator::preventReload(CUserCmd *cmd)
+void CAutoVaccinator::PreventReload(CUserCmd *cmd)
 {
 	if (!CFG::AutoVaccinator_Active || changing_res)
 	{
