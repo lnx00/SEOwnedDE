@@ -4,7 +4,7 @@
 #include "../Features/Outlines/Outlines.h"
 #include "../Features/WorldModulation/WorldModulation.h"
 #include "../Features/Paint/Paint.h"
-#include "../Features/seed_pred/seed_pred.hpp"
+#include "../Features/SeedPred/SeedPred.h"
 
 MAKE_HOOK(
 	IBaseClientDLL_LevelShutdown, Memory::GetVFunc(I::BaseClientDLL, 7),

@@ -124,7 +124,7 @@
     <ClCompile Include="src\App\Features\proj_sim\proj_sim.cpp" />
     <ClCompile Include="src\App\Features\Radar\Radar.cpp" />
     <ClCompile Include="src\App\Features\RapidFire\RapidFire.cpp" />
-    <ClCompile Include="src\App\Features\seed_pred\seed_pred.cpp" />
+    <ClCompile Include="src\App\Features\SeedPred\SeedPred.cpp" />
     <ClCompile Include="src\App\Features\SpectatorList\SpectatorList.cpp" />
     <ClCompile Include="src\App\Features\SpyCamera\SpyCamera.cpp" />
     <ClCompile Include="src\App\Features\SpyWarning\SpyWarning.cpp" />
@@ -247,7 +247,7 @@
     <ClInclude Include="src\App\Features\proj_sim\proj_sim.hpp" />
     <ClInclude Include="src\App\Features\Radar\Radar.h" />
     <ClInclude Include="src\App\Features\RapidFire\RapidFire.h" />
-    <ClInclude Include="src\App\Features\seed_pred\seed_pred.hpp" />
+    <ClInclude Include="src\App\Features\SeedPred\SeedPred.h" />
     <ClInclude Include="src\App\Features\SpectatorList\SpectatorList.h" />
     <ClInclude Include="src\App\Features\SpyCamera\SpyCamera.h" />
     <ClInclude Include="src\App\Features\SpyWarning\SpyWarning.h" />

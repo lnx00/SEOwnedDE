@@ -1,4 +1,4 @@
-#include "seed_pred.hpp"
+#include "SeedPred.h"
 
 #include "../CFG.h"
 #include "../AimUtils/AimUtils.h"

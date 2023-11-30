@@ -114,7 +114,7 @@
     <ClCompile Include="src\App\Features\Players\Players.cpp" />
     <ClCompile Include="src\SDK\TF2\c_tf_player.cpp" />
     <ClCompile Include="src\App\Features\ProjectileSimulation\ProjectileSimulation.cpp" />
-    <ClCompile Include="src\App\Features\seed_pred\seed_pred.cpp" />
+    <ClCompile Include="src\App\Features\SeedPred\SeedPred.cpp" />
     <ClCompile Include="src\App\Hooks\FX_FireBullets.cpp" />
     <ClCompile Include="src\App\Features\proj_sim\proj_sim.cpp" />
     <ClCompile Include="src\App\Features\stickyjump\stickyjump.cpp" />
@@ -302,7 +302,7 @@
     <ClInclude Include="src\App\Features\Players\Players.h" />
     <ClInclude Include="src\SDK\TF2\vphysics.h" />
     <ClInclude Include="src\App\Features\ProjectileSimulation\ProjectileSimulation.h" />
-    <ClInclude Include="src\App\Features\seed_pred\seed_pred.hpp" />
+    <ClInclude Include="src\App\Features\SeedPred\SeedPred.h" />
     <ClInclude Include="src\App\Features\proj_sim\proj_sim.hpp" />
     <ClInclude Include="src\App\Features\stickyjump\stickyjump.hpp" />
   </ItemGroup>

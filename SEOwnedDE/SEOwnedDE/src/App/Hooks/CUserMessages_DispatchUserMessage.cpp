@@ -1,7 +1,7 @@
 #include "../../SDK/SDK.h"
 
 #include "../Features/CFG.h"
-#include "../Features/seed_pred/seed_pred.hpp"
+#include "../Features/SeedPred/SeedPred.h"
 
 MAKE_HOOK(
 	CUserMessages_DispatchUserMessage, Signatures::CUserMessages_DispatchUserMessage.Get(),

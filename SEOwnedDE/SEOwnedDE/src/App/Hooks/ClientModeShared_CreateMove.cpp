@@ -9,7 +9,7 @@
 #include "../Features/RapidFire/RapidFire.h"
 #include "../Features/Triggerbot/Triggerbot.h"
 #include "../Features/AutoVaccinator/AutoVaccinator.h"
-#include "../Features/seed_pred/seed_pred.hpp"
+#include "../Features/SeedPred/SeedPred.h"
 #include "../Features/stickyjump/stickyjump.hpp"
 
 MAKE_HOOK(

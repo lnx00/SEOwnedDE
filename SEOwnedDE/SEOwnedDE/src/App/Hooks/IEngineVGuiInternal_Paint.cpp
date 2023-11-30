@@ -8,7 +8,7 @@
 #include "../Features/SpyCamera/SpyCamera.h"
 #include "../Features/SpyWarning/SpyWarning.h"
 #include "../Features/TeamWellBeing/TeamWellBeing.h"
-#include "../Features/seed_pred/seed_pred.hpp"
+#include "../Features/SeedPred/SeedPred.h"
 
 MAKE_HOOK(
 	IEngineVGuiInternal_Paint, Memory::GetVFunc(I::EngineVGui, 14),
