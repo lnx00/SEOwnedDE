@@ -20,11 +20,10 @@ struct LagRecord_t
 class CLagRecords
 {
 private:
-	std::map<C_TFPlayer *, std::deque<LagRecord_t>> m_LagRecords = {};
+	std::unordered_map<C_TFPlayer *, std::deque<LagRecord_t>> m_LagRecords = {};
 	bool m_bSettingUpBones = false;
 
 	void EraseRecord(C_TFPlayer *pPlayer, int nRecord);
-	void EraseAllRecords(C_TFPlayer *pPlayer);
 
 private:
 	bool IsSimulationTimeValid(float flCurSimTime, float flCmprSimTime);

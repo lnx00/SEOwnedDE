@@ -1,17 +1,13 @@
 #include "LagRecords.h"
 
+#include <ranges>
+
 #include "../CFG.h"
 
 void CLagRecords::EraseRecord(C_TFPlayer *pPlayer, int nRecord)
 {
 	auto &v = m_LagRecords[pPlayer];
 	v.erase(v.begin() + nRecord);
-}
-
-void CLagRecords::EraseAllRecords(C_TFPlayer *pPlayer)
-{
-	if (m_LagRecords.find(pPlayer) != m_LagRecords.end())
-		m_LagRecords.erase(pPlayer);
 }
 
 bool CLagRecords::IsSimulationTimeValid(float flCurSimTime, float flCmprSimTime)
@@ -21,18 +17,18 @@ bool CLagRecords::IsSimulationTimeValid(float flCurSimTime, float flCmprSimTime)
 
 void CLagRecords::AddRecord(C_TFPlayer *pPlayer)
 {
-	LagRecord_t Record = {};
+	LagRecord_t newRecord = {};
 
 	m_bSettingUpBones = true;
 
-	auto setup_bones_optimization{ CFG::Misc_SetupBones_Optimization };
+	const auto setup_bones_optimization{ CFG::Misc_SetupBones_Optimization };
 
 	if (setup_bones_optimization)
 	{
 		pPlayer->InvalidateBoneCache();
 	}
 
-	auto result = pPlayer->SetupBones(Record.m_BoneMatrix, 128, BONE_USED_BY_ANYTHING, I::GlobalVars->curtime);
+	const auto result = pPlayer->SetupBones(newRecord.m_BoneMatrix, 128, BONE_USED_BY_ANYTHING, I::GlobalVars->curtime);
 
 	if (setup_bones_optimization)
 	{
@@ -60,27 +56,27 @@ void CLagRecords::AddRecord(C_TFPlayer *pPlayer)
 	if (!result)
 		return;
 
-	Record.m_pPlayer = pPlayer;
-	Record.m_flSimulationTime = pPlayer->m_flSimulationTime();
-	Record.m_vAbsOrigin = pPlayer->GetAbsOrigin();
-	Record.m_vVecOrigin = pPlayer->m_vecOrigin();
-	Record.m_vAbsAngles = pPlayer->GetAbsAngles();
-	Record.m_vEyeAngles = pPlayer->GetEyeAngles();
-	Record.m_vVelocity = pPlayer->m_vecVelocity();
-	Record.m_vCenter = pPlayer->GetCenter();
-	Record.m_nFlags = pPlayer->m_fFlags();
+	newRecord.m_pPlayer = pPlayer;
+	newRecord.m_flSimulationTime = pPlayer->m_flSimulationTime();
+	newRecord.m_vAbsOrigin = pPlayer->GetAbsOrigin();
+	newRecord.m_vVecOrigin = pPlayer->m_vecOrigin();
+	newRecord.m_vAbsAngles = pPlayer->GetAbsAngles();
+	newRecord.m_vEyeAngles = pPlayer->GetEyeAngles();
+	newRecord.m_vVelocity = pPlayer->m_vecVelocity();
+	newRecord.m_vCenter = pPlayer->GetCenter();
+	newRecord.m_nFlags = pPlayer->m_fFlags();
 
-	if (auto pAnimState = pPlayer->GetAnimState())
-		Record.m_flFeetYaw = pAnimState->m_flCurrentFeetYaw;
+	if (const auto pAnimState = pPlayer->GetAnimState())
+		newRecord.m_flFeetYaw = pAnimState->m_flCurrentFeetYaw;
 
-	m_LagRecords[pPlayer].emplace_front(Record);
+	m_LagRecords[pPlayer].emplace_front(newRecord);
 }
 
 const LagRecord_t *CLagRecords::GetRecord(C_TFPlayer *pPlayer, int nRecord, bool bSafe)
 {
 	if (!bSafe)
 	{
-		if (m_LagRecords.find(pPlayer) == m_LagRecords.end())
+		if (!m_LagRecords.contains(pPlayer))
 			return nullptr;
 
 		if (nRecord < 0 || nRecord > static_cast<int>(m_LagRecords[pPlayer].size() - 1))
@@ -92,9 +88,9 @@ const LagRecord_t *CLagRecords::GetRecord(C_TFPlayer *pPlayer, int nRecord, bool
 
 bool CLagRecords::HasRecords(C_TFPlayer *pPlayer, int *pTotalRecords)
 {
-	if (m_LagRecords.find(pPlayer) != m_LagRecords.end())
+	if (m_LagRecords.contains(pPlayer))
 	{
-		size_t nSize = m_LagRecords[pPlayer].size();
+		const size_t nSize = m_LagRecords[pPlayer].size();
 
 		if (nSize <= 0)
 			return false;
@@ -110,44 +106,42 @@ bool CLagRecords::HasRecords(C_TFPlayer *pPlayer, int *pTotalRecords)
 
 void CLagRecords::UpdateRecords()
 {
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal || pLocal->deadflag() || pLocal->InCond(TF_COND_HALLOWEEN_GHOST_MODE) || pLocal->InCond(TF_COND_HALLOWEEN_KART))
 	{
-		for (const auto &Player : m_LagRecords)
+		if (!m_LagRecords.empty())
 		{
-			EraseAllRecords(Player.first);
+			m_LagRecords.clear();
 		}
 
 		return;
 	}
 
-	for (auto pEntity : H::Entities->GetGroup(CFG::Misc_SetupBones_Optimization ? EEntGroup::PLAYERS_ALL : EEntGroup::PLAYERS_ENEMIES))
+	for (const auto pEntity : H::Entities->GetGroup(CFG::Misc_SetupBones_Optimization ? EEntGroup::PLAYERS_ALL : EEntGroup::PLAYERS_ENEMIES))
 	{
 		if (!pEntity || pEntity == pLocal)
 		{
 			continue;
 		}
 
-		auto pPlayer = pEntity->As<C_TFPlayer>();
+		const auto pPlayer = pEntity->As<C_TFPlayer>();
 
 		if (pPlayer->deadflag())
 		{
-			EraseAllRecords(pPlayer);
-
-			continue;
+			m_LagRecords[pPlayer].clear();
 		}
 	}
 	
-	for (const auto &Record : m_LagRecords)
+	for (const auto& records : m_LagRecords | std::views::values)
 	{
-		for (size_t n = 0; n < Record.second.size(); n++)
+		for (size_t n = 0; n < records.size(); n++)
 		{
-			auto &CurRecord = Record.second[n];
+			auto& curRecord = records[n];
 
-			if (!CurRecord.m_pPlayer || !IsSimulationTimeValid(CurRecord.m_pPlayer->m_flSimulationTime(), CurRecord.m_flSimulationTime))
+			if (!curRecord.m_pPlayer || !IsSimulationTimeValid(curRecord.m_pPlayer->m_flSimulationTime(), curRecord.m_flSimulationTime))
 			{
-				EraseRecord(CurRecord.m_pPlayer, n);
+				EraseRecord(curRecord.m_pPlayer, n);
 			}
 		}
 	}
@@ -155,7 +149,7 @@ void CLagRecords::UpdateRecords()
 
 bool CLagRecords::DiffersFromCurrent(const LagRecord_t *pRecord)
 {
-	auto pPlayer = pRecord->m_pPlayer;
+	const auto pPlayer = pRecord->m_pPlayer;
 
 	if (!pPlayer)
 		return false;
@@ -169,7 +163,7 @@ bool CLagRecords::DiffersFromCurrent(const LagRecord_t *pRecord)
 	if (pPlayer->m_fFlags() != pRecord->m_nFlags)
 		return true;
 
-	if (auto pAnimState = pPlayer->GetAnimState())
+	if (const auto pAnimState = pPlayer->GetAnimState())
 	{
 		if (fabsf(pAnimState->m_flCurrentFeetYaw - pRecord->m_flFeetYaw) > 0.0f)
 			return true;
@@ -183,12 +177,12 @@ void CLagRecordMatrixHelper::Set(const LagRecord_t *pRecord)
 	if (!pRecord)
 		return;
 
-	auto pPlayer = pRecord->m_pPlayer;
+	const auto pPlayer = pRecord->m_pPlayer;
 
 	if (!pPlayer || pPlayer->deadflag())
 		return;
 
-	auto pCachedBoneData = pPlayer->GetCachedBoneData();
+	const auto pCachedBoneData = pPlayer->GetCachedBoneData();
 
 	if (!pCachedBoneData)
 		return;
@@ -211,7 +205,7 @@ void CLagRecordMatrixHelper::Restore()
 	if (!m_bSuccessfullyStored || !m_pPlayer)
 		return;
 
-	auto pCachedBoneData = m_pPlayer->GetCachedBoneData();
+	const auto pCachedBoneData = m_pPlayer->GetCachedBoneData();
 
 	if (!pCachedBoneData)
 		return;
