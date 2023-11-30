@@ -1,4 +1,5 @@
 #include "Memory.h"
+#include <format>
 
 #define INRANGE(x, a, b) (x >= a && x <= b) 
 #define GetBits(x) (INRANGE((x & (~0x20)),'A','F') ? ((x & (~0x20)) - 'A' + 0xA) : (INRANGE(x,'0','9') ? x - '0' : 0))
@@ -61,7 +62,7 @@ DWORD Memory::FindSignature(const char *szModule, const char *szPattern)
 		if (!GetModuleInformation(GetCurrentProcess(), hMod, &module_info, sizeof(MODULEINFO)))
 		{
 #ifdef DEBUG_SIG
-			MessageBox(nullptr, fmt::format("GetModuleInformation {} failed\n", sig).c_str(), "", 0);
+			MessageBox(nullptr, std::format("GetModuleInformation {} failed\n", szPattern).c_str(), "", 0);
 #endif
 			return {};
 		}
@@ -103,7 +104,7 @@ DWORD Memory::FindSignature(const char *szModule, const char *szPattern)
 		}
 
 #if defined DEBUG_SIG
-		MessageBox(nullptr, fmt::format("find_ida_sig {} failed\n", sig).c_str(), "", 0);
+		MessageBox(nullptr, std::format("find_ida_sig {} failed\n", szPattern).c_str(), "", 0);
 #endif
 
 		/// Byte sequence wasn't found
