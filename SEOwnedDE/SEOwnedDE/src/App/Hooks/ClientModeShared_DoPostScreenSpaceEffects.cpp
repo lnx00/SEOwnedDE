@@ -190,7 +190,7 @@ void projectileArc()
 
 	local->m_vecOrigin() = local->GetAbsOrigin();
 
-	if (!projectile_simulation::getInfo(local, weapon, I::EngineClient->GetViewAngles(), info))
+	if (!F::ProjectileSim->getInfo(local, weapon, I::EngineClient->GetViewAngles(), info))
 	{
 		local->m_vecOrigin() = backup_origin;
 
@@ -199,7 +199,7 @@ void projectileArc()
 
 	local->m_vecOrigin() = backup_origin;
 
-	if (!projectile_simulation::init(info))
+	if (!F::ProjectileSim->init(info))
 	{
 		return;
 	}
@@ -220,11 +220,11 @@ void projectileArc()
 
 	for (auto n{ 0 }; n < TIME_TO_TICKS(max_time); n++)
 	{
-		auto pre{ projectile_simulation::getOrigin() };
+		auto pre{ F::ProjectileSim->getOrigin() };
 
-		projectile_simulation::runTick();
+		F::ProjectileSim->runTick();
 
-		auto post{ projectile_simulation::getOrigin() };
+		auto post{ F::ProjectileSim->getOrigin() };
 
 		auto clr{ F::VisualUtils->RainbowTickOffset(n) };
 

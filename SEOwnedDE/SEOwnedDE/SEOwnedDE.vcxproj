@@ -121,7 +121,6 @@
     <ClCompile Include="src\App\Features\Paint\Paint.cpp" />
     <ClCompile Include="src\App\Features\Players\Players.cpp" />
     <ClCompile Include="src\App\Features\ProjectileSimulation\ProjectileSimulation.cpp" />
-    <ClCompile Include="src\App\Features\proj_sim\proj_sim.cpp" />
     <ClCompile Include="src\App\Features\Radar\Radar.cpp" />
     <ClCompile Include="src\App\Features\RapidFire\RapidFire.cpp" />
     <ClCompile Include="src\App\Features\SeedPred\SeedPred.cpp" />
@@ -244,7 +243,6 @@
     <ClInclude Include="src\App\Features\Paint\Paint.h" />
     <ClInclude Include="src\App\Features\Players\Players.h" />
     <ClInclude Include="src\App\Features\ProjectileSimulation\ProjectileSimulation.h" />
-    <ClInclude Include="src\App\Features\proj_sim\proj_sim.hpp" />
     <ClInclude Include="src\App\Features\Radar\Radar.h" />
     <ClInclude Include="src\App\Features\RapidFire\RapidFire.h" />
     <ClInclude Include="src\App\Features\SeedPred\SeedPred.h" />

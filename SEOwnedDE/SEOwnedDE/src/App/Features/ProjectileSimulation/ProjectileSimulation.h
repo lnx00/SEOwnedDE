@@ -15,10 +15,13 @@ struct ProjectileInfo
 	bool no_spin{};
 };
 
-namespace projectile_simulation
+class CProjectileSim
 {
+public:
 	bool getInfo(C_TFPlayer *player, C_TFWeaponBase *weapon, const Vec3 &angles, ProjectileInfo &out);
 	bool init(const ProjectileInfo &info, bool no_vec_up = false);
 	void runTick();
 	Vec3 getOrigin();
-}
+};
+
+MAKE_SINGLETON_SCOPED(CProjectileSim, ProjectileSim, F);

@@ -34,23 +34,23 @@ void drawProjPath(CUserCmd *cmd, float time)
 
 	ProjectileInfo info{};
 
-	if (!projectile_simulation::getInfo(local, weapon, cmd->viewangles, info))
+	if (!F::ProjectileSim->getInfo(local, weapon, cmd->viewangles, info))
 	{
 		return;
 	}
 
-	if (!projectile_simulation::init(info))
+	if (!F::ProjectileSim->init(info))
 	{
 		return;
 	}
 
 	for (auto n{ 0 }; n < TIME_TO_TICKS(time); n++)
 	{
-		auto pre{ projectile_simulation::getOrigin() };
+		auto pre{ F::ProjectileSim->getOrigin() };
 
-		projectile_simulation::runTick();
+		F::ProjectileSim->runTick();
 
-		auto post{ projectile_simulation::getOrigin() };
+		auto post{ F::ProjectileSim->getOrigin() };
 		
 		I::DebugOverlay->AddLineOverlay(pre, post, 255, 255, 255, false, 10.0f);
 	}
@@ -536,7 +536,7 @@ bool CAimbotProjectile::CanArcReach(const Vec3 &vFrom, const Vec3 &vTo, const Ve
 
 	ProjectileInfo info{};
 
-	if (!projectile_simulation::getInfo(local, weapon, vAngleTo, info))
+	if (!F::ProjectileSim->getInfo(local, weapon, vAngleTo, info))
 	{
 		return false;
 	}
@@ -546,7 +546,7 @@ bool CAimbotProjectile::CanArcReach(const Vec3 &vFrom, const Vec3 &vTo, const Ve
 		info.m_speed += 45.0f; //need to do this for some reason
 	}
 
-	if (!projectile_simulation::init(info, true))
+	if (!F::ProjectileSim->init(info, true))
 	{
 		return false;
 	}
@@ -559,11 +559,11 @@ bool CAimbotProjectile::CanArcReach(const Vec3 &vFrom, const Vec3 &vTo, const Ve
 
 	for (auto n{ 0 }; n < TIME_TO_TICKS(flTargetTime * 1.2f); n++)
 	{
-		auto pre{ projectile_simulation::getOrigin() };
+		auto pre{ F::ProjectileSim->getOrigin() };
 
-		projectile_simulation::runTick();
+		F::ProjectileSim->runTick();
 
-		auto post{ projectile_simulation::getOrigin() };
+		auto post{ F::ProjectileSim->getOrigin() };
 
 		trace_t trace{};
 

@@ -3,7 +3,7 @@
 IPhysicsEnvironment *env{};
 IPhysicsObject *obj{};
 
-bool projectile_simulation::getInfo(C_TFPlayer *player, C_TFWeaponBase *weapon, const Vec3 &angles, ProjectileInfo &out)
+bool CProjectileSim::getInfo(C_TFPlayer *player, C_TFWeaponBase *weapon, const Vec3 &angles, ProjectileInfo &out)
 {
 	if (!player || !weapon)
 	{
@@ -123,7 +123,7 @@ bool projectile_simulation::getInfo(C_TFPlayer *player, C_TFWeaponBase *weapon, 
 	}
 }
 
-bool projectile_simulation::init(const ProjectileInfo &info, bool no_vec_up)
+bool CProjectileSim::init(const ProjectileInfo &info, bool no_vec_up)
 {
 	if (!env)
 	{
@@ -289,7 +289,7 @@ bool projectile_simulation::init(const ProjectileInfo &info, bool no_vec_up)
 	return true;
 }
 
-void projectile_simulation::runTick()
+void CProjectileSim::runTick()
 {
 	if (!env)
 	{
@@ -299,7 +299,7 @@ void projectile_simulation::runTick()
 	env->Simulate(TICK_INTERVAL);
 }
 
-Vec3 projectile_simulation::getOrigin()
+Vec3 CProjectileSim::getOrigin()
 {
 	if (!obj)
 	{
