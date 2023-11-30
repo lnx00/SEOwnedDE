@@ -23,7 +23,7 @@ void walkTo(CUserCmd *cmd, const Vec3 &from, const Vec3 &to, float scale)
 	cmd->sidemove = -sinf(yaw) * (450.0f * scale);
 }
 
-void stickyjump::run(CUserCmd *cmd)
+void CStickyJump::Run(CUserCmd *cmd)
 {
 	if (!H::Input->IsDown(CFG::Misc_Auto_Air_Pogo_Key)
 		|| I::EngineVGui->IsGameUIVisible()

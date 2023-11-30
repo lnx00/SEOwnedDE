@@ -2,7 +2,10 @@
 
 #include "../../../SDK/SDK.h"
 
-namespace stickyjump
+class CStickyJump
 {
-	void run(CUserCmd *cmd);
-}
+public:
+	void Run(CUserCmd *cmd);
+};
+
+MAKE_SINGLETON_SCOPED(CStickyJump, StickyJump, F);
