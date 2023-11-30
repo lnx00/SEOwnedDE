@@ -57,7 +57,7 @@ MAKE_HOOK(
 
 		if (HASH_RT(event->GetName()) == player_hurt)
 		{
-			auto_vaccinator::processPlayerHurt(event);
+			F::AutoVaccinator->processPlayerHurt(event);
 		}
 
 		if (HASH_RT(event->GetName()) == player_connect_client && bClientOnly && CFG::Visuals_Chat_Player_List_Info)

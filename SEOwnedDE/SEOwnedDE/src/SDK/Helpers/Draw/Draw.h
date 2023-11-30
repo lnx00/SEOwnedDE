@@ -11,7 +11,6 @@
 
 class CDraw
 {
-private:
 	int m_nScreenW = 0, m_nScreenH = 0;
 	VMatrix m_WorldToProjection = {};
 
@@ -19,10 +18,9 @@ public:
 	void UpdateScreenSize();
 	void UpdateW2SMatrix();
 
-	inline int GetScreenW() { return m_nScreenW; }
-	inline int GetScreenH() { return m_nScreenH; }
+	int GetScreenW() { return m_nScreenW; }
+	int GetScreenH() { return m_nScreenH; }
 
-public:
 	bool W2S(const Vec3 &vOrigin, Vec3 &vScreen);
 	bool ClipTransformWithProjection(const matrix3x4_t &worldToScreen, const Vec3 &point, Vec3 *pClip);
 	bool ClipTransform(const Vector &point, Vector *pClip);

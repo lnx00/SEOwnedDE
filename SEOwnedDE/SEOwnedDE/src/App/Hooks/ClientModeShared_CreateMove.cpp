@@ -33,7 +33,7 @@ MAKE_HOOK(
 		I::ClientState->lastoutgoingcommand + I::ClientState->chokedcommands
 	);
 
-	auto_vaccinator::preventReload(pCmd);
+	F::AutoVaccinator->preventReload(pCmd);
 
 	if (F::RapidFire->ShouldExitCreateMove(pCmd))
 	{
@@ -116,7 +116,7 @@ MAKE_HOOK(
 	}
 	F::EnginePrediction->End();
 
-	auto_vaccinator::run(pCmd);
+	F::AutoVaccinator->run(pCmd);
 	F::SeedPred->AdjustAngles(pCmd);
 	F::StickyJump->Run(pCmd);
 

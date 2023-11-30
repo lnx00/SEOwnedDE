@@ -120,7 +120,7 @@
     <ClCompile Include="src\App\Hooks\C_TFWeapon_ShouldDraw.cpp" />
     <ClCompile Include="src\App\Hooks\CBaseHudChatLine_InsertAndColorizeText.cpp" />
     <ClCompile Include="src\App\Hooks\IMaterialSystem_FindTexture.cpp" />
-    <ClCompile Include="src\App\Features\Chat\Chat1.cpp" />
+    <ClCompile Include="src\App\Features\Chat\Chat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App\Features\Aimbot\AimbotHitscan\AimbotHitscan.h" />

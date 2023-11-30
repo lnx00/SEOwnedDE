@@ -26,9 +26,6 @@ void CDraw::UpdateW2SMatrix()
 
 bool CDraw::W2S(const Vec3 &vOrigin, Vec3 &vScreen)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warray-bounds"
-
 	const matrix3x4_t &w2s = m_WorldToProjection.As3x4();
 
 	float w = w2s[3][0] * vOrigin[0] + w2s[3][1] * vOrigin[1] + w2s[3][2] * vOrigin[2] + w2s[3][3];
@@ -46,15 +43,10 @@ bool CDraw::W2S(const Vec3 &vOrigin, Vec3 &vScreen)
 	}
 
 	return false;
-
-#pragma clang diagnostic pop
 }
 
 bool CDraw::ClipTransformWithProjection(const matrix3x4_t &worldToScreen, const Vec3 &point, Vec3 *pClip)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warray-bounds"
-
 	pClip->x = worldToScreen[0][0] * point[0] + worldToScreen[0][1] * point[1] + worldToScreen[0][2] * point[2] + worldToScreen[0][3];
 	pClip->y = worldToScreen[1][0] * point[0] + worldToScreen[1][1] * point[1] + worldToScreen[1][2] * point[2] + worldToScreen[1][3];
 	pClip->z = 0.0f;
@@ -77,8 +69,6 @@ bool CDraw::ClipTransformWithProjection(const matrix3x4_t &worldToScreen, const 
 	}
 
 	return behind;
-
-#pragma clang diagnostic pop
 }
 
 bool CDraw::ClipTransform(const Vector &point, Vector *pClip)

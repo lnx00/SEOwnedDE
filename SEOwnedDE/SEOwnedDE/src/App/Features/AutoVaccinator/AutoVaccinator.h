@@ -2,9 +2,12 @@
 
 #include "../../../SDK/SDK.h"
 
-namespace auto_vaccinator
+class CAutoVaccinator
 {
+public:
 	void run(CUserCmd *cmd);
 	void processPlayerHurt(IGameEvent *event);
 	void preventReload(CUserCmd *cmd);
-}
+};
+
+MAKE_SINGLETON_SCOPED(CAutoVaccinator, AutoVaccinator, F);

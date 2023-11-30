@@ -106,7 +106,7 @@
     <ClCompile Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.cpp" />
     <ClCompile Include="src\App\Features\AimUtils\AimUtils.cpp" />
     <ClCompile Include="src\App\Features\AutoVaccinator\AutoVaccinator.cpp" />
-    <ClCompile Include="src\App\Features\Chat\Chat1.cpp" />
+    <ClCompile Include="src\App\Features\Chat\Chat.cpp" />
     <ClCompile Include="src\App\Features\EnginePrediction\EnginePrediction.cpp" />
     <ClCompile Include="src\App\Features\ESP\ESP.cpp" />
     <ClCompile Include="src\App\Features\LagRecords\LagRecords.cpp" />
