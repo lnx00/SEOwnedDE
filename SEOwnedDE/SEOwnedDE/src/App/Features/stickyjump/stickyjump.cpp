@@ -1,8 +1,7 @@
 #include "StickyJump.h"
 
-#include "../MovementSimulation/MovementSimulation.h"
-
 #include "../CFG.h"
+#include "../MovementSimulation/MovementSimulation.h"
 
 void CStickyJump::Run(CUserCmd *cmd)
 {
