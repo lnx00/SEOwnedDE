@@ -225,6 +225,25 @@ namespace SDKUtils
 		I::MatSystemSurface->DrawSetTextureRGBAEx(nTextureIdOut, rgba, w, h, IMAGE_FORMAT_BGRA8888);
 		return nTextureIdOut;
 	}
+
+	static void WalkTo(CUserCmd *cmd, const Vec3 &from, const Vec3 &to, float scale)
+	{
+		auto delta{ to - from };
+
+		if (delta.Length() == 0.0f)
+		{
+			return;
+		}
+
+		Vec3 delta_dir{};
+
+		Math::VectorAngles({ delta.x, delta.y, 0.0f }, delta_dir);
+
+		auto yaw{ DEG2RAD(delta_dir.y - cmd->viewangles.y) };
+
+		cmd->forwardmove = cosf(yaw) * (450.0f * scale);
+		cmd->sidemove = -sinf(yaw) * (450.0f * scale);
+	}
 }
 
 namespace G

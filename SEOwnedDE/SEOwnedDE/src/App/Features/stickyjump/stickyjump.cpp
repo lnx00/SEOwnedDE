@@ -4,25 +4,6 @@
 
 #include "../CFG.h"
 
-void walkTo(CUserCmd *cmd, const Vec3 &from, const Vec3 &to, float scale)
-{
-	auto delta{ to - from };
-
-	if (delta.Length() == 0.0f)
-	{
-		return;
-	}
-
-	Vec3 delta_dir{};
-
-	Math::VectorAngles({ delta.x, delta.y, 0.0f }, delta_dir);
-
-	auto yaw{ DEG2RAD(delta_dir.y - cmd->viewangles.y) };
-
-	cmd->forwardmove = cosf(yaw) * (450.0f * scale);
-	cmd->sidemove = -sinf(yaw) * (450.0f * scale);
-}
-
 void CStickyJump::Run(CUserCmd *cmd)
 {
 	if (!H::Input->IsDown(CFG::Misc_Auto_Air_Pogo_Key)
@@ -131,7 +112,7 @@ void CStickyJump::Run(CUserCmd *cmd)
 
 			Math::AngleVectors(Math::VelocityToAngles({ local->m_vecVelocity().x, local->m_vecVelocity().y, 0.0f }), &forward);
 
-			walkTo(cmd, local->m_vecOrigin(), local->m_vecOrigin() + ((forward * -1.0f) * 100.0f), 1.0f);
+			SDKUtils::WalkTo(cmd, local->m_vecOrigin(), local->m_vecOrigin() + ((forward * -1.0f) * 100.0f), 1.0f);
 		}
 
 		break;
