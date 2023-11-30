@@ -13,7 +13,7 @@ bool waiting_for_pp{ false };
 float guess_delta{ 0.0f };
 float response_time{ 0.0f };
 
-void seed_pred::askForPlayerPerf()
+void CSeedPred::askForPlayerPerf()
 {
 	if (!CFG::Exploits_SeedPred_Active)
 	{
@@ -53,7 +53,7 @@ void seed_pred::askForPlayerPerf()
 	waiting_for_pp = true;
 }
 
-bool seed_pred::parsePlayerPerf(bf_read &msg_data)
+bool CSeedPred::parsePlayerPerf(bf_read &msg_data)
 {
 	if (!CFG::Exploits_SeedPred_Active)
 	{
@@ -123,14 +123,14 @@ bool seed_pred::parsePlayerPerf(bf_read &msg_data)
 	return false;
 }
 
-int seed_pred::getSeed()
+int CSeedPred::getSeed()
 {
 	float time{ (server_time + sync_offset + response_time) * 1000.0f };
 
 	return *reinterpret_cast<int *>((char *)&time) & 255;
 }
 
-void seed_pred::reset()
+void CSeedPred::reset()
 {
 	synced = false;
 	server_time = 0.0f;
@@ -143,7 +143,7 @@ void seed_pred::reset()
 	response_time = 0.0f;
 }
 
-void seed_pred::adjustAngles(CUserCmd *cmd)
+void CSeedPred::adjustAngles(CUserCmd *cmd)
 {
 	if (!CFG::Exploits_SeedPred_Active || !synced || !cmd || !G::bFiring)
 	{
@@ -250,7 +250,7 @@ void seed_pred::adjustAngles(CUserCmd *cmd)
 	G::bSilentAngles = true;
 }
 
-void seed_pred::paint()
+void CSeedPred::paint()
 {
 	if (!CFG::Exploits_SeedPred_Active || I::EngineVGui->IsGameUIVisible() || SDKUtils::BInEndOfMatch() || server_time <= 0.0f)
 	{

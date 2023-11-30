@@ -10,7 +10,7 @@ MAKE_HOOK(
 {
 	if (CFG::Exploits_SeedPred_Active)
 	{
-		iSeed = seed_pred::getSeed();
+		iSeed = F::SeedPred->getSeed();
 	}
 
 	CALL_ORIGINAL(pWpn, iPlayer, vecOrigin, vecAngles, iWeapon, iMode, iSeed, flSpread, flDamage, bCritical);

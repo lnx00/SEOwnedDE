@@ -7,7 +7,7 @@ MAKE_HOOK(
 	CL_SendMove, Signatures::CL_SendMove.Get(),
 	void, __fastcall, void *ecx, void *edx)
 {
-	seed_pred::askForPlayerPerf();
+	F::SeedPred->askForPlayerPerf();
 
 	if (Shifting::nAvailableTicks < MAX_COMMANDS)
 	{

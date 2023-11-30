@@ -17,7 +17,7 @@ MAKE_HOOK(
 		return true;
 	}
 
-	if (msg_type == 5 && seed_pred::parsePlayerPerf(msg_data))
+	if (msg_type == 5 && F::SeedPred->parsePlayerPerf(msg_data))
 	{
 		return true;
 	}

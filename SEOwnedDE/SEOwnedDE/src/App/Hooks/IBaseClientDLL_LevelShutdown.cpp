@@ -20,7 +20,7 @@ MAKE_HOOK(
 	F::Paint->CleanUp();
 	F::WorldModulation->LevelShutdown();
 
-	seed_pred::reset();
+	F::SeedPred->reset();
 
 	G::mapVelFixRecords.clear();
 

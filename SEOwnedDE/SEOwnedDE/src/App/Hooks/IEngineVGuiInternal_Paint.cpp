@@ -30,7 +30,7 @@ MAKE_HOOK(
 			F::MiscVisuals->AimbotFOVCircle();
 			F::SpyCamera->Run();
 			F::SpyWarning->Run();
-			seed_pred::paint();
+			F::SeedPred->paint();
 			F::Menu->Run();
 		}
 		I::MatSystemSurface->FinishDrawing();
