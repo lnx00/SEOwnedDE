@@ -31,11 +31,11 @@ void CApp::Start()
 
 	players::parse();
 
-	Config::Load((std::filesystem::current_path().string() + "\\SEOwnedDE\\configs\\default.json").c_str());
+	Config::Load((std::filesystem::current_path().string() + R"(\SEOwnedDE\configs\default.json)").c_str());
 
-	auto month = []
+	const auto month = []
 	{
-		std::time_t t = std::time(0);
+		const std::time_t t = std::time(nullptr);
 		tm Time = {};
 		localtime_s(&Time, &t);
 
@@ -69,7 +69,7 @@ void CApp::Shutdown()
 {
 	U::HookManager->FreeAllHooks();
 
-	SetWindowLongPtr(Hooks::WINAPI_WndProc::hwWindow, GWL_WNDPROC, (LONG_PTR)Hooks::WINAPI_WndProc::Original);
+	SetWindowLongPtr(Hooks::WINAPI_WndProc::hwWindow, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(Hooks::WINAPI_WndProc::Original));
 	
 	Sleep(250);
 
@@ -79,7 +79,7 @@ void CApp::Shutdown()
 
 	F::WorldModulation->RestoreWorldModulation();
 
-	if (auto cl_wpn_sway_interp{ I::CVar->FindVar("cl_wpn_sway_interp") })
+	if (const auto cl_wpn_sway_interp{ I::CVar->FindVar("cl_wpn_sway_interp") })
 	{
 		cl_wpn_sway_interp->SetValue(0.0f);
 	}
