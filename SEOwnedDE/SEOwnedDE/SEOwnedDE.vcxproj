@@ -190,6 +190,7 @@
     <ClCompile Include="src\App\Hooks\IBaseClientDLL_LevelShutdown.cpp" />
     <ClCompile Include="src\App\Hooks\IEngineVGuiInternal_Paint.cpp" />
     <ClCompile Include="src\App\Hooks\IInput_GetUserCmd.cpp" />
+    <ClCompile Include="src\App\Hooks\IMaterialSystem_FindTexture.cpp" />
     <ClCompile Include="src\App\Hooks\INetChannel_SendNetMsg.cpp" />
     <ClCompile Include="src\App\Hooks\ISurface_LockCursor.cpp" />
     <ClCompile Include="src\App\Hooks\ISurface_OnScreenSizeChanged.cpp" />
