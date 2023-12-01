@@ -17,7 +17,7 @@ MAKE_HOOK(
 		{
 			CPlayers::PlayerInfo pi{};
 
-			if (F::Players->getInfo(n, pi))
+			if (F::Players->GetInfo(n, pi))
 			{
 				player_info_t pi_game{};
 

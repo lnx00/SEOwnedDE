@@ -33,7 +33,7 @@ MAKE_HOOK(
 
 			CPlayers::PlayerInfo pi{};
 
-			if (F::Players->getInfo(clientIndex, pi))
+			if (F::Players->GetInfo(clientIndex, pi))
 			{
 				if (pi.m_ignored)
 				{

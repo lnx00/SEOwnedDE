@@ -2312,7 +2312,7 @@ void CMenu::MainWindow()
 
 				CPlayers::PlayerInfo custom_info{};
 
-				F::Players->getInfo(n, custom_info);
+				F::Players->GetInfo(n, custom_info);
 
 				auto bx{ m_nCursorX };
 				auto by{ m_nCursorY };
@@ -2342,7 +2342,7 @@ void CMenu::MainWindow()
 
 				if (playerListButton(L"ignored", 60, custom_info.m_ignored ? CFG::Color_Friend : CFG::Menu_Text_Inactive, true))
 				{
-					F::Players->mark(n, { !custom_info.m_ignored, false });
+					F::Players->Mark(n, { !custom_info.m_ignored, false });
 				}
 
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
@@ -2350,7 +2350,7 @@ void CMenu::MainWindow()
 
 				if (playerListButton(L"cheater", 60, custom_info.m_cheater ? CFG::Color_Cheater : CFG::Menu_Text_Inactive, true))
 				{
-					F::Players->mark(n, { false, !custom_info.m_cheater });
+					F::Players->Mark(n, { false, !custom_info.m_cheater });
 				}
 
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
@@ -2358,7 +2358,7 @@ void CMenu::MainWindow()
 
 				if (playerListButton(L"retard legit", 60, custom_info.m_retard_legit ? CFG::Color_RetardLegit : CFG::Menu_Text_Inactive, true))
 				{
-					F::Players->mark(n, { false, false, !custom_info.m_retard_legit });
+					F::Players->Mark(n, { false, false, !custom_info.m_retard_legit });
 				}
 
 				m_nCursorX = bx;

@@ -12,10 +12,10 @@ public:
 		bool m_retard_legit{};
 	};
 
-	void parse();
-	void mark(int entindex, const PlayerInfo &info);
-	bool getInfo(int entindex, PlayerInfo &out);
-	bool getInfoGUID(const std::string &guid, PlayerInfo &out);
+	void Parse();
+	void Mark(int entindex, const PlayerInfo &info);
+	bool GetInfo(int entindex, PlayerInfo &out);
+	bool GetInfoGUID(const std::string &guid, PlayerInfo &out);
 };
 
 MAKE_SINGLETON_SCOPED(CPlayers, Players, F);

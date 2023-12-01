@@ -64,7 +64,7 @@ MAKE_HOOK(
 		{
 			CPlayers::PlayerInfo pi{};
 
-			if (F::Players->getInfoGUID(event->GetString("networkid"), pi))
+			if (F::Players->GetInfoGUID(event->GetString("networkid"), pi))
 			{
 				const char *const name{ event->GetString("name") };
 

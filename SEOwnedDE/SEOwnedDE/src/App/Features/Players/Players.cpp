@@ -9,7 +9,7 @@ struct Player
 std::vector<Player> players_vec{};
 std::string log_path{};
 
-void CPlayers::parse()
+void CPlayers::Parse()
 {
 	if (log_path.empty())
 	{
@@ -67,7 +67,7 @@ void CPlayers::parse()
 	}
 }
 
-void CPlayers::mark(int entindex, const PlayerInfo &info)
+void CPlayers::Mark(int entindex, const PlayerInfo &info)
 {
 	if (entindex == I::EngineClient->GetLocalPlayer())
 	{
@@ -140,7 +140,7 @@ void CPlayers::mark(int entindex, const PlayerInfo &info)
 	file.close();
 }
 
-bool CPlayers::getInfo(int entindex, PlayerInfo &out)
+bool CPlayers::GetInfo(int entindex, PlayerInfo &out)
 {
 	if (entindex == I::EngineClient->GetLocalPlayer())
 	{
@@ -171,7 +171,7 @@ bool CPlayers::getInfo(int entindex, PlayerInfo &out)
 	return false;
 }
 
-bool CPlayers::getInfoGUID(const std::string &guid, PlayerInfo &out)
+bool CPlayers::GetInfoGUID(const std::string &guid, PlayerInfo &out)
 {
 	auto steam_id{ HASH_RT(guid.c_str()) };
 
