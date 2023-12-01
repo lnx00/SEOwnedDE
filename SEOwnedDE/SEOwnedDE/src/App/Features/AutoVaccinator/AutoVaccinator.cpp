@@ -149,7 +149,7 @@ bool isPlayerInDanger(C_TFPlayer *player, medigun_resist_types_t &danger_type)
 
 		auto visible_from_center
 		{ 
-			F::AimUtils->TraceEntityAutoDet
+			H::AimUtils->TraceEntityAutoDet
 			(
 				ent,
 				player->GetCenter(),
@@ -159,7 +159,7 @@ bool isPlayerInDanger(C_TFPlayer *player, medigun_resist_types_t &danger_type)
 
 		auto visible_from_head
 		{ 
-			F::AimUtils->TraceEntityAutoDet
+			H::AimUtils->TraceEntityAutoDet
 			(
 				ent,
 				player->m_vecOrigin() + Vec3{ 0.0f, 0.0f, player->m_vecMaxs().z },
@@ -186,8 +186,8 @@ bool isPlayerInDanger(C_TFPlayer *player, medigun_resist_types_t &danger_type)
 			continue;
 		}
 
-		auto visible_from_center{ F::AimUtils->TraceEntityAutoDet(ent, player->GetCenter(), ent->GetCenter()) };
-		auto visible_from_head{ F::AimUtils->TraceEntityAutoDet(ent, player->m_vecOrigin() + Vec3{ 0.0f, 0.0f, player->m_vecMaxs().z }, ent->GetCenter())};
+		auto visible_from_center{ H::AimUtils->TraceEntityAutoDet(ent, player->GetCenter(), ent->GetCenter()) };
+		auto visible_from_head{ H::AimUtils->TraceEntityAutoDet(ent, player->m_vecOrigin() + Vec3{ 0.0f, 0.0f, player->m_vecMaxs().z }, ent->GetCenter())};
 
 		if (!visible_from_center && !visible_from_head)
 		{

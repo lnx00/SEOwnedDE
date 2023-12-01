@@ -31,7 +31,7 @@ void CAimbot::RunMain(CUserCmd *pCmd)
 		|| pWeapon->m_iItemDefinitionIndex() == Soldier_m_RocketJumper || pWeapon->m_iItemDefinitionIndex() == Demoman_s_StickyJumper)
 		return;
 
-	switch (F::AimUtils->GetWeaponType(pWeapon))
+	switch (H::AimUtils->GetWeaponType(pWeapon))
 	{
 		case EWeaponType::HITSCAN: {
 			F::AimbotHitscan->Run(pCmd, pLocal, pWeapon);
@@ -67,7 +67,7 @@ void CAimbot::Run(CUserCmd *pCmd)
 		|| pLocal->m_bFeignDeathReady() || pLocal->m_flInvisibility() > 0.0f)
 		return;
 
-	auto nWeaponType = F::AimUtils->GetWeaponType(pWeapon);
+	auto nWeaponType = H::AimUtils->GetWeaponType(pWeapon);
 
 	if (!G::bFiring)
 	{

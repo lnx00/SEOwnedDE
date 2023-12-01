@@ -35,7 +35,7 @@ MAKE_HOOK(
 
 				trace_t trace = {};
 				CTraceFilterHitscan filter = {};
-				F::AimUtils->Trace(info.m_vecSrc, info.m_vecSrc + (info.m_vecDirShooting * info.m_flDistance), (MASK_SHOT | CONTENTS_GRATE), &filter, &trace);
+				H::AimUtils->Trace(info.m_vecSrc, info.m_vecSrc + (info.m_vecDirShooting * info.m_flDistance), (MASK_SHOT | CONTENTS_GRATE), &filter, &trace);
 
 				vEnd = trace.endpos;
 

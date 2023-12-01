@@ -50,11 +50,11 @@ void CAutoDetonate::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 
 				if (pSticky->GetCenter().DistTo(pPlayer->GetCenter()) < flRadius)
 				{
-					if (F::AimUtils->TraceEntityAutoDet(pPlayer, pSticky->GetCenter(), pPlayer->GetCenter()))
+					if (H::AimUtils->TraceEntityAutoDet(pPlayer, pSticky->GetCenter(), pPlayer->GetCenter()))
 					{
 						if (pSticky->m_bDefensiveBomb()) {
 							Vec3 vAngle = Math::CalcAngle(pLocal->GetShootPos(), pSticky->GetCenter());
-							F::AimUtils->FixMovement(pCmd, vAngle);
+							H::AimUtils->FixMovement(pCmd, vAngle);
 							pCmd->viewangles = vAngle;
 							G::bSilentAngles = true;
 						}
@@ -76,11 +76,11 @@ void CAutoDetonate::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 
 				if (pSticky->GetCenter().DistTo(pEntity->GetCenter()) < flRadius)
 				{
-					if (F::AimUtils->TraceEntityAutoDet(pEntity, pSticky->GetCenter(), pEntity->GetCenter()))
+					if (H::AimUtils->TraceEntityAutoDet(pEntity, pSticky->GetCenter(), pEntity->GetCenter()))
 					{
 						if (pSticky->m_bDefensiveBomb()) {
 							Vec3 vAngle = Math::CalcAngle(pLocal->GetShootPos(), pSticky->GetCenter());
-							F::AimUtils->FixMovement(pCmd, vAngle);
+							H::AimUtils->FixMovement(pCmd, vAngle);
 							pCmd->viewangles = vAngle;
 							G::bSilentAngles = true;
 						}

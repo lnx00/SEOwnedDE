@@ -276,7 +276,7 @@ void CMaterials::RunLagRecords()
 	if (!pWeapon)
 		return;
 
-	auto WeaponType = F::AimUtils->GetWeaponType(pWeapon);
+	auto WeaponType = H::AimUtils->GetWeaponType(pWeapon);
 
 	if (WeaponType == EWeaponType::HITSCAN)
 	{

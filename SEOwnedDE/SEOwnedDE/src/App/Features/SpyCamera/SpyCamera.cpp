@@ -110,7 +110,7 @@ void CSpyCamera::Run()
 		if (Math::CalcFov({ 0.0f, vEngineAngles.y, 0.0f }, Math::CalcAngle(pLocal->GetShootPos(), pPlayer->GetCenter())) < 80.0f)
 			continue;
 
-		if (!F::AimUtils->TraceEntityAutoDet(pPlayer, pLocal->GetShootPos(), pPlayer->GetShootPos()))
+		if (!H::AimUtils->TraceEntityAutoDet(pPlayer, pLocal->GetShootPos(), pPlayer->GetShootPos()))
 			continue;
 
 		vecSpies.push_back(pPlayer);
@@ -137,7 +137,7 @@ void CSpyCamera::Run()
 
 		trace_t Trace = {};
 		CTraceFilterWorldCustom Filter = {};
-		F::AimUtils->Trace(vSpyPos, vSpyPos - (vForward * 80.0f), MASK_SOLID, &Filter, &Trace);
+		H::AimUtils->Trace(vSpyPos, vSpyPos - (vForward * 80.0f), MASK_SOLID, &Filter, &Trace);
 
 		setup.origin = vSpyPos - ((vForward * 80.0f) * Trace.fraction);
 		setup.angles = vAngles;

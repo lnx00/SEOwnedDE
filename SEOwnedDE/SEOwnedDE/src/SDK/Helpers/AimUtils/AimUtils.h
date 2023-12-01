@@ -31,4 +31,4 @@ public:
 	bool IsBehindAndFacingTarget(const Vec3 &vPlayerCenter, const Vec3 &vTargetCenter, const Vec3 &vPlayerViewAngles, const Vec3 &vTargetEyeAngles);
 };
 
-MAKE_SINGLETON_SCOPED(CAimUtils, AimUtils, F);
+MAKE_SINGLETON_SCOPED(CAimUtils, AimUtils, H);

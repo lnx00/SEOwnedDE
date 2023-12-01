@@ -139,7 +139,7 @@ bool CRapidFire::ShouldExitCreateMove(CUserCmd *pCmd)
 
 bool CRapidFire::IsWeaponSupported(C_TFWeaponBase *pWeapon)
 {
-	auto nWeaponType = F::AimUtils->GetWeaponType(pWeapon);
+	auto nWeaponType = H::AimUtils->GetWeaponType(pWeapon);
 
 	if (nWeaponType == EWeaponType::MELEE || nWeaponType == EWeaponType::OTHER)
 		return false;

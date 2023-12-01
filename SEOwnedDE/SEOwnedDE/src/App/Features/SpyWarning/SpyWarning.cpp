@@ -62,7 +62,7 @@ void CSpyWarning::Run()
 
 		if (CFG::Viuals_SpyWarning_Ignore_Invisible)
 		{
-			if (!F::AimUtils->TracePositionWorld(pLocal->GetShootPos(), pPlayer->GetRenderCenter()))
+			if (!H::AimUtils->TracePositionWorld(pLocal->GetShootPos(), pPlayer->GetRenderCenter()))
 				continue;
 		}
 

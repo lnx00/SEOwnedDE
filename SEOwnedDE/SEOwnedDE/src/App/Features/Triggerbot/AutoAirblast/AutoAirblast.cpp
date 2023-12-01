@@ -121,7 +121,7 @@ bool findTargetProjectile(C_TFPlayer *local, TargetProjectile &out)
 		CTraceFilterWorldCustom filter{};
 		trace_t trace{};
 
-		F::AimUtils->Trace(local->GetShootPos(), pos, MASK_SOLID, &filter, &trace);
+		H::AimUtils->Trace(local->GetShootPos(), pos, MASK_SOLID, &filter, &trace);
 
 		if (trace.fraction < 1.0f || trace.allsolid || trace.startsolid)
 		{
@@ -195,7 +195,7 @@ void CAutoAirblast::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 				CTraceFilterWorldCustom filter{};
 				trace_t trace{};
 
-				F::AimUtils->Trace(pLocal->GetShootPos(), owner->GetCenter(), MASK_SOLID, &filter, &trace);
+				H::AimUtils->Trace(pLocal->GetShootPos(), owner->GetCenter(), MASK_SOLID, &filter, &trace);
 
 				if (trace.fraction > 0.99f && !trace.allsolid && !trace.startsolid)
 				{

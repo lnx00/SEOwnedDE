@@ -105,7 +105,7 @@ void SniperLines()
 		CTraceFilterWorldCustom Filter = {};
 		trace_t Trace = {};
 
-		F::AimUtils->Trace(vStart, vEnd, MASK_SOLID, &Filter, &Trace);
+		H::AimUtils->Trace(vStart, vEnd, MASK_SOLID, &Filter, &Trace);
 
 		vEnd = Trace.endpos;
 
@@ -234,7 +234,7 @@ void projectileArc()
 
 		trace_t trace{};
 
-		F::AimUtils->TraceHull(pre, post, { -2.0f, -2.0f, -2.0f }, { 2.0f, 2.0f, 2.0f }, MASK_SOLID, &filter, &trace);
+		H::AimUtils->TraceHull(pre, post, { -2.0f, -2.0f, -2.0f }, { 2.0f, 2.0f, 2.0f }, MASK_SOLID, &filter, &trace);
 
 		if (trace.DidHit())
 		{

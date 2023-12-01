@@ -441,7 +441,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 		CTraceFilterHitscan filter{};
 		trace_t tr{};
 
-		F::AimUtils->Trace(local->GetShootPos(), pl->GetCenter(), (MASK_SHOT & ~CONTENTS_HITBOX), &filter, &tr);
+		H::AimUtils->Trace(local->GetShootPos(), pl->GetCenter(), (MASK_SHOT & ~CONTENTS_HITBOX), &filter, &tr);
 
 		return tr.fraction > 0.99f || tr.m_pEnt == pl;
 	};
@@ -481,7 +481,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 
 			auto angle{ Math::CalcAngle(local->GetShootPos(), pl->GetCenter()) };
 
-			F::AimUtils->FixMovement(cmd, angle);
+			H::AimUtils->FixMovement(cmd, angle);
 
 			cmd->viewangles = angle;
 			cmd->buttons |= IN_ATTACK;

@@ -23,7 +23,7 @@ void CSeedPred::AskForPlayerPerf()
 
 	C_TFWeaponBase *weapon{ H::Entities->GetWeapon() };
 
-	if (!weapon || !(weapon->GetDamageType() & DMG_BULLET) || F::AimUtils->GetWeaponType(weapon) != EWeaponType::HITSCAN || weapon->GetWeaponSpread() <= 0.0f)
+	if (!weapon || !(weapon->GetDamageType() & DMG_BULLET) || H::AimUtils->GetWeaponType(weapon) != EWeaponType::HITSCAN || weapon->GetWeaponSpread() <= 0.0f)
 	{
 		Reset();
 

@@ -126,7 +126,7 @@ Vec3 getOffsetShootPos(C_TFPlayer *local, C_TFWeaponBase *weapon, CUserCmd *cmd)
 				if (local->m_fFlags() & FL_DUCKING)
 					vOffset.z = 8.0f;
 
-				F::AimUtils->GetProjectileFireSetup(cmd->viewangles, vOffset, &out);
+				H::AimUtils->GetProjectileFireSetup(cmd->viewangles, vOffset, &out);
 			}
 
 			break;
@@ -139,7 +139,7 @@ Vec3 getOffsetShootPos(C_TFPlayer *local, C_TFWeaponBase *weapon, CUserCmd *cmd)
 			if (local->m_fFlags() & FL_DUCKING)
 				vOffset.z = 8.0f;
 
-			F::AimUtils->GetProjectileFireSetup(cmd->viewangles, vOffset, &out);
+			H::AimUtils->GetProjectileFireSetup(cmd->viewangles, vOffset, &out);
 
 			break;
 		}
@@ -596,7 +596,7 @@ bool CAimbotProjectile::CanArcReach(const Vec3 &vFrom, const Vec3 &vTo, const Ve
 			}
 		}
 
-		F::AimUtils->TraceHull(pre, post, mins, maxs, MASK_SOLID, &filter, &trace);
+		H::AimUtils->TraceHull(pre, post, mins, maxs, MASK_SOLID, &filter, &trace);
 
 		if (trace.m_pEnt == pTarget)
 		{
@@ -615,7 +615,7 @@ bool CAimbotProjectile::CanArcReach(const Vec3 &vFrom, const Vec3 &vTo, const Ve
 				return false;
 			}
 
-			F::AimUtils->Trace(trace.endpos, vTo, MASK_SOLID, &filter, &trace);
+			H::AimUtils->Trace(trace.endpos, vTo, MASK_SOLID, &filter, &trace);
 
 			return !trace.DidHit() || trace.m_pEnt == pTarget;
 		}
@@ -649,7 +649,7 @@ bool CAimbotProjectile::CanSee(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, cons
 				if (pLocal->m_fFlags() & FL_DUCKING)
 					vOffset.z = 8.0f;
 
-				F::AimUtils->GetProjectileFireSetup(Target.m_vAngleTo, vOffset, &vLocalPos);
+				H::AimUtils->GetProjectileFireSetup(Target.m_vAngleTo, vOffset, &vLocalPos);
 			}
 
 			break;
@@ -662,7 +662,7 @@ bool CAimbotProjectile::CanSee(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, cons
 			if (pLocal->m_fFlags() & FL_DUCKING)
 				vOffset.z = 8.0f;
 
-			F::AimUtils->GetProjectileFireSetup(Target.m_vAngleTo, vOffset, &vLocalPos);
+			H::AimUtils->GetProjectileFireSetup(Target.m_vAngleTo, vOffset, &vLocalPos);
 
 			break;
 		}
@@ -679,12 +679,12 @@ bool CAimbotProjectile::CanSee(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, cons
 	{
 		if (m_CurProjInfo.m_bFlamethrower)
 		{
-			return F::AimUtils->TraceFlames(Target.m_pEntity, vLocalPos, vTo);
+			return H::AimUtils->TraceFlames(Target.m_pEntity, vLocalPos, vTo);
 		}
 
 		else
 		{
-			return F::AimUtils->TraceProjectile(Target.m_pEntity, vLocalPos, vTo);
+			return H::AimUtils->TraceProjectile(Target.m_pEntity, vLocalPos, vTo);
 		}
 	}
 }
@@ -697,7 +697,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon,
 	{
 		Vec3 vOffset = { 16.0f, 8.0f, -6.0f };
 
-		F::AimUtils->GetProjectileFireSetup(pCmd->viewangles, vOffset, &vLocalPos);
+		H::AimUtils->GetProjectileFireSetup(pCmd->viewangles, vOffset, &vLocalPos);
 	}
 
 	vecPositions.clear();
@@ -792,7 +792,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon,
 						CTraceFilterWorldCustom filter{};
 						trace_t trace{};
 
-						F::AimUtils->Trace(center, point, MASK_SOLID, &filter, &trace);
+						H::AimUtils->Trace(center, point, MASK_SOLID, &filter, &trace);
 
 						if (trace.fraction > 0.99f)
 						{
@@ -817,7 +817,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon,
 						trace_t trace = {};
 						CTraceFilterWorldCustom filter = {};
 
-						F::AimUtils->TraceHull
+						H::AimUtils->TraceHull
 						(
 							getOffsetShootPos(pLocal, pWeapon, pCmd),
 							point,
@@ -833,7 +833,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon,
 							continue;
 						}
 
-						F::AimUtils->Trace(trace.endpos, point, MASK_SOLID, &filter, &trace);
+						H::AimUtils->Trace(trace.endpos, point, MASK_SOLID, &filter, &trace);
 
 						if (trace.fraction < 1.0f)
 						{
@@ -945,7 +945,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon,
 				CTraceFilterWorldCustom filter{};
 				trace_t trace{};
 
-				F::AimUtils->Trace(center, point, MASK_SOLID, &filter, &trace);
+				H::AimUtils->Trace(center, point, MASK_SOLID, &filter, &trace);
 
 				if (trace.fraction > 0.99f)
 				{
@@ -974,7 +974,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon,
 				trace_t trace = {};
 				CTraceFilterWorldCustom filter = {};
 
-				F::AimUtils->TraceHull
+				H::AimUtils->TraceHull
 				(
 					getOffsetShootPos(pLocal, pWeapon, pCmd),
 					point,
@@ -990,7 +990,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon,
 					continue;
 				}
 
-				F::AimUtils->Trace(trace.endpos, point, MASK_SOLID, &filter, &trace);
+				H::AimUtils->Trace(trace.endpos, point, MASK_SOLID, &filter, &trace);
 
 				if (trace.fraction < 1.0f)
 				{
@@ -1213,7 +1213,7 @@ void CAimbotProjectile::Aim(CUserCmd *pCmd, C_TFPlayer *pLocal, C_TFWeaponBase *
 		{
 			if (m_CurProjInfo.m_bFlamethrower ? true : G::bCanPrimaryAttack)
 			{
-				F::AimUtils->FixMovement(pCmd, vAngleTo);
+				H::AimUtils->FixMovement(pCmd, vAngleTo);
 
 				pCmd->viewangles = vAngleTo;
 				

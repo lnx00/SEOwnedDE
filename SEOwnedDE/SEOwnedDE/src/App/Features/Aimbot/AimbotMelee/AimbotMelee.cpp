@@ -20,7 +20,7 @@ bool CAimbotMelee::CanSee(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, Target_t 
 		if (Target.m_pLagRecord)
 			F::LagRecordMatrixHelper->Set(Target.m_pLagRecord);
 
-		bCanSee = F::AimUtils->TraceEntityMelee(Target.m_pEntity, vLocalPos, vToSee);
+		bCanSee = H::AimUtils->TraceEntityMelee(Target.m_pEntity, vLocalPos, vToSee);
 
 		if (CFG::Aimbot_Melee_Aim_Type == 2 || CFG::Aimbot_Melee_Aim_Type == 3)
 		{
@@ -30,7 +30,7 @@ bool CAimbotMelee::CanSee(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, Target_t 
 				return vLocalPos + (vForward * pWeapon->GetSwingRange());
 			}();
 
-			Target.m_bMeleeTraceHit = F::AimUtils->TraceEntityMelee(Target.m_pEntity, vLocalPos, vToHit);
+			Target.m_bMeleeTraceHit = H::AimUtils->TraceEntityMelee(Target.m_pEntity, vLocalPos, vToHit);
 		}
 
 		else Target.m_bMeleeTraceHit = bCanSee;
@@ -239,7 +239,7 @@ void CAimbotMelee::Aim(CUserCmd *pCmd, C_TFPlayer *pLocal, C_TFWeaponBase *pWeap
 		{
 			if (IsFiring(pCmd, pWeapon))
 			{
-				F::AimUtils->FixMovement(pCmd, vAngleTo);
+				H::AimUtils->FixMovement(pCmd, vAngleTo);
 				pCmd->viewangles = vAngleTo;
 
 				if (Shifting::bShifting && Shifting::bShiftingWarp)

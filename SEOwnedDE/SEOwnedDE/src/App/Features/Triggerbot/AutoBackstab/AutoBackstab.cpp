@@ -122,7 +122,7 @@ void CAutoBackstab::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 
 			auto to{ pLocal->GetShootPos() + (forward * 47.0f) };
 
-			if (F::AimUtils->TraceEntityMelee(player, pLocal->GetShootPos(), to))
+			if (H::AimUtils->TraceEntityMelee(player, pLocal->GetShootPos(), to))
 			{
 				if (CFG::Triggerbot_AutoBacktab_Mode == 1)
 				{
@@ -175,7 +175,7 @@ void CAutoBackstab::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 
 				auto to{ pLocal->GetShootPos() + (forward * 47.0f) };
 
-				if (!F::AimUtils->TraceEntityMelee(player, pLocal->GetShootPos(), to))
+				if (!H::AimUtils->TraceEntityMelee(player, pLocal->GetShootPos(), to))
 				{
 					F::LagRecordMatrixHelper->Restore();
 

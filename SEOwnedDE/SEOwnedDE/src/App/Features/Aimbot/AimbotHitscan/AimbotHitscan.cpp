@@ -13,7 +13,7 @@ int CAimbotHitscan::GetAimHitbox(C_TFWeaponBase *pWeapon)
 			if (pWeapon->GetWeaponID() == TF_WEAPON_SNIPERRIFLE_CLASSIC)
 				return (pWeapon->As<C_TFSniperRifle>()->m_flChargedDamage() >= 150.0f) ? HITBOX_HEAD : HITBOX_PELVIS;
 
-			return F::AimUtils->IsWeaponCapableOfHeadshot(pWeapon) ? HITBOX_HEAD : HITBOX_PELVIS;
+			return H::AimUtils->IsWeaponCapableOfHeadshot(pWeapon) ? HITBOX_HEAD : HITBOX_PELVIS;
 		}
 		default: return HITBOX_PELVIS;
 	}
@@ -72,7 +72,7 @@ bool CAimbotHitscan::ScanHead(C_TFPlayer *pLocal, Target_t &Target)
 
 		int nHitHitbox = -1;
 
-		if (!F::AimUtils->TraceEntityBullet(pPlayer, vLocalPos, vTransformed, &nHitHitbox))
+		if (!H::AimUtils->TraceEntityBullet(pPlayer, vLocalPos, vTransformed, &nHitHitbox))
 			continue;
 
 		if (nHitHitbox != HITBOX_HEAD)
@@ -122,7 +122,7 @@ bool CAimbotHitscan::ScanBody(C_TFPlayer *pLocal, Target_t &Target)
 
 		Vec3 vHitbox = pPlayer->GetHitboxPos(n);
 
-		if (!F::AimUtils->TraceEntityBullet(pPlayer, vLocalPos, vHitbox))
+		if (!H::AimUtils->TraceEntityBullet(pPlayer, vLocalPos, vHitbox))
 			continue;
 
 		Target.m_vPosition = vHitbox;
@@ -152,7 +152,7 @@ bool CAimbotHitscan::ScanBuilding(C_TFPlayer *pLocal, Target_t &Target)
 		{
 			Vec3 vHitbox = pObject->GetHitboxPos(n);
 
-			if (!F::AimUtils->TraceEntityBullet(pObject, vLocalPos, vHitbox))
+			if (!H::AimUtils->TraceEntityBullet(pObject, vLocalPos, vHitbox))
 				continue;
 
 			Target.m_vPosition = vHitbox;
@@ -183,7 +183,7 @@ bool CAimbotHitscan::ScanBuilding(C_TFPlayer *pLocal, Target_t &Target)
 			Vec3 vTransformed = {};
 			Math::VectorTransform(Point, Transform, vTransformed);
 
-			if (!F::AimUtils->TraceEntityBullet(pObject, vLocalPos, vTransformed))
+			if (!H::AimUtils->TraceEntityBullet(pObject, vLocalPos, vTransformed))
 				continue;
 
 			Target.m_vPosition = vTransformed;
@@ -348,7 +348,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, Targ
 				{
 					int nHitHitbox = -1;
 
-					if (!F::AimUtils->TraceEntityBullet(Target.m_pEntity, vLocalPos, Target.m_vPosition, &nHitHitbox))
+					if (!H::AimUtils->TraceEntityBullet(Target.m_pEntity, vLocalPos, Target.m_vPosition, &nHitHitbox))
 					{
 						if (Target.m_nAimedHitbox == HITBOX_HEAD)
 						{
@@ -376,7 +376,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, Targ
 				{
 					F::LagRecordMatrixHelper->Set(Target.m_pLagRecord);
 
-					bool bTraceResult = F::AimUtils->TraceEntityBullet(Target.m_pEntity, vLocalPos, Target.m_vPosition);
+					bool bTraceResult = H::AimUtils->TraceEntityBullet(Target.m_pEntity, vLocalPos, Target.m_vPosition);
 
 					F::LagRecordMatrixHelper->Restore();
 
@@ -391,7 +391,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, Targ
 			case ETFClassIds::CObjectDispenser:
 			case ETFClassIds::CObjectTeleporter:
 			{
-				if (!F::AimUtils->TraceEntityBullet(Target.m_pEntity, vLocalPos, Target.m_vPosition))
+				if (!H::AimUtils->TraceEntityBullet(Target.m_pEntity, vLocalPos, Target.m_vPosition))
 				{
 					if (!ScanBuilding(pLocal, Target))
 						continue;
@@ -402,7 +402,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, Targ
 
 			case ETFClassIds::CTFGrenadePipebombProjectile:
 			{
-				if (!F::AimUtils->TraceEntityBullet(Target.m_pEntity, vLocalPos, Target.m_vPosition))
+				if (!H::AimUtils->TraceEntityBullet(Target.m_pEntity, vLocalPos, Target.m_vPosition))
 				{
 					continue;
 				}
@@ -459,7 +459,7 @@ void CAimbotHitscan::Aim(CUserCmd *pCmd, C_TFPlayer *pLocal, C_TFWeaponBase *pWe
 		{
 			if (G::bCanPrimaryAttack)
 			{
-				F::AimUtils->FixMovement(pCmd, vAngleTo);
+				H::AimUtils->FixMovement(pCmd, vAngleTo);
 				pCmd->viewangles = vAngleTo;
 				G::bSilentAngles = true;
 			}
@@ -488,7 +488,7 @@ bool CAimbotHitscan::ShouldFire(CUserCmd *pCmd, C_TFPlayer *pLocal, C_TFWeaponBa
 		return false;
 
 	bool bIsMachina = pWeapon->m_iItemDefinitionIndex() == Sniper_m_TheMachina || pWeapon->m_iItemDefinitionIndex() == Sniper_m_ShootingStar;
-	bool bCapableOfHeadshot = F::AimUtils->IsWeaponCapableOfHeadshot(pWeapon);
+	bool bCapableOfHeadshot = H::AimUtils->IsWeaponCapableOfHeadshot(pWeapon);
 	bool bIsSydneySleeper = pWeapon->m_iItemDefinitionIndex() == Sniper_m_TheSydneySleeper;
 	bool bIsSniper = pLocal->m_iClass() == TF_CLASS_SNIPER;
 
@@ -575,7 +575,7 @@ bool CAimbotHitscan::ShouldFire(CUserCmd *pCmd, C_TFPlayer *pLocal, C_TFWeaponBa
 			{
 				int nHitHitbox = -1;
 
-				if (!F::AimUtils->TraceEntityBullet(pPlayer, vTraceStart, vTraceEnd, &nHitHitbox))
+				if (!H::AimUtils->TraceEntityBullet(pPlayer, vTraceStart, vTraceEnd, &nHitHitbox))
 					return false;
 
 				if (Target.m_nAimedHitbox == HITBOX_HEAD)
@@ -604,7 +604,7 @@ bool CAimbotHitscan::ShouldFire(CUserCmd *pCmd, C_TFPlayer *pLocal, C_TFWeaponBa
 
 				int nHitHitbox = -1;
 
-				if (!F::AimUtils->TraceEntityBullet(pPlayer, vTraceStart, vTraceEnd, &nHitHitbox)) {
+				if (!H::AimUtils->TraceEntityBullet(pPlayer, vTraceStart, vTraceEnd, &nHitHitbox)) {
 					F::LagRecordMatrixHelper->Restore();
 					return false;
 				}
@@ -634,7 +634,7 @@ bool CAimbotHitscan::ShouldFire(CUserCmd *pCmd, C_TFPlayer *pLocal, C_TFWeaponBa
 
 		else
 		{
-			if (!F::AimUtils->TraceEntityBullet(Target.m_pEntity, vTraceStart, vTraceEnd, nullptr))
+			if (!H::AimUtils->TraceEntityBullet(Target.m_pEntity, vTraceStart, vTraceEnd, nullptr))
 				return false;
 		}
 	}
