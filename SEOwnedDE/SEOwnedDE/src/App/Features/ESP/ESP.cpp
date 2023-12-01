@@ -7,6 +7,60 @@ constexpr int SPACING_X = 2;
 constexpr int SPACING_Y = 2;
 constexpr Color_t WHITE = {220, 220, 220, 255};
 
+// TODO: These utility functions should be moved somewhere else
+
+const char* GetBuildingName(C_BaseObject* pBuilding)
+{
+	switch (pBuilding->GetClassId())
+	{
+	case ETFClassIds::CObjectSentrygun: return pBuilding->m_bMiniBuilding() ? "Mini Sentrygun" : "Sentrygun";
+	case ETFClassIds::CObjectDispenser: return "Dispenser";
+	case ETFClassIds::CObjectTeleporter: return pBuilding->m_iObjectMode() == MODE_TELEPORTER_ENTRANCE ? "Teleporter In" : "Teleporter Out";
+	default: return "Unknown Building Name";
+	}
+}
+
+const char* GetProjectileName(C_BaseEntity* pEntity)
+{
+	switch (pEntity->GetClassId())
+	{
+	case ETFClassIds::CTFProjectile_Rocket:
+	case ETFClassIds::CTFProjectile_SentryRocket: return "Rocket";
+	case ETFClassIds::CTFProjectile_Jar: return "Jarate";
+	case ETFClassIds::CTFProjectile_JarGas: return "Gas";
+	case ETFClassIds::CTFProjectile_JarMilk: return "Milk";
+	case ETFClassIds::CTFProjectile_Arrow: return "Arrow";
+	case ETFClassIds::CTFProjectile_Flare: return "Flare";
+	case ETFClassIds::CTFProjectile_Cleaver: return "Cleaver";
+	case ETFClassIds::CTFProjectile_HealingBolt: return "Healing Arrow";
+	case ETFClassIds::CTFGrenadePipebombProjectile:
+		{
+			const auto pPipebomb = pEntity->As<C_TFGrenadePipebombProjectile>();
+
+			return pPipebomb->HasStickyEffects() ? "Sticky" : pPipebomb->m_iType() == TF_GL_MODE_CANNONBALL ? "Cannonball" : "Pipe";
+		}
+
+	default: return "Projectile";
+	}
+}
+
+const char* GetPlayerClassName(C_TFPlayer* pPlayer)
+{
+	switch (pPlayer->m_iClass())
+	{
+	case TF_CLASS_SCOUT: return "Scout";
+	case TF_CLASS_SOLDIER: return "Soldier";
+	case TF_CLASS_PYRO: return "Pyro";
+	case TF_CLASS_DEMOMAN: return "Demoman";
+	case TF_CLASS_HEAVYWEAPONS: return "Heavy";
+	case TF_CLASS_ENGINEER: return "Engineer";
+	case TF_CLASS_MEDIC: return "Medic";
+	case TF_CLASS_SNIPER: return "Sniper";
+	case TF_CLASS_SPY: return "Spy";
+	default: return "Unknown Class";
+	}
+}
+
 bool CESP::GetDrawBounds(C_BaseEntity* pEntity, int& x, int& y, int& w, int& h)
 {
 	if (!pEntity)
@@ -334,21 +388,7 @@ void CESP::Run()
 
 			if (CFG::ESP_Players_Class)
 			{
-				auto ClassStr = [&]() -> const char* {
-					switch (pPlayer->m_iClass())
-					{
-					case TF_CLASS_SCOUT: return "Scout";
-					case TF_CLASS_SOLDIER: return "Soldier";
-					case TF_CLASS_PYRO: return "Pyro";
-					case TF_CLASS_DEMOMAN: return "Demoman";
-					case TF_CLASS_HEAVYWEAPONS: return "Heavy";
-					case TF_CLASS_ENGINEER: return "Engineer";
-					case TF_CLASS_MEDIC: return "Medic";
-					case TF_CLASS_SNIPER: return "Sniper";
-					case TF_CLASS_SPY: return "Spy";
-					default: return "Unknown Class";
-					}
-				};
+
 
 				H::Draw->String(
 					H::Fonts->Get(EFonts::ESP_SMALL),
@@ -357,7 +397,7 @@ void CESP::Run()
 					textColor,
 					POS_DEFAULT,
 					"%hs",
-					ClassStr()
+					GetPlayerClassName(pPlayer)
 				);
 			}
 
@@ -627,23 +667,13 @@ void CESP::Run()
 
 			if (CFG::ESP_Buildings_Name)
 			{
-				auto Name = [&]() -> const char* {
-					switch (pBuilding->GetClassId())
-					{
-					case ETFClassIds::CObjectSentrygun: return pBuilding->m_bMiniBuilding() ? "Mini Sentrygun" : "Sentrygun";
-					case ETFClassIds::CObjectDispenser: return "Dispenser";
-					case ETFClassIds::CObjectTeleporter: return pBuilding->m_iObjectMode() == MODE_TELEPORTER_ENTRANCE ? "Teleporter In" : "Teleporter Out";
-					default: return "Unknown Building Name";
-					}
-				};
-
 				H::Draw->String(
 					H::Fonts->Get(EFonts::ESP_SMALL),
 					x + (w / 2),
 					(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
 					textColor,
 					POS_CENTERX,
-					Name()
+					GetBuildingName(pBuilding)
 				);
 			}
 
@@ -931,36 +961,13 @@ void CESP::Run()
 
 				if (CFG::ESP_World_Name)
 				{
-					auto Name = [&]() -> const char* {
-						switch (pEntity->GetClassId())
-						{
-						case ETFClassIds::CTFProjectile_Rocket:
-						case ETFClassIds::CTFProjectile_SentryRocket: return "Rocket";
-						case ETFClassIds::CTFProjectile_Jar: return "Jarate";
-						case ETFClassIds::CTFProjectile_JarGas: return "Gas";
-						case ETFClassIds::CTFProjectile_JarMilk: return "Milk";
-						case ETFClassIds::CTFProjectile_Arrow: return "Arrow";
-						case ETFClassIds::CTFProjectile_Flare: return "Flare";
-						case ETFClassIds::CTFProjectile_Cleaver: return "Cleaver";
-						case ETFClassIds::CTFProjectile_HealingBolt: return "Healing Arrow";
-						case ETFClassIds::CTFGrenadePipebombProjectile:
-							{
-								const auto pPipebomb = pEntity->As<C_TFGrenadePipebombProjectile>();
-
-								return pPipebomb->HasStickyEffects() ? "Sticky" : pPipebomb->m_iType() == TF_GL_MODE_CANNONBALL ? "Cannonball" : "Pipe";
-							}
-
-						default: return "Projectile";
-						}
-					};
-
 					H::Draw->String(
 						H::Fonts->Get(EFonts::ESP_SMALL),
 						x + (w / 2),
 						(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
 						textColor,
 						POS_CENTERX,
-						Name()
+						GetProjectileName(pEntity)
 					);
 				}
 
