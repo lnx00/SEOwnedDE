@@ -1,7 +1,6 @@
 #include "RapidFire.h"
 
 #include "../CFG.h"
-#include "../AimUtils/AimUtils.h"
 
 static Vec3 g_vShiftStart = {};
 static bool g_bStartedShiftOnGround = false;

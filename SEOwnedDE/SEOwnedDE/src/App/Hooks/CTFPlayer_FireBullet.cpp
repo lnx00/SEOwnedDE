@@ -2,8 +2,6 @@
 
 #include "../Features/CFG.h"
 
-#include "../Features/AimUtils/AimUtils.h"
-
 MAKE_HOOK(
 	CTFPlayer_FireBullet, Signatures::CTFPlayer_FireBullet.Get(),
 	void, __fastcall, void *ecx, void *edx, C_TFWeaponBase *pWpn, FireBulletsInfo_t &info, bool bDoEffects, int nDamageType, int nCustomDamageType)

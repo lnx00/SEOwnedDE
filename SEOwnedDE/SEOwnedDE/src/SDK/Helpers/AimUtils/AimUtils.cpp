@@ -1,6 +1,6 @@
 #include "AimUtils.h"
 
-#include "../CFG.h"
+#include "../../SDK.h"
 
 void CAimUtils::Trace(const Vec3 &start, const Vec3 &end, unsigned int mask, CTraceFilter *filter, trace_t *trace)
 {

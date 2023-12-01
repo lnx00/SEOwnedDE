@@ -2,8 +2,6 @@
 
 #include "../../CFG.h"
 
-#include "../../AimUtils/AimUtils.h"
-
 struct TargetProjectile
 {
 	C_BaseProjectile *ptr{};

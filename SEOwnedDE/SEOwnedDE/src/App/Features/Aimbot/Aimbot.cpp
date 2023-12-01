@@ -4,8 +4,6 @@
 #include "AimbotProjectile/AimbotProjectile.h"
 #include "AimbotMelee/AimbotMelee.h"
 
-#include "../AimUtils/AimUtils.h"
-
 #include "../CFG.h"
 
 void CAimbot::RunMain(CUserCmd *pCmd)

@@ -1,7 +1,6 @@
 #include "AimbotMelee.h"
 
 #include "../../CFG.h"
-#include "../../AimUtils/AimUtils.h"
 
 bool CAimbotMelee::CanSee(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, Target_t &Target)
 {

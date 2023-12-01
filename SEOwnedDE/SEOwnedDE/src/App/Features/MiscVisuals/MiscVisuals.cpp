@@ -1,7 +1,6 @@
 #include "MiscVisuals.h"
 
 #include "../CFG.h"
-#include "../AimUtils/AimUtils.h"
 #include "../RapidFire/RapidFire.h"
 
 void CMiscVisuals::AimbotFOVCircle()

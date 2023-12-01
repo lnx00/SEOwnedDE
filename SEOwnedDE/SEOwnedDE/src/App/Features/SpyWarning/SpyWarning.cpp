@@ -3,7 +3,6 @@
 #include "../CFG.h"
 
 #include "../VisualUtils/VisualUtils.h"
-#include "../AimUtils/AimUtils.h"
 
 #define SCREEN_OFFSET_X_SCALE 0.5f
 #define SCREEN_OFFSET_Y_SCALE 0.2f

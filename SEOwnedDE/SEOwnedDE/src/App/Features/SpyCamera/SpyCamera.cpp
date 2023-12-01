@@ -2,7 +2,6 @@
 
 #include "../CFG.h"
 #include "../Menu/Menu.h"
-#include "../AimUtils/AimUtils.h"
 
 void CSpyCamera::Drag()
 {

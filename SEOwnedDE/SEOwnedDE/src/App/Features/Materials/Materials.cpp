@@ -3,7 +3,6 @@
 #include "../CFG.h"
 #include "../VisualUtils/VisualUtils.h"
 #include "../LagRecords/LagRecords.h"
-#include "../AimUtils/AimUtils.h"
 
 void SetModelStencilForOutlines(C_BaseEntity *pEntity)
 {

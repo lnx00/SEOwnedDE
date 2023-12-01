@@ -1,6 +1,5 @@
 #include "AimbotHitscan.h"
 
-#include "../../AimUtils/AimUtils.h"
 #include "../../CFG.h"
 
 int CAimbotHitscan::GetAimHitbox(C_TFWeaponBase *pWeapon)

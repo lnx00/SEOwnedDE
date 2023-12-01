@@ -37,6 +37,7 @@
 #include "Helpers/Entities/Entities.h"
 #include "Helpers/Fonts/Fonts.h"
 #include "Helpers/Input/Input.h"
+#include "Helpers/AimUtils/AimUtils.h"
 
 #include "Impl/TraceFilters/TraceFilters.h"
 

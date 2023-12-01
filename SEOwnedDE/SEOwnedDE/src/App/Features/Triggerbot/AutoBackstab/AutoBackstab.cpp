@@ -2,7 +2,6 @@
 
 #include "../../CFG.h"
 
-#include "../../AimUtils/AimUtils.h"
 #include "../../LagRecords/LagRecords.h"
 
 bool IsBehindAndFacingTarget(const Vec3 &owner_center, const Vec3 &owner_viewangles, const Vec3 &target_center, const Vec3 &target_eyeangles)

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../../../SDK/SDK.h"
+#include "../../TF2/c_tf_player.h"
+
+class CTraceFilter;
 
 enum class EWeaponType {
 	HITSCAN, MELEE, PROJECTILE, OTHER

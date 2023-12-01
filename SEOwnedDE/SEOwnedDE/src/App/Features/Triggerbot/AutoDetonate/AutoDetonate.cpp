@@ -1,7 +1,6 @@
 #include "AutoDetonate.h"
 
 #include "../../CFG.h"
-#include "../../AimUtils/AimUtils.h"
 
 void CAutoDetonate::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *pCmd)
 {

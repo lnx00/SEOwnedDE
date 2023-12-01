@@ -1,7 +1,6 @@
 #include "Paint.h"
 
 #include "../CFG.h"
-#include "../AimUtils/AimUtils.h"
 
 #pragma warning (disable : 4244) //possible loss of data (int to float)
 

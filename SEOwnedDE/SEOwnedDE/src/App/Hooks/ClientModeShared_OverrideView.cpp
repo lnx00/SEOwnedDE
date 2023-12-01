@@ -2,8 +2,6 @@
 
 #include "../Features/CFG.h"
 
-#include "../Features/AimUtils/AimUtils.h"
-
 void DoFOV(CViewSetup *pSetup)
 {
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())

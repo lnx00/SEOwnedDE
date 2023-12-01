@@ -2,8 +2,6 @@
 
 #include "../CFG.h"
 
-#include "../AimUtils/AimUtils.h"
-
 void CMisc::Bunnyhop(CUserCmd *pCmd)
 {
 	if (!CFG::Misc_Bunnyhop)

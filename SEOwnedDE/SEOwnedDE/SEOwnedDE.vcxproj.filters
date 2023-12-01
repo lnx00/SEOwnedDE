@@ -5,7 +5,7 @@
     <ClCompile Include="src\App\Features\Aimbot\AimbotMelee\AimbotMelee.cpp" />
     <ClCompile Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.cpp" />
     <ClCompile Include="src\App\Features\Aimbot\Aimbot.cpp" />
-    <ClCompile Include="src\App\Features\AimUtils\AimUtils.cpp" />
+    <ClCompile Include="src\SDK\Helpers\AimUtils\AimUtils.cpp" />
     <ClCompile Include="src\App\Features\EnginePrediction\EnginePrediction.cpp" />
     <ClCompile Include="src\App\Features\ESP\ESP.cpp" />
     <ClCompile Include="src\App\Features\LagRecords\LagRecords.cpp" />
@@ -128,7 +128,7 @@
     <ClInclude Include="src\App\Features\Aimbot\AimbotMelee\AimbotMelee.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.h" />
     <ClInclude Include="src\App\Features\Aimbot\Aimbot.h" />
-    <ClInclude Include="src\App\Features\AimUtils\AimUtils.h" />
+    <ClInclude Include="src\SDK\Helpers\AimUtils\AimUtils.h" />
     <ClInclude Include="src\App\Features\EnginePrediction\EnginePrediction.h" />
     <ClInclude Include="src\App\Features\ESP\ESP.h" />
     <ClInclude Include="src\App\Features\LagRecords\LagRecords.h" />

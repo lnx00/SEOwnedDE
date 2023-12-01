@@ -2,8 +2,6 @@
 
 #include "../CFG.h"
 
-#include "../AimUtils/AimUtils.h"
-
 int sim_res_type{ MEDIGUN_NUM_RESISTS };
 int goal_res_type{ MEDIGUN_BULLET_RESIST };
 bool changing_res{ false };
