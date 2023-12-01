@@ -19,5 +19,11 @@ LONG __stdcall Hooks::WINAPI_WndProc::Func(HWND hWnd, UINT uMsg, WPARAM wParam, 
 
 void Hooks::WINAPI_WndProc::Init()
 {
-	Original = (WNDPROC)SetWindowLongPtr(hwWindow = FindWindowA(0, "Team Fortress 2"), GWL_WNDPROC, (LONG_PTR)Func);
+	hwWindow = FindWindowA(nullptr, "Team Fortress 2");
+	Original = reinterpret_cast<WNDPROC>(SetWindowLongPtr(hwWindow, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(Func)));
+}
+
+void Hooks::WINAPI_WndProc::Release()
+{
+	SetWindowLongPtr(hwWindow, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(Original));
 }

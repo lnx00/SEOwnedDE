@@ -69,7 +69,7 @@ void CApp::Shutdown()
 {
 	U::HookManager->FreeAllHooks();
 
-	SetWindowLongPtr(Hooks::WINAPI_WndProc::hwWindow, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(Hooks::WINAPI_WndProc::Original));
+	Hooks::WINAPI_WndProc::Release();
 	
 	Sleep(250);
 
