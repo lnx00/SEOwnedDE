@@ -5,22 +5,22 @@
 
 constexpr int SPACING_X = 2;
 constexpr int SPACING_Y = 2;
-constexpr Color_t WHITE = { 220, 220, 220, 255 };
+constexpr Color_t WHITE = {220, 220, 220, 255};
 
-bool CESP::GetDrawBounds(C_BaseEntity *pEntity, int &x, int &y, int &w, int &h)
+bool CESP::GetDrawBounds(C_BaseEntity* pEntity, int& x, int& y, int& w, int& h)
 {
 	if (!pEntity)
 		return false;
 
 	bool bIsPlayer = false;
 	Vec3 vMins = {}, vMaxs = {};
-	matrix3x4_t &Transform = const_cast<matrix3x4_t &>(pEntity->RenderableToWorldTransform());
+	auto& transform = const_cast<matrix3x4_t&>(pEntity->RenderableToWorldTransform()); // TODO: This is bad
 
 	switch (pEntity->GetClassId())
 	{
-		case ETFClassIds::CTFPlayer:
+	case ETFClassIds::CTFPlayer:
 		{
-			auto pPlayer = pEntity->As<C_TFPlayer>();
+			const auto pPlayer = pEntity->As<C_TFPlayer>();
 
 			bIsPlayer = true;
 			vMins = pPlayer->m_vecMins();
@@ -30,28 +30,30 @@ bool CESP::GetDrawBounds(C_BaseEntity *pEntity, int &x, int &y, int &w, int &h)
 			{
 				Vec3 vAngles = I::EngineClient->GetViewAngles();
 				vAngles.x = vAngles.z = 0.0f;
-				Math::AngleMatrix(vAngles, Transform);
-				Math::MatrixSetColumn(pPlayer->GetRenderOrigin(), 3, Transform);
+				Math::AngleMatrix(vAngles, transform);
+				Math::MatrixSetColumn(pPlayer->GetRenderOrigin(), 3, transform);
 			}
 
 			break;
 		}
 
-		case ETFClassIds::CObjectSentrygun:
-		case ETFClassIds::CObjectDispenser:
-		case ETFClassIds::CObjectTeleporter: {
+	case ETFClassIds::CObjectSentrygun:
+	case ETFClassIds::CObjectDispenser:
+	case ETFClassIds::CObjectTeleporter:
+		{
 			vMins = pEntity->m_vecMins();
 			vMaxs = pEntity->m_vecMaxs();
 			break;
 		}
 
-		default: {
+	default:
+		{
 			pEntity->GetRenderBounds(vMins, vMaxs);
 			break;
 		}
 	}
 
-	Vec3 vPoints[] =
+	const Vec3 vPoints[] =
 	{
 		Vec3(vMins.x, vMins.y, vMins.z),
 		Vec3(vMins.x, vMaxs.y, vMins.z),
@@ -66,7 +68,9 @@ bool CESP::GetDrawBounds(C_BaseEntity *pEntity, int &x, int &y, int &w, int &h)
 	Vec3 vTransformed[8] = {};
 
 	for (int n = 0; n < 8; n++)
-		Math::VectorTransform(vPoints[n], Transform, vTransformed[n]);
+	{
+		Math::VectorTransform(vPoints[n], transform, vTransformed[n]);
+	}
 
 	Vec3 flb = {}, brt = {}, blb = {}, frt = {}, frb = {}, brb = {}, blt = {}, flt = {};
 
@@ -76,7 +80,7 @@ bool CESP::GetDrawBounds(C_BaseEntity *pEntity, int &x, int &y, int &w, int &h)
 		&& H::Draw->W2S(vTransformed[6], blt) && H::Draw->W2S(vTransformed[7], flt)
 		&& H::Draw->W2S(vTransformed[6], blt) && H::Draw->W2S(vTransformed[7], flt))
 	{
-		Vec3 arr[] = { flb, brt, blb, frt, frb, brb, blt, flt };
+		const Vec3 arr[] = {flb, brt, blb, frt, frb, brb, blt, flt};
 
 		float left = flb.x;
 		float top = flb.y;
@@ -103,7 +107,8 @@ bool CESP::GetDrawBounds(C_BaseEntity *pEntity, int &x, int &y, int &w, int &h)
 		float w_ = (righ - left);
 		float h_ = (top - bottom);
 
-		if (bIsPlayer) {
+		if (bIsPlayer)
+		{
 			x_ += ((righ - left) / 8.0f);
 			w_ -= (((righ - left) / 8.0f) * 2.0f);
 		}
@@ -119,28 +124,28 @@ bool CESP::GetDrawBounds(C_BaseEntity *pEntity, int &x, int &y, int &w, int &h)
 	return false;
 }
 
-void CESP::DrawBones(C_TFPlayer *pPlayer, Color_t Color)
+void CESP::DrawBones(C_TFPlayer* pPlayer, Color_t color)
 {
-	auto MatrixPosition = [](const matrix3x4_t &matrix, Vector &position)
+	auto MatrixPosition = [](const matrix3x4_t& matrix, Vector& position)
 	{
 		position[0] = matrix[0][3];
 		position[1] = matrix[1][3];
 		position[2] = matrix[2][3];
 	};
 
-	const model_t *pModel = pPlayer->GetModel();
+	const model_t* pModel = pPlayer->GetModel();
 
 	if (!pModel)
 		return;
 
-	const studiohdr_t *pStudioHdr = I::ModelInfoClient->GetStudiomodel(pModel);
+	const studiohdr_t* pStudioHdr = I::ModelInfoClient->GetStudiomodel(pModel);
 
 	if (!pStudioHdr)
 		return;
 
-	matrix3x4_t Matrix[MAXSTUDIOBONES];
+	matrix3x4_t boneMatrix[MAXSTUDIOBONES];
 
-	if (!pPlayer->SetupBones(Matrix, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, I::GlobalVars->curtime))
+	if (!pPlayer->SetupBones(boneMatrix, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, I::GlobalVars->curtime))
 		return;
 
 	Vec3 p1 = {}, p2 = {};
@@ -148,22 +153,22 @@ void CESP::DrawBones(C_TFPlayer *pPlayer, Color_t Color)
 
 	for (int n = 0; n < pStudioHdr->numbones; n++)
 	{
-		const mstudiobone_t *pBone = pStudioHdr->pBone(n);
+		const mstudiobone_t* pBone = pStudioHdr->pBone(n);
 
 		if (!pBone || pBone->parent == -1 || !(pBone->flags & BONE_USED_BY_HITBOX))
 			continue;
 
-		MatrixPosition(Matrix[n], p1);
+		MatrixPosition(boneMatrix[n], p1);
 
 		if (!H::Draw->W2S(p1, p1s))
 			continue;
 
-		MatrixPosition(Matrix[pBone->parent], p2);
+		MatrixPosition(boneMatrix[pBone->parent], p2);
 
 		if (!H::Draw->W2S(p2, p2s))
 			continue;
 
-		H::Draw->Line(static_cast<int>(p1s.x), static_cast<int>(p1s.y), static_cast<int>(p2s.x), static_cast<int>(p2s.y), Color);
+		H::Draw->Line(static_cast<int>(p1s.x), static_cast<int>(p1s.y), static_cast<int>(p2s.x), static_cast<int>(p2s.y), color);
 	}
 }
 
@@ -206,7 +211,7 @@ void CESP::Run()
 
 			if (CFG::ESP_Players_Ignore_Friends && bIsFriend)
 				continue;
-			
+
 			if (!bIsLocal)
 			{
 				if (!bIsFriend)
@@ -218,8 +223,10 @@ void CESP::Run()
 							if (pPlayer->m_iClass() != TF_CLASS_MEDIC)
 								continue;
 						}
-
-						else continue;
+						else
+						{
+							continue;
+						}
 					}
 
 					if (CFG::ESP_Players_Ignore_Enemies && pPlayer->m_iTeamNum() != pLocal->m_iTeamNum())
@@ -246,7 +253,7 @@ void CESP::Run()
 						continue;
 
 					Vec3 vAngle = {};
-					Math::VectorAngles({ nScreenCenterX - vScreen.x, nScreenCenterY - vScreen.y, 0.0f }, vAngle);
+					Math::VectorAngles({nScreenCenterX - vScreen.x, nScreenCenterY - vScreen.y, 0.0f}, vAngle);
 
 					float flYaw = DEG2RAD(vAngle.y);
 					float flRadius = CFG::ESP_Players_Arrows_Radius;
@@ -267,10 +274,10 @@ void CESP::Run()
 				continue;
 			}
 
-			auto Color = F::VisualUtils->GetEntityColor(pLocal, pPlayer);
-			auto HealthColor = F::VisualUtils->GetHealthColor(pPlayer->m_iHealth(), pPlayer->GetMaxHealth());
-			auto TextColor = CFG::ESP_Text_Color == 0 ? Color : CFG::Color_ESP_Text;
-			
+			auto entColor = F::VisualUtils->GetEntityColor(pLocal, pPlayer);
+			auto healthColor = F::VisualUtils->GetHealthColor(pPlayer->m_iHealth(), pPlayer->GetMaxHealth());
+			auto textColor = CFG::ESP_Text_Color == 0 ? entColor : CFG::Color_ESP_Text;
+
 			int nTextOffsetY = 0;
 
 			if (CFG::ESP_Players_Tracer)
@@ -281,10 +288,10 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_From)
 						{
-							case 0: return 0;
-							case 1: return H::Draw->GetScreenH() / 2;
-							case 2: return H::Draw->GetScreenH();
-							default: return 0;
+						case 0: return 0;
+						case 1: return H::Draw->GetScreenH() / 2;
+						case 2: return H::Draw->GetScreenH();
+						default: return 0;
 						}
 					};
 
@@ -292,20 +299,20 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_To)
 						{
-							case 0: return y;
-							case 1: return y + (h / 2);
-							case 2: return y + h;
-							default: return 0;
+						case 0: return y;
+						case 1: return y + (h / 2);
+						case 2: return y + h;
+						default: return 0;
 						}
 					};
 
-					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), Color);
+					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), entColor);
 				}
 			}
 
 			if (CFG::ESP_Players_Bones)
 			{
-				DrawBones(pPlayer, CFG::ESP_Players_Bones_Color == 0 ? Color : WHITE);
+				DrawBones(pPlayer, CFG::ESP_Players_Bones_Color == 0 ? entColor : WHITE);
 			}
 
 			if (CFG::ESP_Players_Name)
@@ -318,7 +325,7 @@ void CESP::Run()
 						H::Fonts->Get(EFonts::ESP_SMALL),
 						x + (w / 2),
 						(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
-						TextColor,
+						textColor,
 						POS_CENTERX,
 						Utils::ConvertUtf8ToWide(PlayerInfo.name).c_str()
 					);
@@ -327,20 +334,19 @@ void CESP::Run()
 
 			if (CFG::ESP_Players_Class)
 			{
-				auto ClassStr = [&]() -> const char *
-				{
+				auto ClassStr = [&]() -> const char* {
 					switch (pPlayer->m_iClass())
 					{
-						case TF_CLASS_SCOUT: return "Scout";
-						case TF_CLASS_SOLDIER: return "Soldier";
-						case TF_CLASS_PYRO: return "Pyro";
-						case TF_CLASS_DEMOMAN: return "Demoman";
-						case TF_CLASS_HEAVYWEAPONS: return "Heavy";
-						case TF_CLASS_ENGINEER: return "Engineer";
-						case TF_CLASS_MEDIC: return "Medic";
-						case TF_CLASS_SNIPER: return "Sniper";
-						case TF_CLASS_SPY: return "Spy";
-						default: return "Unknown Class";
+					case TF_CLASS_SCOUT: return "Scout";
+					case TF_CLASS_SOLDIER: return "Soldier";
+					case TF_CLASS_PYRO: return "Pyro";
+					case TF_CLASS_DEMOMAN: return "Demoman";
+					case TF_CLASS_HEAVYWEAPONS: return "Heavy";
+					case TF_CLASS_ENGINEER: return "Engineer";
+					case TF_CLASS_MEDIC: return "Medic";
+					case TF_CLASS_SNIPER: return "Sniper";
+					case TF_CLASS_SPY: return "Spy";
+					default: return "Unknown Class";
 					}
 				};
 
@@ -348,7 +354,7 @@ void CESP::Run()
 					H::Fonts->Get(EFonts::ESP_SMALL),
 					x + w + SPACING_X,
 					y + (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall * nTextOffsetY++),
-					TextColor,
+					textColor,
 					POS_DEFAULT,
 					"%hs",
 					ClassStr()
@@ -357,13 +363,13 @@ void CESP::Run()
 
 			if (CFG::ESP_Players_Class_Icon)
 			{
-				static const int nClassIconSize = 18;
+				static constexpr int CLASS_ICON_SIZE = 18;
 
 				H::Draw->Texture(
 					x + (w / 2),
-					CFG::ESP_Players_Name ? ((y - (H::Fonts->Get(EFonts::ESP).m_nTall - 1)) - SPACING_Y) - nClassIconSize : y - (nClassIconSize + SPACING_Y),
-					nClassIconSize,
-					nClassIconSize,
+					CFG::ESP_Players_Name ? ((y - (H::Fonts->Get(EFonts::ESP).m_nTall - 1)) - SPACING_Y) - CLASS_ICON_SIZE : y - (CLASS_ICON_SIZE + SPACING_Y),
+					CLASS_ICON_SIZE,
+					CLASS_ICON_SIZE,
 					F::VisualUtils->GetClassIcon(pPlayer->m_iClass()),
 					POS_CENTERX
 				);
@@ -375,7 +381,7 @@ void CESP::Run()
 					H::Fonts->Get(EFonts::ESP_SMALL),
 					x + w + SPACING_X,
 					y + (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall * nTextOffsetY++),
-					HealthColor,
+					healthColor,
 					POS_DEFAULT,
 					"%d",
 					pPlayer->m_iHealth()
@@ -384,20 +390,20 @@ void CESP::Run()
 
 			if (CFG::ESP_Players_HealthBar && !pPlayer->InCond(TF_COND_HALLOWEEN_GHOST_MODE))
 			{
-				float flHealth = static_cast<float>(pPlayer->m_iHealth());
-				float flMaxHealth = static_cast<float>(pPlayer->GetMaxHealth());
+				auto flHealth = static_cast<float>(pPlayer->m_iHealth());
+				auto flMaxHealth = static_cast<float>(pPlayer->GetMaxHealth());
 
-				if (flHealth && flMaxHealth)
+				if (flHealth > 0.f && flMaxHealth > 0.f)
 				{
 					if (flHealth > flMaxHealth)
 						flMaxHealth = flHealth;
 
-					static const int nBarWidth = 2;
-					int nBarX = x - ((nBarWidth * 2) + 1);
+					static constexpr int BAR_WIDTH = 2;
+					int nBarX = x - ((BAR_WIDTH * 2) + 1);
 					int nFillH = static_cast<int>(Math::RemapValClamped(flHealth, 0.0f, flMaxHealth, 0.0f, static_cast<float>(h)));
 
-					H::Draw->OutlinedRect(nBarX - 1, (y + h - nFillH) - 1, nBarWidth + 2, nFillH + 2, CFG::Color_ESP_Outline);
-					H::Draw->Rect(nBarX, y + h - nFillH, nBarWidth, nFillH, HealthColor);
+					H::Draw->OutlinedRect(nBarX - 1, (y + h - nFillH) - 1, BAR_WIDTH + 2, nFillH + 2, CFG::Color_ESP_Outline);
+					H::Draw->Rect(nBarX, y + h - nFillH, BAR_WIDTH, nFillH, healthColor);
 				}
 			}
 
@@ -454,7 +460,7 @@ void CESP::Run()
 
 			if (CFG::ESP_Players_Box)
 			{
-				H::Draw->OutlinedRect(x, y, w, h, Color);
+				H::Draw->OutlinedRect(x, y, w, h, entColor);
 				H::Draw->OutlinedRect(x - 1, y - 1, w + 2, h + 2, CFG::Color_ESP_Outline);
 			}
 
@@ -463,76 +469,82 @@ void CESP::Run()
 				if (nTextOffsetY > 0)
 					nTextOffsetY += 1;
 
-				int draw_x = x + w + SPACING_X;
+				int drawX = x + w + SPACING_X;
 				int tall = H::Fonts->Get(EFonts::ESP_CONDS).m_nTall;
 
-				Color_t Color = CFG::Color_Conds;
+				Color_t color = CFG::Color_Conds;
 
 				if (pPlayer->IsZoomed())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "ZOOM");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "ZOOM");
 
 				if (pPlayer->IsInvisible())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "INVIS");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "INVIS");
 
 				if (pPlayer->m_bFeignDeathReady())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "DEADRINGER");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "DEADRINGER");
 
 				if (pPlayer->IsInvulnerable())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "INVULN");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "INVULN");
 
 				if (pPlayer->IsCritBoosted())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "CRIT");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "CRIT");
 
 				if (pPlayer->IsMiniCritBoosted())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "MINICRIT");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "MINICRIT");
 
 				if (pPlayer->IsMarked())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "MARKED");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "MARKED");
 
 				if (pPlayer->InCond(TF_COND_MAD_MILK))
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "MILK");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "MILK");
 
 				if (pPlayer->InCond(TF_COND_TAUNTING) || (pPlayer == pLocal && G::bStartedFakeTaunt))
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "TAUNT");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "TAUNT");
 
 				if (pPlayer->InCond(TF_COND_DISGUISED))
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "DISGUISE");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "DISGUISE");
 
 				if (pPlayer->InCond(TF_COND_BURNING) || pPlayer->InCond(TF_COND_BURNING_PYRO))
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "BURNING");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "BURNING");
 
 				if (pPlayer->InCond(TF_COND_OFFENSEBUFF))
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "BANNER");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "BANNER");
 
 				if (pPlayer->InCond(TF_COND_DEFENSEBUFF))
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "BACKUP");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "BACKUP");
 
 				if (pPlayer->InCond(TF_COND_REGENONDAMAGEBUFF))
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "CONCH");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "CONCH");
 
 				if (!pPlayer->InCond(TF_COND_MEDIGUN_UBER_BULLET_RESIST))
 				{
 					if (pPlayer->InCond(TF_COND_MEDIGUN_SMALL_BULLET_RESIST))
-						H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "BULLET(RES)");
+						H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "BULLET(RES)");
 				}
-
-				else H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "BULLET(UBER)");
+				else
+				{
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "BULLET(UBER)");
+				}
 
 				if (!pPlayer->InCond(TF_COND_MEDIGUN_UBER_BLAST_RESIST))
 				{
 					if (pPlayer->InCond(TF_COND_MEDIGUN_SMALL_BLAST_RESIST))
-						H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "EXPLOSION(RES)");
+						H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "EXPLOSION(RES)");
 				}
-
-				else H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "EXPLOSION(UBER)");
+				else
+				{
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "EXPLOSION(UBER)");
+				}
 
 				if (!pPlayer->InCond(TF_COND_MEDIGUN_UBER_FIRE_RESIST))
 				{
 					if (pPlayer->InCond(TF_COND_MEDIGUN_SMALL_FIRE_RESIST))
-						H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "FIRE(RES)");
+						H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "FIRE(RES)");
 				}
-
-				else H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "FIRE(UBER)");
+				else
+				{
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "FIRE(UBER)");
+				}
 			}
 		}
 	}
@@ -557,7 +569,7 @@ void CESP::Run()
 				continue;
 
 			if (!bIsLocal)
-			{		
+			{
 				if (CFG::ESP_Buildings_Ignore_Teammates && pBuilding->m_iTeamNum() == pLocal->m_iTeamNum())
 				{
 					if (CFG::ESP_Buildings_Show_Teammate_Dispensers)
@@ -565,8 +577,10 @@ void CESP::Run()
 						if (pBuilding->GetClassId() != ETFClassIds::CObjectDispenser)
 							continue;
 					}
-
-					else continue;
+					else
+					{
+						continue;
+					}
 				}
 
 				if (CFG::ESP_Buildings_Ignore_Enemies && pBuilding->m_iTeamNum() != pLocal->m_iTeamNum())
@@ -578,9 +592,9 @@ void CESP::Run()
 			if (!GetDrawBounds(pBuilding, x, y, w, h))
 				continue;
 
-			auto Color = F::VisualUtils->GetEntityColor(pLocal, pBuilding);
-			auto HealthColor = F::VisualUtils->GetHealthColor(pBuilding->m_iHealth(), pBuilding->m_iMaxHealth());
-			auto TextColor = CFG::ESP_Text_Color == 0 ? Color : CFG::Color_ESP_Text;
+			auto entColor = F::VisualUtils->GetEntityColor(pLocal, pBuilding);
+			auto healthColor = F::VisualUtils->GetHealthColor(pBuilding->m_iHealth(), pBuilding->m_iMaxHealth());
+			auto textColor = CFG::ESP_Text_Color == 0 ? entColor : CFG::Color_ESP_Text;
 
 			int nTextOffsetY = 0;
 
@@ -590,10 +604,10 @@ void CESP::Run()
 				{
 					switch (CFG::ESP_Tracer_From)
 					{
-						case 0: return 0;
-						case 1: return H::Draw->GetScreenH() / 2;
-						case 2: return H::Draw->GetScreenH();
-						default: return 0;
+					case 0: return 0;
+					case 1: return H::Draw->GetScreenH() / 2;
+					case 2: return H::Draw->GetScreenH();
+					default: return 0;
 					}
 				};
 
@@ -601,26 +615,25 @@ void CESP::Run()
 				{
 					switch (CFG::ESP_Tracer_To)
 					{
-						case 0: return y;
-						case 1: return y + (h / 2);
-						case 2: return y + h;
-						default: return 0;
+					case 0: return y;
+					case 1: return y + (h / 2);
+					case 2: return y + h;
+					default: return 0;
 					}
 				};
 
-				H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), Color);
+				H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), entColor);
 			}
 
 			if (CFG::ESP_Buildings_Name)
 			{
-				auto Name = [&]() -> const char *
-				{
+				auto Name = [&]() -> const char* {
 					switch (pBuilding->GetClassId())
 					{
-						case ETFClassIds::CObjectSentrygun: return pBuilding->m_bMiniBuilding() ? "Mini Sentrygun" : "Sentrygun";
-						case ETFClassIds::CObjectDispenser: return "Dispenser";
-						case ETFClassIds::CObjectTeleporter: return pBuilding->m_iObjectMode() == MODE_TELEPORTER_ENTRANCE ? "Teleporter In" : "Teleporter Out";
-						default: return "Unknown Building Name";
+					case ETFClassIds::CObjectSentrygun: return pBuilding->m_bMiniBuilding() ? "Mini Sentrygun" : "Sentrygun";
+					case ETFClassIds::CObjectDispenser: return "Dispenser";
+					case ETFClassIds::CObjectTeleporter: return pBuilding->m_iObjectMode() == MODE_TELEPORTER_ENTRANCE ? "Teleporter In" : "Teleporter Out";
+					default: return "Unknown Building Name";
 					}
 				};
 
@@ -628,7 +641,7 @@ void CESP::Run()
 					H::Fonts->Get(EFonts::ESP_SMALL),
 					x + (w / 2),
 					(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
-					TextColor,
+					textColor,
 					POS_CENTERX,
 					Name()
 				);
@@ -640,7 +653,7 @@ void CESP::Run()
 					H::Fonts->Get(EFonts::ESP_SMALL),
 					x + w + SPACING_X,
 					y + (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall * nTextOffsetY++),
-					HealthColor,
+					healthColor,
 					POS_DEFAULT,
 					"%d",
 					pBuilding->m_iHealth()
@@ -649,20 +662,20 @@ void CESP::Run()
 
 			if (CFG::ESP_Buildings_HealthBar)
 			{
-				float flHealth = static_cast<float>(pBuilding->m_iHealth());
-				float flMaxHealth = static_cast<float>(pBuilding->m_iMaxHealth());
+				auto flHealth = static_cast<float>(pBuilding->m_iHealth());
+				auto flMaxHealth = static_cast<float>(pBuilding->m_iMaxHealth());
 
-				if (flHealth && flMaxHealth)
+				if (flHealth > 0.f && flMaxHealth > 0.f)
 				{
 					if (flHealth > flMaxHealth)
 						flMaxHealth = flHealth;
 
-					static const int nBarWidth = 2;
-					int nBarX = x - ((nBarWidth * 2) + 1);
+					static constexpr int BAR_WIDTH = 2;
+					int nBarX = x - ((BAR_WIDTH * 2) + 1);
 					int nFillH = static_cast<int>(Math::RemapValClamped(flHealth, 0.0f, flMaxHealth, 0.0f, static_cast<float>(h)));
 
-					H::Draw->OutlinedRect(nBarX - 1, (y + h - nFillH) - 1, nBarWidth + 2, nFillH + 2, CFG::Color_ESP_Outline);
-					H::Draw->Rect(nBarX, y + h - nFillH, nBarWidth, nFillH, HealthColor);
+					H::Draw->OutlinedRect(nBarX - 1, (y + h - nFillH) - 1, BAR_WIDTH + 2, nFillH + 2, CFG::Color_ESP_Outline);
+					H::Draw->Rect(nBarX, y + h - nFillH, BAR_WIDTH, nFillH, healthColor);
 				}
 			}
 
@@ -672,7 +685,7 @@ void CESP::Run()
 					H::Fonts->Get(EFonts::ESP_SMALL),
 					x + w + SPACING_X,
 					y + (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall * nTextOffsetY++),
-					TextColor,
+					textColor,
 					POS_DEFAULT,
 					"%d",
 					pBuilding->m_iUpgradeLevel()
@@ -683,8 +696,8 @@ void CESP::Run()
 			{
 				int nBarH = 2;
 				int nDrawY = y + h + nBarH + 1;
-				float flLevel = static_cast<float>(pBuilding->m_iUpgradeLevel());
-				float flFillW = Math::RemapValClamped(flLevel, 1.0f, 3.0f, static_cast<float>(w / 3.0f), static_cast<float>(w));
+				auto flLevel = static_cast<float>(pBuilding->m_iUpgradeLevel());
+				float flFillW = Math::RemapValClamped(flLevel, 1.0f, 3.0f, w / 3.0f, static_cast<float>(w));
 
 				if (pBuilding->m_bMiniBuilding())
 					flFillW = static_cast<float>(w);
@@ -695,43 +708,45 @@ void CESP::Run()
 
 			if (CFG::ESP_Buildings_Box)
 			{
-				H::Draw->OutlinedRect(x, y, w, h, Color);
+				H::Draw->OutlinedRect(x, y, w, h, entColor);
 				H::Draw->OutlinedRect(x - 1, y - 1, w + 2, h + 2, CFG::Color_ESP_Outline);
 			}
-			
+
 			if (CFG::ESP_Buildings_Conds)
 			{
 				if (nTextOffsetY > 0)
 					nTextOffsetY += 1;
 
-				int draw_x = x + w + SPACING_X;
+				int drawX = x + w + SPACING_X;
 				int tall = H::Fonts->Get(EFonts::ESP_CONDS).m_nTall;
 
-				Color_t Color = CFG::Color_Conds;
+				Color_t color = CFG::Color_Conds;
 
 				if (pBuilding->m_bBuilding())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "BUILDING");
+				{
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "BUILDING");
+				}
 
 				else
 				{
 					if (pBuilding->GetClassId() == ETFClassIds::CObjectSentrygun && pBuilding->As<C_ObjectSentrygun>()->m_iAmmoShells() == 0)
-						H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "NOSHELLS");
+						H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "NOSHELLS");
 
 					if (!pBuilding->m_bMiniBuilding())
 					{
 						if (pBuilding->GetClassId() == ETFClassIds::CObjectSentrygun && pBuilding->As<C_ObjectSentrygun>()->m_iAmmoRockets() == 0)
 						{
 							if (pBuilding->m_iUpgradeLevel() == 3)
-								H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "NOROCKETS");
+								H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "NOROCKETS");
 						}
 					}
 				}
 
 				if (pBuilding->IsDisabled())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "DISABLED");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "DISABLED");
 
 				if (pBuilding->GetClassId() == ETFClassIds::CObjectSentrygun && pBuilding->As<C_ObjectSentrygun>()->m_bShielded())
-					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), draw_x, y + (tall * nTextOffsetY++), Color, POS_DEFAULT, "WRANGLED");
+					H::Draw->String(H::Fonts->Get(EFonts::ESP_CONDS), drawX, y + (tall * nTextOffsetY++), color, POS_DEFAULT, "WRANGLED");
 			}
 		}
 	}
@@ -744,8 +759,8 @@ void CESP::Run()
 
 		if (!CFG::ESP_World_Ignore_HealthPacks)
 		{
-			auto Color = CFG::Color_HealthPack;
-			auto TextColor = CFG::ESP_Text_Color == 0 ? Color : CFG::Color_ESP_Text;
+			auto color = CFG::Color_HealthPack;
+			auto textColor = CFG::ESP_Text_Color == 0 ? color : CFG::Color_ESP_Text;
 
 			for (auto pEntity : H::Entities->GetGroup(EEntGroup::HEALTHPACKS))
 			{
@@ -758,10 +773,10 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_From)
 						{
-							case 0: return 0;
-							case 1: return H::Draw->GetScreenH() / 2;
-							case 2: return H::Draw->GetScreenH();
-							default: return 0;
+						case 0: return 0;
+						case 1: return H::Draw->GetScreenH() / 2;
+						case 2: return H::Draw->GetScreenH();
+						default: return 0;
 						}
 					};
 
@@ -769,14 +784,14 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_To)
 						{
-							case 0: return y;
-							case 1: return y + (h / 2);
-							case 2: return y + h;
-							default: return 0;
+						case 0: return y;
+						case 1: return y + (h / 2);
+						case 2: return y + h;
+						default: return 0;
 						}
 					};
 
-					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), Color);
+					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), color);
 				}
 
 				if (CFG::ESP_World_Name)
@@ -785,7 +800,7 @@ void CESP::Run()
 						H::Fonts->Get(EFonts::ESP_SMALL),
 						x + (w / 2),
 						(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
-						TextColor,
+						textColor,
 						POS_CENTERX,
 						"health"
 					);
@@ -793,7 +808,7 @@ void CESP::Run()
 
 				if (CFG::ESP_World_Box)
 				{
-					H::Draw->OutlinedRect(x, y, w, h, Color);
+					H::Draw->OutlinedRect(x, y, w, h, color);
 					H::Draw->OutlinedRect(x - 1, y - 1, w + 2, h + 2, CFG::Color_ESP_Outline);
 				}
 			}
@@ -801,8 +816,8 @@ void CESP::Run()
 
 		if (!CFG::ESP_World_Ignore_AmmoPacks)
 		{
-			auto Color = CFG::Color_AmmoPack;
-			auto TextColor = CFG::ESP_Text_Color == 0 ? Color : CFG::Color_ESP_Text;
+			auto color = CFG::Color_AmmoPack;
+			auto textColor = CFG::ESP_Text_Color == 0 ? color : CFG::Color_ESP_Text;
 
 			for (auto pEntity : H::Entities->GetGroup(EEntGroup::AMMOPACKS))
 			{
@@ -815,10 +830,10 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_From)
 						{
-							case 0: return 0;
-							case 1: return H::Draw->GetScreenH() / 2;
-							case 2: return H::Draw->GetScreenH();
-							default: return 0;
+						case 0: return 0;
+						case 1: return H::Draw->GetScreenH() / 2;
+						case 2: return H::Draw->GetScreenH();
+						default: return 0;
 						}
 					};
 
@@ -826,14 +841,14 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_To)
 						{
-							case 0: return y;
-							case 1: return y + (h / 2);
-							case 2: return y + h;
-							default: return 0;
+						case 0: return y;
+						case 1: return y + (h / 2);
+						case 2: return y + h;
+						default: return 0;
 						}
 					};
 
-					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), Color);
+					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), color);
 				}
 
 				if (CFG::ESP_World_Name)
@@ -842,7 +857,7 @@ void CESP::Run()
 						H::Fonts->Get(EFonts::ESP_SMALL),
 						x + (w / 2),
 						(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
-						TextColor,
+						textColor,
 						POS_CENTERX,
 						"ammo"
 					);
@@ -850,7 +865,7 @@ void CESP::Run()
 
 				if (CFG::ESP_World_Box)
 				{
-					H::Draw->OutlinedRect(x, y, w, h, Color);
+					H::Draw->OutlinedRect(x, y, w, h, color);
 					H::Draw->OutlinedRect(x - 1, y - 1, w + 2, h + 2, CFG::Color_ESP_Outline);
 				}
 			}
@@ -884,8 +899,8 @@ void CESP::Run()
 				if (!GetDrawBounds(pEntity, x, y, w, h))
 					continue;
 
-				auto Color = F::VisualUtils->GetEntityColor(pLocal, pEntity);
-				auto TextColor = CFG::ESP_Text_Color == 0 ? Color : CFG::Color_ESP_Text;
+				auto entColor = F::VisualUtils->GetEntityColor(pLocal, pEntity);
+				auto textColor = CFG::ESP_Text_Color == 0 ? entColor : CFG::Color_ESP_Text;
 
 				if (CFG::ESP_World_Tracer)
 				{
@@ -893,10 +908,10 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_From)
 						{
-							case 0: return 0;
-							case 1: return H::Draw->GetScreenH() / 2;
-							case 2: return H::Draw->GetScreenH();
-							default: return 0;
+						case 0: return 0;
+						case 1: return H::Draw->GetScreenH() / 2;
+						case 2: return H::Draw->GetScreenH();
+						default: return 0;
 						}
 					};
 
@@ -904,39 +919,38 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_To)
 						{
-							case 0: return y;
-							case 1: return y + (h / 2);
-							case 2: return y + h;
-							default: return 0;
+						case 0: return y;
+						case 1: return y + (h / 2);
+						case 2: return y + h;
+						default: return 0;
 						}
 					};
 
-					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), Color);
+					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), entColor);
 				}
 
 				if (CFG::ESP_World_Name)
 				{
-					auto Name = [&]() -> const char *
-					{
+					auto Name = [&]() -> const char* {
 						switch (pEntity->GetClassId())
 						{
-							case ETFClassIds::CTFProjectile_Rocket:
-							case ETFClassIds::CTFProjectile_SentryRocket: return "Rocket";
-							case ETFClassIds::CTFProjectile_Jar: return "Jarate";
-							case ETFClassIds::CTFProjectile_JarGas: return "Gas";
-							case ETFClassIds::CTFProjectile_JarMilk: return "Milk";
-							case ETFClassIds::CTFProjectile_Arrow: return "Arrow";
-							case ETFClassIds::CTFProjectile_Flare: return "Flare";
-							case ETFClassIds::CTFProjectile_Cleaver: return "Cleaver";
-							case ETFClassIds::CTFProjectile_HealingBolt: return "Healing Arrow";
-							case ETFClassIds::CTFGrenadePipebombProjectile:
+						case ETFClassIds::CTFProjectile_Rocket:
+						case ETFClassIds::CTFProjectile_SentryRocket: return "Rocket";
+						case ETFClassIds::CTFProjectile_Jar: return "Jarate";
+						case ETFClassIds::CTFProjectile_JarGas: return "Gas";
+						case ETFClassIds::CTFProjectile_JarMilk: return "Milk";
+						case ETFClassIds::CTFProjectile_Arrow: return "Arrow";
+						case ETFClassIds::CTFProjectile_Flare: return "Flare";
+						case ETFClassIds::CTFProjectile_Cleaver: return "Cleaver";
+						case ETFClassIds::CTFProjectile_HealingBolt: return "Healing Arrow";
+						case ETFClassIds::CTFGrenadePipebombProjectile:
 							{
-								auto pPipebomb = pEntity->As<C_TFGrenadePipebombProjectile>();
+								const auto pPipebomb = pEntity->As<C_TFGrenadePipebombProjectile>();
 
 								return pPipebomb->HasStickyEffects() ? "Sticky" : pPipebomb->m_iType() == TF_GL_MODE_CANNONBALL ? "Cannonball" : "Pipe";
 							}
 
-							default: return "Projectile";
+						default: return "Projectile";
 						}
 					};
 
@@ -944,7 +958,7 @@ void CESP::Run()
 						H::Fonts->Get(EFonts::ESP_SMALL),
 						x + (w / 2),
 						(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
-						TextColor,
+						textColor,
 						POS_CENTERX,
 						Name()
 					);
@@ -952,7 +966,7 @@ void CESP::Run()
 
 				if (CFG::ESP_World_Box)
 				{
-					H::Draw->OutlinedRect(x, y, w, h, Color);
+					H::Draw->OutlinedRect(x, y, w, h, entColor);
 					H::Draw->OutlinedRect(x - 1, y - 1, w + 2, h + 2, CFG::Color_ESP_Outline);
 				}
 			}
@@ -960,8 +974,8 @@ void CESP::Run()
 
 		if (!CFG::ESP_World_Ignore_Halloween_Gift)
 		{
-			auto Color = CFG::Color_Halloween_Gift;
-			auto TextColor = CFG::ESP_Text_Color == 0 ? Color : CFG::Color_ESP_Text;
+			auto color = CFG::Color_Halloween_Gift;
+			auto textColor = CFG::ESP_Text_Color == 0 ? color : CFG::Color_ESP_Text;
 
 			for (auto pEntity : H::Entities->GetGroup(EEntGroup::HALLOWEEN_GIFT))
 			{
@@ -974,10 +988,10 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_From)
 						{
-							case 0: return 0;
-							case 1: return H::Draw->GetScreenH() / 2;
-							case 2: return H::Draw->GetScreenH();
-							default: return 0;
+						case 0: return 0;
+						case 1: return H::Draw->GetScreenH() / 2;
+						case 2: return H::Draw->GetScreenH();
+						default: return 0;
 						}
 					};
 
@@ -985,14 +999,14 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_To)
 						{
-							case 0: return y;
-							case 1: return y + (h / 2);
-							case 2: return y + h;
-							default: return 0;
+						case 0: return y;
+						case 1: return y + (h / 2);
+						case 2: return y + h;
+						default: return 0;
 						}
 					};
 
-					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), Color);
+					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), color);
 				}
 
 				if (CFG::ESP_World_Name)
@@ -1001,7 +1015,7 @@ void CESP::Run()
 						H::Fonts->Get(EFonts::ESP_SMALL),
 						x + (w / 2),
 						(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
-						TextColor,
+						textColor,
 						POS_CENTERX,
 						"halloween gift"
 					);
@@ -1009,7 +1023,7 @@ void CESP::Run()
 
 				if (CFG::ESP_World_Box)
 				{
-					H::Draw->OutlinedRect(x, y, w, h, Color);
+					H::Draw->OutlinedRect(x, y, w, h, color);
 					H::Draw->OutlinedRect(x - 1, y - 1, w + 2, h + 2, CFG::Color_ESP_Outline);
 				}
 			}
@@ -1017,8 +1031,8 @@ void CESP::Run()
 
 		if (!CFG::ESP_World_Ignore_Halloween_Gift)
 		{
-			auto Color = CFG::Color_MVM_Money;
-			auto TextColor = CFG::ESP_Text_Color == 0 ? Color : CFG::Color_ESP_Text;
+			auto color = CFG::Color_MVM_Money;
+			auto textColor = CFG::ESP_Text_Color == 0 ? color : CFG::Color_ESP_Text;
 
 			for (auto pEntity : H::Entities->GetGroup(EEntGroup::MVM_MONEY))
 			{
@@ -1031,10 +1045,10 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_From)
 						{
-							case 0: return 0;
-							case 1: return H::Draw->GetScreenH() / 2;
-							case 2: return H::Draw->GetScreenH();
-							default: return 0;
+						case 0: return 0;
+						case 1: return H::Draw->GetScreenH() / 2;
+						case 2: return H::Draw->GetScreenH();
+						default: return 0;
 						}
 					};
 
@@ -1042,14 +1056,14 @@ void CESP::Run()
 					{
 						switch (CFG::ESP_Tracer_To)
 						{
-							case 0: return y;
-							case 1: return y + (h / 2);
-							case 2: return y + h;
-							default: return 0;
+						case 0: return y;
+						case 1: return y + (h / 2);
+						case 2: return y + h;
+						default: return 0;
 						}
 					};
 
-					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), Color);
+					H::Draw->Line(H::Draw->GetScreenW() / 2, nFromY(), x + (w / 2), nToY(), color);
 				}
 
 				if (CFG::ESP_World_Name)
@@ -1058,7 +1072,7 @@ void CESP::Run()
 						H::Fonts->Get(EFonts::ESP_SMALL),
 						x + (w / 2),
 						(y - (H::Fonts->Get(EFonts::ESP_SMALL).m_nTall - 1)) - SPACING_Y,
-						TextColor,
+						textColor,
 						POS_CENTERX,
 						"money"
 					);
@@ -1066,7 +1080,7 @@ void CESP::Run()
 
 				if (CFG::ESP_World_Box)
 				{
-					H::Draw->OutlinedRect(x, y, w, h, Color);
+					H::Draw->OutlinedRect(x, y, w, h, color);
 					H::Draw->OutlinedRect(x - 1, y - 1, w + 2, h + 2, CFG::Color_ESP_Outline);
 				}
 			}

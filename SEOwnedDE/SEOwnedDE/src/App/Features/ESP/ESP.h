@@ -4,9 +4,8 @@
 
 class CESP
 {
-private:
-	bool GetDrawBounds(C_BaseEntity *pEntity, int &x, int &y, int &w, int &h);
-	void DrawBones(C_TFPlayer *pPlayer, Color_t Color);
+	bool GetDrawBounds(C_BaseEntity* pEntity, int& x, int& y, int& w, int& h);
+	void DrawBones(C_TFPlayer* pPlayer, Color_t color);
 
 public:
 	void Run();
