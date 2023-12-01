@@ -8,9 +8,9 @@ bool C_TFPlayer::IsPlayerOnSteamFriendsList()
 
 	if (!result)
 	{
-		players::PlayerInfo info{};
+		CPlayers::PlayerInfo info{};
 
-		return players::getInfo(entindex(), info) && info.m_ignored;
+		return F::Players->getInfo(entindex(), info) && info.m_ignored;
 	}
 
 	return result;

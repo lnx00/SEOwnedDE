@@ -15,9 +15,9 @@ MAKE_HOOK(
 	{
 		for (int n{}; n < I::EngineClient->GetMaxClients() + 1; n++)
 		{
-			players::PlayerInfo pi{};
+			CPlayers::PlayerInfo pi{};
 
-			if (players::getInfo(n, pi))
+			if (F::Players->getInfo(n, pi))
 			{
 				player_info_t pi_game{};
 

@@ -62,9 +62,9 @@ MAKE_HOOK(
 
 		if (HASH_RT(event->GetName()) == player_connect_client && bClientOnly && CFG::Visuals_Chat_Player_List_Info)
 		{
-			players::PlayerInfo pi{};
+			CPlayers::PlayerInfo pi{};
 
-			if (players::getInfoGUID(event->GetString("networkid"), pi))
+			if (F::Players->getInfoGUID(event->GetString("networkid"), pi))
 			{
 				const char *const name{ event->GetString("name") };
 

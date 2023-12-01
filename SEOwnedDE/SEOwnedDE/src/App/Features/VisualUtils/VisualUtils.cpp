@@ -61,9 +61,9 @@ Color_t CVisualUtils::GetEntityColor(C_TFPlayer *pLocal, C_BaseEntity *pEntity)
 
 		if (pPlayer != pLocal)
 		{
-			players::PlayerInfo info{};
+			CPlayers::PlayerInfo info{};
 
-			players::getInfo(pPlayer->entindex(), info);
+			F::Players->getInfo(pPlayer->entindex(), info);
 
 			if (info.m_cheater)
 			{

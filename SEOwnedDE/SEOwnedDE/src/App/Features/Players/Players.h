@@ -2,8 +2,9 @@
 
 #include "../../../SDK/SDK.h"
 
-namespace players
+class CPlayers
 {
+public:
 	struct PlayerInfo
 	{
 		bool m_ignored{};
@@ -15,4 +16,6 @@ namespace players
 	void mark(int entindex, const PlayerInfo &info);
 	bool getInfo(int entindex, PlayerInfo &out);
 	bool getInfoGUID(const std::string &guid, PlayerInfo &out);
-}
+};
+
+MAKE_SINGLETON_SCOPED(CPlayers, Players, F);

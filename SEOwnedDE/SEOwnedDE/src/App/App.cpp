@@ -29,7 +29,7 @@ void CApp::Start()
 
 	Hooks::WINAPI_WndProc::Init();
 
-	players::parse();
+	F::Players->parse();
 
 	Config::Load((std::filesystem::current_path().string() + R"(\SEOwnedDE\configs\default.json)").c_str());
 
