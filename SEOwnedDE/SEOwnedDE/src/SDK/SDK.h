@@ -11,7 +11,6 @@
 #include "TF2/ienginevgui.h"
 #include "TF2/ivrenderview.h"
 #include "TF2/globalvars_base.h"
-#include "TF2/IEngineTrace.h"
 #include "TF2/icvar.h"
 #include "TF2/prediction.h"
 #include "TF2/igamemovement.h"
@@ -38,6 +37,8 @@
 #include "Helpers/Entities/Entities.h"
 #include "Helpers/Fonts/Fonts.h"
 #include "Helpers/Input/Input.h"
+
+#include "Impl/TraceFilters/TraceFilters.h"
 
 #define PRINT(...) I::CVar->ConsoleColorPrintf({ 20, 220, 55, 255 }, __VA_ARGS__)
 

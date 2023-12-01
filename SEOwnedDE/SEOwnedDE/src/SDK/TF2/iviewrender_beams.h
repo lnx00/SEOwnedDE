@@ -2,6 +2,8 @@
 
 #include "interface.h"
 
+class ITraceFilter;
+
 #define TE_EXPLFLAG_NONE		0x0			// all flags clear makes default Half-Life explosion
 #define TE_EXPLFLAG_NOADDITIVE	0x1			// sprite will be drawn opaque (ensure that the sprite you send is a non-additive sprite)
 #define TE_EXPLFLAG_NODLIGHTS	0x2			// do not render dynamic lights

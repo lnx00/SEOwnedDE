@@ -121,6 +121,7 @@
     <ClCompile Include="src\App\Hooks\CBaseHudChatLine_InsertAndColorizeText.cpp" />
     <ClCompile Include="src\App\Hooks\IMaterialSystem_FindTexture.cpp" />
     <ClCompile Include="src\App\Features\Chat\Chat.cpp" />
+    <ClCompile Include="src\SDK\Impl\TraceFilters\TraceFilters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App\Features\Aimbot\AimbotHitscan\AimbotHitscan.h" />
@@ -303,5 +304,6 @@
     <ClInclude Include="src\App\Features\ProjectileSim\ProjectileSim.h" />
     <ClInclude Include="src\App\Features\SeedPred\SeedPred.h" />
     <ClInclude Include="src\App\Features\StickyJump\StickyJump.h" />
+    <ClInclude Include="src\SDK\Impl\TraceFilters\TraceFilters.h" />
   </ItemGroup>
 </Project>

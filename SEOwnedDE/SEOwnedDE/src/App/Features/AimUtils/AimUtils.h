@@ -10,26 +10,6 @@ enum EWeaponSlots {
 	WEAPON_SLOT_PRIMARY, WEAPON_SLOT_SECONDARY, WEAPON_SLOT_MELEE
 };
 
-class CTraceFilterHitscan : public CTraceFilter
-{
-public:
-	virtual bool ShouldHitEntity(IHandleEntity *pServerEntity, int contentsMask);
-	virtual TraceType_t GetTraceType() const;
-
-public:
-	C_BaseEntity *m_pIgnore = nullptr;
-};
-
-class CTraceFilterWorldCustom : public CTraceFilter
-{
-public:
-	virtual bool ShouldHitEntity(IHandleEntity *pServerEntity, int contentsMask);
-	virtual TraceType_t GetTraceType() const;
-
-public:
-	C_BaseEntity *m_pTarget = nullptr;
-};
-
 class CAimUtils
 {
 public:

@@ -205,6 +205,7 @@
     <ClCompile Include="src\SDK\Helpers\Entities\Entities.cpp" />
     <ClCompile Include="src\SDK\Helpers\Fonts\Fonts.cpp" />
     <ClCompile Include="src\SDK\Helpers\Input\Input.cpp" />
+    <ClCompile Include="src\SDK\Impl\TraceFilters\TraceFilters.cpp" />
     <ClCompile Include="src\SDK\TF2\c_tf_player.cpp" />
     <ClCompile Include="src\SDK\TF2\keyvalues.cpp" />
     <ClCompile Include="src\SDK\TF2\MD5.cpp" />
@@ -263,6 +264,7 @@
     <ClInclude Include="src\SDK\Helpers\Entities\Entities.h" />
     <ClInclude Include="src\SDK\Helpers\Fonts\Fonts.h" />
     <ClInclude Include="src\SDK\Helpers\Input\Input.h" />
+    <ClInclude Include="src\SDK\Impl\TraceFilters\TraceFilters.h" />
     <ClInclude Include="src\SDK\SDK.h" />
     <ClInclude Include="src\SDK\TF2\Activity.h" />
     <ClInclude Include="src\SDK\TF2\AnalogCode.h" />
