@@ -11,6 +11,7 @@
 #include "../Features/AutoVaccinator/AutoVaccinator.h"
 #include "../Features/SeedPred/SeedPred.h"
 #include "../Features/StickyJump/StickyJump.h"
+#include "../Features/Crits/Crits.h"
 
 MAKE_HOOK(
 	ClientModeShared_CreateMove, Memory::GetVFunc(I::ClientModeShared, 21),
@@ -37,7 +38,7 @@ MAKE_HOOK(
 
 	if (F::RapidFire->ShouldExitCreateMove(pCmd))
 	{
-		F::Misc->Crits(pCmd);
+		F::Crits->Run(pCmd);
 
 		return F::RapidFire->GetShiftSilentAngles() ? false : CALL_ORIGINAL(ecx, edx, flInputSampleTime, pCmd);
 	}
@@ -120,7 +121,7 @@ MAKE_HOOK(
 	F::SeedPred->AdjustAngles(pCmd);
 	F::StickyJump->Run(pCmd);
 
-	F::Misc->Crits(pCmd);
+	F::Crits->Run(pCmd);
 
 	//nTicksTargetSame
 	{

@@ -122,6 +122,7 @@
     <ClCompile Include="src\App\Hooks\IMaterialSystem_FindTexture.cpp" />
     <ClCompile Include="src\App\Features\Chat\Chat.cpp" />
     <ClCompile Include="src\SDK\Impl\TraceFilters\TraceFilters.cpp" />
+    <ClCompile Include="src\App\Features\Crits\Crits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App\Features\Aimbot\AimbotHitscan\AimbotHitscan.h" />
@@ -305,5 +306,6 @@
     <ClInclude Include="src\App\Features\SeedPred\SeedPred.h" />
     <ClInclude Include="src\App\Features\StickyJump\StickyJump.h" />
     <ClInclude Include="src\SDK\Impl\TraceFilters\TraceFilters.h" />
+    <ClInclude Include="src\App\Features\Crits\Crits.h" />
   </ItemGroup>
 </Project>

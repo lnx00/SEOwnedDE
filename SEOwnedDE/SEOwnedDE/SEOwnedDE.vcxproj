@@ -104,6 +104,7 @@
     <ClCompile Include="src\App\Features\Aimbot\AimbotHitscan\AimbotHitscan.cpp" />
     <ClCompile Include="src\App\Features\Aimbot\AimbotMelee\AimbotMelee.cpp" />
     <ClCompile Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.cpp" />
+    <ClCompile Include="src\App\Features\Crits\Crits.cpp" />
     <ClCompile Include="src\SDK\Helpers\AimUtils\AimUtils.cpp" />
     <ClCompile Include="src\App\Features\AutoVaccinator\AutoVaccinator.cpp" />
     <ClCompile Include="src\App\Features\Chat\Chat.cpp" />
@@ -227,6 +228,7 @@
     <ClInclude Include="src\App\Features\Aimbot\AimbotHitscan\AimbotHitscan.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotMelee\AimbotMelee.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.h" />
+    <ClInclude Include="src\App\Features\Crits\Crits.h" />
     <ClInclude Include="src\SDK\Helpers\AimUtils\AimUtils.h" />
     <ClInclude Include="src\App\Features\AutoVaccinator\AutoVaccinator.h" />
     <ClInclude Include="src\App\Features\CFG.h" />

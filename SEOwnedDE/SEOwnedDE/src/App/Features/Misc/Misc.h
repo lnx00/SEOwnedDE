@@ -8,7 +8,6 @@ public:
 	void Bunnyhop(CUserCmd* pCmd);
 	void AutoStrafer(CUserCmd* pCmd);
 	void NoiseMakerSpam();
-	void Crits(CUserCmd* pCmd);
 	void FastStop(CUserCmd* pCmd);
 
 	void AutoRocketJump(CUserCmd* cmd);
