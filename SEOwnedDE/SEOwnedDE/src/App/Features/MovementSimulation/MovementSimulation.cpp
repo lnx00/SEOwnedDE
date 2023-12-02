@@ -15,7 +15,7 @@ public:
 	Vec3 m_vecVelocity = {};
 	Vec3 m_vecBaseVelocity = {};
 	Vec3 m_vecViewOffset = {};
-	C_BaseEntity *m_hGroundEntity = nullptr;
+	C_BaseEntity* m_hGroundEntity = nullptr;
 	int m_fFlags = 0;
 	float m_flDucktime = 0.0f;
 	float m_flDuckJumpTime = 0.0f;
@@ -40,7 +40,7 @@ public:
 	float m_flWaterJumpTime = 0.0f;
 	float m_flSwimSoundTime = 0.0f;
 	int m_surfaceProps = 0;
-	void *m_pSurfaceData = nullptr;
+	void* m_pSurfaceData = nullptr;
 	float m_surfaceFriction = 0.0f;
 	char m_chTextureType = 0;
 	Vec3 m_vecPunchAngle = {};
@@ -59,9 +59,8 @@ public:
 	int m_nPlayerCondEx3 = 0;
 	int m_nPlayerCondEx4 = 0;
 	int _condition_bits = 0;
-	
-public:
-	inline void Store(C_TFPlayer *pPlayer)
+
+	void Store(C_TFPlayer* pPlayer)
 	{
 		m_vecOrigin = pPlayer->m_vecOrigin();
 		m_vecVelocity = pPlayer->m_vecVelocity();
@@ -112,7 +111,7 @@ public:
 		_condition_bits = pPlayer->_condition_bits();
 	}
 
-	inline void Restore(C_TFPlayer *pPlayer)
+	void Restore(C_TFPlayer* pPlayer)
 	{
 		pPlayer->m_vecOrigin() = m_vecOrigin;
 		pPlayer->m_vecVelocity() = m_vecVelocity;
@@ -167,7 +166,7 @@ public:
 
 static CPlayerDataBackup PlayerDataBackup = {};
 
-void CMovementSimulation::SetupMoveData(C_TFPlayer *pPlayer, CMoveData *pMoveData)
+void CMovementSimulation::SetupMoveData(C_TFPlayer* pPlayer, CMoveData* pMoveData)
 {
 	if (!pPlayer || !pMoveData)
 		return;
@@ -184,7 +183,7 @@ void CMovementSimulation::SetupMoveData(C_TFPlayer *pPlayer, CMoveData *pMoveDat
 
 	pMoveData->m_flClientMaxSpeed = pMoveData->m_flMaxSpeed;
 
-	pMoveData->m_vecViewAngles = { 0.0f, Math::VelocityToAngles(pMoveData->m_vecVelocity).y, 0.0f };
+	pMoveData->m_vecViewAngles = {0.0f, Math::VelocityToAngles(pMoveData->m_vecVelocity).y, 0.0f};
 
 	if (CFG::Aimbot_Projectile_Aim_Prediction_Method == 0)
 	{
@@ -201,7 +200,7 @@ void CMovementSimulation::SetupMoveData(C_TFPlayer *pPlayer, CMoveData *pMoveDat
 		pMoveData->m_flSideMove = (pMoveData->m_vecVelocity.x - vForward.x * pMoveData->m_flForwardMove) / vRight.x;
 	}
 
-	float flSpeed = pPlayer->m_vecVelocity().Length2D();
+	const float flSpeed = pPlayer->m_vecVelocity().Length2D();
 
 	if (flSpeed <= pMoveData->m_flMaxSpeed * 0.1f)
 		pMoveData->m_flForwardMove = pMoveData->m_flSideMove = 0.0f;
@@ -227,29 +226,29 @@ void CMovementSimulation::SetupMoveData(C_TFPlayer *pPlayer, CMoveData *pMoveDat
 			return;
 		}
 
-		auto pRecord0 = F::LagRecords->GetRecord(pPlayer, 0);
-		auto pRecord1 = F::LagRecords->GetRecord(pPlayer, 1);
-		auto pRecord2 = F::LagRecords->GetRecord(pPlayer, 2);
-		auto pRecord3 = F::LagRecords->GetRecord(pPlayer, 3);
-		auto pRecord4 = F::LagRecords->GetRecord(pPlayer, 4);
+		const auto pRecord0 = F::LagRecords->GetRecord(pPlayer, 0);
+		const auto pRecord1 = F::LagRecords->GetRecord(pPlayer, 1);
+		const auto pRecord2 = F::LagRecords->GetRecord(pPlayer, 2);
+		const auto pRecord3 = F::LagRecords->GetRecord(pPlayer, 3);
+		const auto pRecord4 = F::LagRecords->GetRecord(pPlayer, 4);
 
 		if (pRecord0 && pRecord1 && pRecord2 && pRecord3 && pRecord4)
 		{
-			float flYaw0 = Math::VelocityToAngles(pRecord0->m_vVelocity).y;
-			float flYaw1 = Math::VelocityToAngles(pRecord1->m_vVelocity).y;
-			float flYaw2 = Math::VelocityToAngles(pRecord2->m_vVelocity).y;
-			float flYaw3 = Math::VelocityToAngles(pRecord3->m_vVelocity).y;
-			float flYaw4 = Math::VelocityToAngles(pRecord4->m_vVelocity).y;
+			const float flYaw0 = Math::VelocityToAngles(pRecord0->m_vVelocity).y;
+			const float flYaw1 = Math::VelocityToAngles(pRecord1->m_vVelocity).y;
+			const float flYaw2 = Math::VelocityToAngles(pRecord2->m_vVelocity).y;
+			const float flYaw3 = Math::VelocityToAngles(pRecord3->m_vVelocity).y;
+			const float flYaw4 = Math::VelocityToAngles(pRecord4->m_vVelocity).y;
 
-			auto inc{ flYaw4 > flYaw3 && flYaw3 > flYaw2 && flYaw2 > flYaw1 && flYaw1 > flYaw0 };
-			auto dec{ flYaw4 < flYaw3 && flYaw3 < flYaw2 && flYaw2 < flYaw1 && flYaw1 < flYaw0 };
+			const auto inc{flYaw4 > flYaw3 && flYaw3 > flYaw2 && flYaw2 > flYaw1 && flYaw1 > flYaw0};
+			const auto dec{flYaw4 < flYaw3 && flYaw3 < flYaw2 && flYaw2 < flYaw1 && flYaw1 < flYaw0};
 
 			if (!inc && !dec)
 			{
 				return;
 			}
 
-			float flYawRate = (((flYaw0 - flYaw1) + (flYaw2 - flYaw3) + (flYaw3 - flYaw4)) / 3) / (TICK_INTERVAL * 50.0f);
+			const float flYawRate = (((flYaw0 - flYaw1) + (flYaw2 - flYaw3) + (flYaw3 - flYaw4)) / 3) / (TICK_INTERVAL * 50.0f);
 
 			if (fabsf(flYawRate) < 1.0f)
 			{
@@ -262,29 +261,29 @@ void CMovementSimulation::SetupMoveData(C_TFPlayer *pPlayer, CMoveData *pMoveDat
 
 	if (CFG::Aimbot_Projectile_Air_Strafe_Prediction && !(PlayerDataBackup.m_fFlags & FL_ONGROUND) && F::LagRecords->HasRecords(pPlayer))
 	{
-		const LagRecord_t *rec0{ F::LagRecords->GetRecord(pPlayer, 0) };
-		const LagRecord_t *rec1{ F::LagRecords->GetRecord(pPlayer, 1) };
-		const LagRecord_t *rec2{ F::LagRecords->GetRecord(pPlayer, 2) };
-		const LagRecord_t *rec3{ F::LagRecords->GetRecord(pPlayer, 3) };
-		const LagRecord_t *rec4{ F::LagRecords->GetRecord(pPlayer, 4) };
+		const LagRecord_t* rec0{F::LagRecords->GetRecord(pPlayer, 0)};
+		const LagRecord_t* rec1{F::LagRecords->GetRecord(pPlayer, 1)};
+		const LagRecord_t* rec2{F::LagRecords->GetRecord(pPlayer, 2)};
+		const LagRecord_t* rec3{F::LagRecords->GetRecord(pPlayer, 3)};
+		//const LagRecord_t* rec4{F::LagRecords->GetRecord(pPlayer, 4)};
 
-		if (rec0 && rec1 && rec2 && rec3 && rec4)
+		if (rec0 && rec1 && rec2 && rec3 /*&& rec4*/)
 		{
-			float yaw0{ Math::VelocityToAngles(rec0->m_vVelocity).y };
-			float yaw1{ Math::VelocityToAngles(rec1->m_vVelocity).y };
-			float yaw2{ Math::VelocityToAngles(rec2->m_vVelocity).y };
-			float yaw3{ Math::VelocityToAngles(rec3->m_vVelocity).y };
-			float yaw4{ Math::VelocityToAngles(rec4->m_vVelocity).y };
+			const float yaw0{Math::VelocityToAngles(rec0->m_vVelocity).y};
+			const float yaw1{Math::VelocityToAngles(rec1->m_vVelocity).y};
+			const float yaw2{Math::VelocityToAngles(rec2->m_vVelocity).y};
+			const float yaw3{Math::VelocityToAngles(rec3->m_vVelocity).y};
+			//float yaw4{Math::VelocityToAngles(rec4->m_vVelocity).y};
 
-			bool inc{ /*yaw4 > yaw3 &&*/ yaw3 > yaw2 && yaw2 > yaw1 && yaw1 > yaw0 };
-			bool dec{ /*yaw4 < yaw3 &&*/ yaw3 < yaw2 && yaw2 < yaw1 && yaw1 < yaw0 };
+			const bool inc{/*yaw4 > yaw3 &&*/ yaw3 > yaw2 && yaw2 > yaw1 && yaw1 > yaw0};
+			const bool dec{/*yaw4 < yaw3 &&*/ yaw3 < yaw2 && yaw2 < yaw1 && yaw1 < yaw0};
 
 			if (!inc && !dec)
 			{
 				return;
 			}
 
-			float delta{ (((yaw0 - yaw1) + (yaw2 - yaw3) /*+ (yaw3 - yaw4)*/) / 2) };
+			const float delta{(((yaw0 - yaw1) + (yaw2 - yaw3) /*+ (yaw3 - yaw4)*/) / 2)};
 
 			m_flYawTurnRate = delta;
 
@@ -303,7 +302,7 @@ void CMovementSimulation::SetupMoveData(C_TFPlayer *pPlayer, CMoveData *pMoveDat
 	}
 }
 
-bool CMovementSimulation::Initialize(C_TFPlayer *pPlayer)
+bool CMovementSimulation::Initialize(C_TFPlayer* pPlayer)
 {
 	if (!I::TFGameMovement || !pPlayer || pPlayer->deadflag())
 		return false;
@@ -338,7 +337,7 @@ bool CMovementSimulation::Initialize(C_TFPlayer *pPlayer)
 			pPlayer->m_hGroundEntity() = nullptr; //without this nonlocal entities get snapped to the floor
 
 		pPlayer->m_flModelScale() -= 0.03125f; //fixes issues with corners
-		
+
 		if (pPlayer->m_fFlags() & FL_ONGROUND)
 			pPlayer->m_vecOrigin().z += 0.03125f * 3.0f; //to prevent getting stuck in the ground
 
@@ -377,11 +376,11 @@ void CMovementSimulation::Restore()
 	m_pPlayer = nullptr;
 	m_flYawTurnRate = 0.0f;
 
-	memset(&m_MoveData, 0, sizeof(CMoveData));
-	memset(&PlayerDataBackup, 0, sizeof(CPlayerDataBackup));
+	std::memset(&m_MoveData, 0, sizeof(CMoveData));
+	std::memset(&PlayerDataBackup, 0, sizeof(CPlayerDataBackup));
 }
 
-void CMovementSimulation::RunTick(float flRunTime)
+void CMovementSimulation::RunTick(float flTimeToTarget)
 {
 	if (!I::TFGameMovement || !m_pPlayer)
 	{
@@ -400,7 +399,7 @@ void CMovementSimulation::RunTick(float flRunTime)
 
 	if (CFG::Aimbot_Projectile_Ground_Strafe_Prediction && (PlayerDataBackup.m_fFlags & FL_ONGROUND) && (m_pPlayer->m_fFlags() & FL_ONGROUND))
 	{
-		m_MoveData.m_vecViewAngles.y += m_flYawTurnRate * Math::RemapValClamped(flRunTime, 0.0f, 1.0f, 1.0f, 0.5f);
+		m_MoveData.m_vecViewAngles.y += m_flYawTurnRate * Math::RemapValClamped(flTimeToTarget, 0.0f, 1.0f, 1.0f, 0.5f);
 	}
 
 	if (CFG::Aimbot_Projectile_Air_Strafe_Prediction && !(PlayerDataBackup.m_fFlags & FL_ONGROUND) && !(m_pPlayer->m_fFlags() & FL_ONGROUND))
@@ -411,10 +410,9 @@ void CMovementSimulation::RunTick(float flRunTime)
 	m_bRunning = true;
 
 	//call CTFGameMovement::ProcessMovement
-	reinterpret_cast<void(__thiscall *)(void *, C_BasePlayer *, CMoveData *)>(Signatures::CTFGameMovement_ProcessMovement.Get())
-	(
-		I::TFGameMovement, m_pPlayer, &m_MoveData
-	);
+	using FnProcessMovement = void(__thiscall *)(void*, C_BasePlayer*, CMoveData*);
+	static auto pProcessMovement = reinterpret_cast<FnProcessMovement>(Signatures::CTFGameMovement_ProcessMovement.Get());
+	pProcessMovement(I::TFGameMovement, m_pPlayer, &m_MoveData);
 
 	m_bRunning = false;
 }
