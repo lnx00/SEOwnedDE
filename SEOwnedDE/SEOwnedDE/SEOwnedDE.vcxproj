@@ -225,6 +225,7 @@
     <ClCompile Include="src\Utils\SignatureManager\SignatureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\nlohmann\json_fwd.hpp" />
     <ClInclude Include="src\App\App.h" />
     <ClInclude Include="src\App\Features\Aimbot\Aimbot.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotHitscan\AimbotHitscan.h" />
