@@ -4,6 +4,109 @@
 
 #include "../CFG.h"
 
+void CMovementSimulation::CPlayerDataBackup::Store(C_TFPlayer* pPlayer)
+{
+	m_vecOrigin = pPlayer->m_vecOrigin();
+	m_vecVelocity = pPlayer->m_vecVelocity();
+	m_vecBaseVelocity = pPlayer->m_vecBaseVelocity();
+	m_vecViewOffset = pPlayer->m_vecViewOffset();
+	m_hGroundEntity = pPlayer->m_hGroundEntity();
+	m_fFlags = pPlayer->m_fFlags();
+	m_flDucktime = pPlayer->m_flDucktime();
+	m_flDuckJumpTime = pPlayer->m_flDuckJumpTime();
+	m_bDucked = pPlayer->m_bDucked();
+	m_bDucking = pPlayer->m_bDucking();
+	m_bInDuckJump = pPlayer->m_bInDuckJump();
+	m_flModelScale = pPlayer->m_flModelScale();
+	m_nButtons = pPlayer->m_nButtons();
+	m_flLastMovementStunChange = pPlayer->m_flLastMovementStunChange();
+	m_flStunLerpTarget = pPlayer->m_flStunLerpTarget();
+	m_bStunNeedsFadeOut = pPlayer->m_bStunNeedsFadeOut();
+	m_flPrevTauntYaw = pPlayer->m_flPrevTauntYaw();
+	m_flTauntYaw = pPlayer->m_flTauntYaw();
+	m_flCurrentTauntMoveSpeed = pPlayer->m_flCurrentTauntMoveSpeed();
+	m_iKartState = pPlayer->m_iKartState();
+	m_flVehicleReverseTime = pPlayer->m_flVehicleReverseTime();
+	m_flHypeMeter = pPlayer->m_flHypeMeter();
+	m_flMaxspeed = pPlayer->m_flMaxspeed();
+	m_nAirDucked = pPlayer->m_nAirDucked();
+	m_bJumping = pPlayer->m_bJumping();
+	m_iAirDash = pPlayer->m_iAirDash();
+	m_flWaterJumpTime = pPlayer->m_flWaterJumpTime();
+	m_flSwimSoundTime = pPlayer->m_flSwimSoundTime();
+	m_surfaceProps = pPlayer->m_surfaceProps();
+	m_pSurfaceData = pPlayer->m_pSurfaceData();
+	m_surfaceFriction = pPlayer->m_surfaceFriction();
+	m_chTextureType = pPlayer->m_chTextureType();
+	m_vecPunchAngle = pPlayer->m_vecPunchAngle();
+	m_vecPunchAngleVel = pPlayer->m_vecPunchAngleVel();
+	m_MoveType = pPlayer->m_MoveType();
+	m_MoveCollide = pPlayer->m_MoveCollide();
+	m_vecLadderNormal = pPlayer->m_vecLadderNormal();
+	m_flGravity = pPlayer->m_flGravity();
+	m_nWaterLevel = pPlayer->m_nWaterLevel_C_BaseEntity();
+	m_nWaterType = pPlayer->m_nWaterType();
+	m_flFallVelocity = pPlayer->m_flFallVelocity();
+	m_nPlayerCond = pPlayer->m_nPlayerCond();
+	m_nPlayerCondEx = pPlayer->m_nPlayerCondEx();
+	m_nPlayerCondEx2 = pPlayer->m_nPlayerCondEx2();
+	m_nPlayerCondEx3 = pPlayer->m_nPlayerCondEx3();
+	m_nPlayerCondEx4 = pPlayer->m_nPlayerCondEx4();
+	_condition_bits = pPlayer->_condition_bits();
+}
+
+void CMovementSimulation::CPlayerDataBackup::Restore(C_TFPlayer* pPlayer)
+{
+	pPlayer->m_vecOrigin() = m_vecOrigin;
+	pPlayer->m_vecVelocity() = m_vecVelocity;
+	pPlayer->m_vecBaseVelocity() = m_vecBaseVelocity;
+	pPlayer->m_vecViewOffset() = m_vecViewOffset;
+	pPlayer->m_hGroundEntity() = m_hGroundEntity;
+	pPlayer->m_fFlags() = m_fFlags;
+	pPlayer->m_flDucktime() = m_flDucktime;
+	pPlayer->m_flDuckJumpTime() = m_flDuckJumpTime;
+	pPlayer->m_bDucked() = m_bDucked;
+	pPlayer->m_bDucking() = m_bDucking;
+	pPlayer->m_bInDuckJump() = m_bInDuckJump;
+	pPlayer->m_flModelScale() = m_flModelScale;
+	pPlayer->m_nButtons() = m_nButtons;
+	pPlayer->m_flLastMovementStunChange() = m_flLastMovementStunChange;
+	pPlayer->m_flStunLerpTarget() = m_flStunLerpTarget;
+	pPlayer->m_bStunNeedsFadeOut() = m_bStunNeedsFadeOut;
+	pPlayer->m_flPrevTauntYaw() = m_flPrevTauntYaw;
+	pPlayer->m_flTauntYaw() = m_flTauntYaw;
+	pPlayer->m_flCurrentTauntMoveSpeed() = m_flCurrentTauntMoveSpeed;
+	pPlayer->m_iKartState() = m_iKartState;
+	pPlayer->m_flVehicleReverseTime() = m_flVehicleReverseTime;
+	pPlayer->m_flHypeMeter() = m_flHypeMeter;
+	pPlayer->m_flMaxspeed() = m_flMaxspeed;
+	pPlayer->m_nAirDucked() = m_nAirDucked;
+	pPlayer->m_bJumping() = m_bJumping;
+	pPlayer->m_iAirDash() = m_iAirDash;
+	pPlayer->m_flWaterJumpTime() = m_flWaterJumpTime;
+	pPlayer->m_flSwimSoundTime() = m_flSwimSoundTime;
+	pPlayer->m_surfaceProps() = m_surfaceProps;
+	pPlayer->m_pSurfaceData() = m_pSurfaceData;
+	pPlayer->m_surfaceFriction() = m_surfaceFriction;
+	pPlayer->m_chTextureType() = m_chTextureType;
+	pPlayer->m_vecPunchAngle() = m_vecPunchAngle;
+	pPlayer->m_vecPunchAngleVel() = m_vecPunchAngleVel;
+	pPlayer->m_flJumpTime() = m_flJumpTime;
+	pPlayer->m_MoveType() = m_MoveType;
+	pPlayer->m_MoveCollide() = m_MoveCollide;
+	pPlayer->m_vecLadderNormal() = m_vecLadderNormal;
+	pPlayer->m_flGravity() = m_flGravity;
+	pPlayer->m_nWaterLevel_C_BaseEntity() = m_nWaterLevel;
+	pPlayer->m_nWaterType() = m_nWaterType;
+	pPlayer->m_flFallVelocity() = m_flFallVelocity;
+	pPlayer->m_nPlayerCond() = m_nPlayerCond;
+	pPlayer->m_nPlayerCondEx() = m_nPlayerCondEx;
+	pPlayer->m_nPlayerCondEx2() = m_nPlayerCondEx2;
+	pPlayer->m_nPlayerCondEx3() = m_nPlayerCondEx3;
+	pPlayer->m_nPlayerCondEx4() = m_nPlayerCondEx4;
+	pPlayer->_condition_bits() = _condition_bits;
+}
+
 void CMovementSimulation::SetupMoveData(C_TFPlayer* pPlayer, CMoveData* pMoveData)
 {
 	if (!pPlayer || !pMoveData)
