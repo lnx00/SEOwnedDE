@@ -42,27 +42,27 @@ void CApp::Start()
 		return Time.tm_mon + 1;
 	}();
 
+	Color_t msgColor = { 197, 108, 240, 255 };
 	if (month == 10)
 	{
 		I::MatSystemSurface->PlaySound("vo\\halloween_boss\\knight_alert.mp3");
-
-		I::CVar->ConsoleColorPrintf({ 247, 136, 18, 255 }, "SEOwnedDE Loaded!\n");
+		msgColor = { 247, 136, 18, 255 };
 	}
-
-	if (month == 12 || month == 1 || month == 2)
+	else if (month == 12 || month == 1 || month == 2)
 	{
 		if (month == 12)
 		{
 			I::MatSystemSurface->PlaySound("misc\\jingle_bells\\jingle_bells_nm_04.wav");
 		}
 
-		I::CVar->ConsoleColorPrintf({ 28, 179, 210, 255 }, "SEOwnedDE Loaded!\n");
+		msgColor = { 28, 179, 210, 255 };
 	}
-
 	else
 	{
-		I::CVar->ConsoleColorPrintf({ 197, 108, 240, 255 }, "SEOwnedDE Loaded!\n");
+		I::MatSystemSurface->PlaySound("vo\\items\\wheatley_sapper\\wheatley_sapper_hacked02.mp3");
 	}
+
+	I::CVar->ConsoleColorPrintf(msgColor, "SEOwnedDE Loaded!\n");
 }
 
 void CApp::Shutdown()
