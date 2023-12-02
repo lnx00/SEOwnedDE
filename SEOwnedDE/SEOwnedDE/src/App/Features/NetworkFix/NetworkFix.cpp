@@ -2,9 +2,7 @@
 
 #include "../CFG.h"
 
-MAKE_HOOK(
-	CL_ReadPackets, Signatures::CL_ReadPackets.Get(),
-	void, __cdecl, bool bFinalTick)
+MAKE_HOOK(CL_ReadPackets, Signatures::CL_ReadPackets.Get(), void, __cdecl, bool bFinalTick)
 {
 	if (!CFG::Misc_Ping_Reducer)
 	{
@@ -42,7 +40,7 @@ void CNetworkFix::FixInputDelay(bool bFinalTick)
 		return;
 	}
 
-	if (auto pNetChannel = I::EngineClient->GetNetChannelInfo())
+	if (const auto pNetChannel = I::EngineClient->GetNetChannelInfo())
 	{
 		if (pNetChannel->IsLoopback())
 		{
@@ -50,15 +48,15 @@ void CNetworkFix::FixInputDelay(bool bFinalTick)
 		}
 	}
 
-	CReadPacketState Backup = {};
+	CReadPacketState backup = {};
 
-	Backup.Store();
+	backup.Store();
 
 	Hooks::CL_ReadPackets::Hook.Original<Hooks::CL_ReadPackets::fn>()(bFinalTick);
 
 	m_State.Store();
 
-	Backup.Restore();
+	backup.Restore();
 }
 
 bool CNetworkFix::ShouldReadPackets()
@@ -66,7 +64,7 @@ bool CNetworkFix::ShouldReadPackets()
 	if (!I::EngineClient->IsInGame())
 		return true;
 
-	if (auto pNetChannel = I::EngineClient->GetNetChannelInfo())
+	if (const auto pNetChannel = I::EngineClient->GetNetChannelInfo())
 	{
 		if (pNetChannel->IsLoopback())
 			return true;
