@@ -92,10 +92,10 @@ MAKE_HOOK(
 	F::Misc->AutoStrafer(pCmd);
 	F::Misc->FastStop(pCmd);
 	F::Misc->NoiseMakerSpam();
-	F::Misc->autoRocketJump(pCmd);
-	F::Misc->autoDisguise(pCmd);
-	F::Misc->movementLock(pCmd);
-	F::Misc->mvmInstaRespawn();
+	F::Misc->AutoRocketJump(pCmd);
+	F::Misc->AutoDisguise(pCmd);
+	F::Misc->MovementLock(pCmd);
+	F::Misc->MvmInstaRespawn();
 
 	F::EnginePrediction->Start(pCmd);
 	{
@@ -110,7 +110,7 @@ MAKE_HOOK(
 			}
 		}
 
-		F::Misc->autoMedigun(pCmd);
+		F::Misc->AutoMedigun(pCmd);
 		F::Aimbot->Run(pCmd);
 		F::Triggerbot->Run(pCmd);
 	}

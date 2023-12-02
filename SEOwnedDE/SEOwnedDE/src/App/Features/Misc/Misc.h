@@ -5,17 +5,17 @@
 class CMisc
 {
 public:
-	void Bunnyhop(CUserCmd *pCmd);
-	void AutoStrafer(CUserCmd *pCmd);
+	void Bunnyhop(CUserCmd* pCmd);
+	void AutoStrafer(CUserCmd* pCmd);
 	void NoiseMakerSpam();
-	void Crits(CUserCmd *pCmd);
-	void FastStop(CUserCmd *pCmd);
+	void Crits(CUserCmd* pCmd);
+	void FastStop(CUserCmd* pCmd);
 
-	void autoRocketJump(CUserCmd *cmd);
-	void autoDisguise(CUserCmd *cmd);
-	void autoMedigun(CUserCmd *cmd);
-	void movementLock(CUserCmd *cmd);
-	void mvmInstaRespawn();
+	void AutoRocketJump(CUserCmd* cmd);
+	void AutoDisguise(CUserCmd* cmd);
+	void AutoMedigun(CUserCmd* cmd);
+	void MovementLock(CUserCmd* cmd);
+	void MvmInstaRespawn();
 };
 
 MAKE_SINGLETON_SCOPED(CMisc, Misc, F);

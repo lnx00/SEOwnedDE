@@ -2,12 +2,12 @@
 
 #include "../CFG.h"
 
-void CMisc::Bunnyhop(CUserCmd *pCmd)
+void CMisc::Bunnyhop(CUserCmd* pCmd)
 {
 	if (!CFG::Misc_Bunnyhop)
 		return;
 
-	if (auto pLocal = H::Entities->GetLocal())
+	if (const auto pLocal = H::Entities->GetLocal())
 	{
 		if (pLocal->deadflag() || pLocal->m_nWaterLevel() > static_cast<byte>(WL_Feet))
 			return;
@@ -24,18 +24,20 @@ void CMisc::Bunnyhop(CUserCmd *pCmd)
 		}
 
 		else if (!bJumpState)
+		{
 			bJumpState = true;
+		}
 	}
 }
 
-void CMisc::AutoStrafer(CUserCmd *pCmd)
+void CMisc::AutoStrafer(CUserCmd* pCmd)
 {
 	//credits: KGB
 
 	if (!CFG::Misc_Auto_Strafe)
 		return;
 
-	if (auto pLocal = H::Entities->GetLocal())
+	if (const auto pLocal = H::Entities->GetLocal())
 	{
 		if (pLocal->deadflag() || (pLocal->m_fFlags() & FL_ONGROUND))
 			return;
@@ -48,8 +50,8 @@ void CMisc::AutoStrafer(CUserCmd *pCmd)
 
 		if (pCmd->buttons & IN_MOVELEFT || pCmd->buttons & IN_MOVERIGHT || pCmd->buttons & IN_FORWARD || pCmd->buttons & IN_BACK)
 		{
-			float flForwardMove = pCmd->forwardmove;
-			float flSideMove = pCmd->sidemove;
+			const float flForwardMove = pCmd->forwardmove;
+			const float flSideMove = pCmd->sidemove;
 
 			Vec3 vForward = {}, vRight = {};
 			Math::AngleVectors(pCmd->viewangles, &vForward, &vRight, nullptr);
@@ -60,17 +62,17 @@ void CMisc::AutoStrafer(CUserCmd *pCmd)
 			vRight.Normalize();
 
 			Vec3 vWishDir = {};
-			Math::VectorAngles({ (vForward.x * flForwardMove) + (vRight.x * flSideMove), (vForward.y * flForwardMove) + (vRight.y * flSideMove), 0.0f }, vWishDir);
+			Math::VectorAngles({(vForward.x * flForwardMove) + (vRight.x * flSideMove), (vForward.y * flForwardMove) + (vRight.y * flSideMove), 0.0f}, vWishDir);
 
 			Vec3 vCurDir = {};
 			Math::VectorAngles(pLocal->m_vecVelocity(), vCurDir);
 
-			float flDirDelta = Math::NormalizeAngle(vWishDir.y - vCurDir.y);
-			float flTurnScale = Math::RemapValClamped(CFG::Misc_Auto_Strafe_Turn_Scale, 0.0f, 1.0f, 0.9f, 1.0f);
-			float flRotation = DEG2RAD((flDirDelta > 0.0f ? -90.0f : 90.f) + (flDirDelta * flTurnScale));
+			const float flDirDelta = Math::NormalizeAngle(vWishDir.y - vCurDir.y);
+			const float flTurnScale = Math::RemapValClamped(CFG::Misc_Auto_Strafe_Turn_Scale, 0.0f, 1.0f, 0.9f, 1.0f);
+			const float flRotation = DEG2RAD((flDirDelta > 0.0f ? -90.0f : 90.f) + (flDirDelta * flTurnScale));
 
-			float flCosRot = cosf(flRotation);
-			float flSinRot = sinf(flRotation);
+			const float flCosRot = cosf(flRotation);
+			const float flSinRot = sinf(flRotation);
 
 			pCmd->forwardmove = (flCosRot * flForwardMove) - (flSinRot * flSideMove);
 			pCmd->sidemove = (flSinRot * flForwardMove) + (flCosRot * flSideMove);
@@ -83,38 +85,38 @@ void CMisc::NoiseMakerSpam()
 	if (!CFG::Misc_NoiseMaker_Spam)
 		return;
 
-	if (auto pLocal = H::Entities->GetLocal())
+	if (const auto pLocal = H::Entities->GetLocal())
 	{
 		if (pLocal->deadflag() || pLocal->m_flNextNoiseMakerTime() >= I::GlobalVars->curtime)
 			return;
 
-		auto kv = new KeyValues("use_action_slot_item_server");
+		const auto kv = new KeyValues("use_action_slot_item_server");
 		I::EngineClient->ServerCmdKeyValues(kv);
 	}
 }
 
-void CMisc::Crits(CUserCmd *pCmd)
+void CMisc::Crits(CUserCmd* pCmd)
 {
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal || pLocal->deadflag() || pLocal->IsCritBoosted() || pLocal->IsMiniCritBoosted())
 		return;
 
-	static auto tf_weapon_criticals{ I::CVar->FindVar("tf_weapon_criticals") };
+	static auto tf_weapon_criticals{I::CVar->FindVar("tf_weapon_criticals")};
 
 	if (!tf_weapon_criticals->GetInt())
 	{
 		return;
 	}
 
-	auto isFiring = [&](C_TFWeaponBase *weapon)
+	auto isFiring = [&](C_TFWeaponBase* weapon)
 	{
 		if (weapon->GetSlot() != 2)
 		{
 			if (!weapon->HasPrimaryAmmoForShot())
 				return false;
 
-			int nWeaponID = weapon->GetWeaponID();
+			const int nWeaponID = weapon->GetWeaponID();
 
 			if (nWeaponID == TF_WEAPON_PIPEBOMBLAUNCHER || nWeaponID == TF_WEAPON_CANNON)
 				return (G::nOldButtons & IN_ATTACK) && !(pCmd->buttons & IN_ATTACK);
@@ -126,7 +128,7 @@ void CMisc::Crits(CUserCmd *pCmd)
 		return (pCmd->buttons & IN_ATTACK) && G::bCanPrimaryAttack;
 	};
 
-	auto pWeapon = H::Entities->GetWeapon();
+	const auto pWeapon = H::Entities->GetWeapon();
 
 	if (!pWeapon || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE || !isFiring(pWeapon))
 		return;
@@ -148,7 +150,8 @@ void CMisc::Crits(CUserCmd *pCmd)
 
 			else bCalc = pWeapon->CalcIsAttackCriticalHelper();
 
-			if (bCrit ? bCalc : !bCalc) {
+			if (bCrit ? bCalc : !bCalc)
+			{
 				nCritCommand = nCommandNumber;
 				break;
 			}
@@ -163,7 +166,7 @@ void CMisc::Crits(CUserCmd *pCmd)
 
 	if (pWeapon->GetSlot() == 2)
 	{
-		static auto tf_weapon_criticals_melee{ I::CVar->FindVar("tf_weapon_criticals_melee") };
+		static auto tf_weapon_criticals_melee{I::CVar->FindVar("tf_weapon_criticals_melee")};
 
 		if (!tf_weapon_criticals_melee->GetInt())
 		{
@@ -172,19 +175,19 @@ void CMisc::Crits(CUserCmd *pCmd)
 
 		if (H::Input->IsDown(CFG::Exploits_Crits_Force_Crit_Key_Melee))
 		{
-			bool want_crit{ true };
+			bool wantCrit{true};
 
 			if (G::nTargetIndex)
 			{
-				auto ent{ I::ClientEntityList->GetClientEntity(G::nTargetIndex) };
+				const auto ent{I::ClientEntityList->GetClientEntity(G::nTargetIndex)};
 
 				if (ent && ent->GetClassId() == ETFClassIds::CTFPlayer && ent->As<C_TFPlayer>()->m_iTeamNum() == pLocal->m_iTeamNum())
 				{
-					want_crit = false;
+					wantCrit = false;
 				}
 			}
 
-			if (want_crit)
+			if (wantCrit)
 			{
 				pCmd->command_number = FindCritCmd(true);
 			}
@@ -210,7 +213,9 @@ void CMisc::Crits(CUserCmd *pCmd)
 	else
 	{
 		if (H::Input->IsDown(CFG::Exploits_Crits_Force_Crit_Key))
+		{
 			pCmd->command_number = FindCritCmd(true);
+		}
 
 		else
 		{
@@ -222,12 +227,12 @@ void CMisc::Crits(CUserCmd *pCmd)
 	}
 }
 
-void CMisc::FastStop(CUserCmd *pCmd)
+void CMisc::FastStop(CUserCmd* pCmd)
 {
 	if (!CFG::Misc_Fast_Stop)
 		return;
 
-	if (auto pLocal = H::Entities->GetLocal())
+	if (const auto pLocal = H::Entities->GetLocal())
 	{
 		if (!pLocal->deadflag()
 			&& pLocal->GetMoveType() == MOVETYPE_WALK
@@ -235,12 +240,12 @@ void CMisc::FastStop(CUserCmd *pCmd)
 			&& pLocal->m_vecVelocity().Length2D() >= 10.0f
 			&& !(pCmd->buttons & (IN_FORWARD | IN_BACK | IN_MOVERIGHT | IN_MOVELEFT)))
 		{
-			Vector velocity = pLocal->m_vecVelocity();
+			const Vector velocity = pLocal->m_vecVelocity();
 			QAngle direction;
 
 			Math::VectorAngles(velocity, direction);
 
-			float speed = velocity.Length();
+			const float speed = velocity.Length();
 
 			direction.y = I::EngineClient->GetViewAngles().y - direction.y;
 
@@ -248,15 +253,15 @@ void CMisc::FastStop(CUserCmd *pCmd)
 
 			Math::AngleVectors(direction, &forward);
 
-			Vector negated_direction = forward * -speed;
+			const Vector negatedDirection = forward * -speed;
 
-			pCmd->forwardmove = negated_direction.x;
-			pCmd->sidemove = negated_direction.y;
+			pCmd->forwardmove = negatedDirection.x;
+			pCmd->sidemove = negatedDirection.y;
 		}
 	}
 }
 
-void CMisc::autoRocketJump(CUserCmd *cmd)
+void CMisc::AutoRocketJump(CUserCmd* cmd)
 {
 	if (!H::Input->IsDown(CFG::Misc_Auto_Rocket_Jump_Key)
 		|| I::EngineVGui->IsGameUIVisible()
@@ -266,7 +271,7 @@ void CMisc::autoRocketJump(CUserCmd *cmd)
 		return;
 	}
 
-	auto local{ H::Entities->GetLocal() };
+	const auto local{H::Entities->GetLocal()};
 
 	if (!local
 		|| local->deadflag()
@@ -282,7 +287,7 @@ void CMisc::autoRocketJump(CUserCmd *cmd)
 		return;
 	}
 
-	auto weapon{ H::Entities->GetWeapon() };
+	const auto weapon{H::Entities->GetWeapon()};
 
 	if (!weapon
 		|| (weapon->GetWeaponID() != TF_WEAPON_ROCKETLAUNCHER && weapon->GetWeaponID() != TF_WEAPON_ROCKETLAUNCHER_DIRECTHIT)
@@ -304,8 +309,8 @@ void CMisc::autoRocketJump(CUserCmd *cmd)
 
 	else
 	{
-		auto pitch{ Math::RemapValClamped(I::EngineClient->GetViewAngles().x, -89.0f, 0.0f, 89.0f, 50.0f) };
-		auto yaw{ Math::NormalizeAngle(Math::VelocityToAngles(local->m_vecVelocity()).y + 180.0f) };
+		auto pitch{Math::RemapValClamped(I::EngineClient->GetViewAngles().x, -89.0f, 0.0f, 89.0f, 50.0f)};
+		auto yaw{Math::NormalizeAngle(Math::VelocityToAngles(local->m_vecVelocity()).y + 180.0f)};
 
 		if (!(cmd->buttons & (IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT)))
 		{
@@ -321,14 +326,14 @@ void CMisc::autoRocketJump(CUserCmd *cmd)
 	}
 }
 
-void CMisc::autoDisguise(CUserCmd *cmd)
+void CMisc::AutoDisguise(CUserCmd* cmd)
 {
 	if (!CFG::Misc_Auto_Disguise || I::GlobalVars->tickcount % 20 != 0)
 	{
 		return;
 	}
 
-	auto local{ H::Entities->GetLocal() };
+	const auto local{H::Entities->GetLocal()};
 
 	if (!local || local->deadflag() || local->m_iClass() != TF_CLASS_SPY || local->InCond(TF_COND_DISGUISED) || local->InCond(TF_COND_DISGUISING))
 	{
@@ -338,9 +343,9 @@ void CMisc::autoDisguise(CUserCmd *cmd)
 	I::EngineClient->ClientCmd_Unrestricted("lastdisguise");
 }
 
-void CMisc::autoMedigun(CUserCmd *cmd)
+void CMisc::AutoMedigun(CUserCmd* cmd)
 {
-	static std::vector<C_TFPlayer *> potential{};
+	static std::vector<C_TFPlayer*> potential{};
 
 	if (!H::Input->IsDown(CFG::Misc_Auto_Medigun_Key))
 	{
@@ -359,7 +364,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 		return;
 	}
 
-	auto local{ H::Entities->GetLocal() };
+	const auto local{H::Entities->GetLocal()};
 
 	if (!local
 		|| local->deadflag()
@@ -373,7 +378,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 		return;
 	}
 
-	auto weapon{ H::Entities->GetWeapon() };
+	const auto weapon{H::Entities->GetWeapon()};
 
 	if (!weapon || weapon->GetWeaponID() != TF_WEAPON_MEDIGUN)
 	{
@@ -382,7 +387,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 		return;
 	}
 
-	auto medigun{ weapon->As<C_WeaponMedigun>() };
+	const auto medigun{weapon->As<C_WeaponMedigun>()};
 
 	if (!medigun)
 	{
@@ -391,7 +396,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 		return;
 	}
 
-	auto isPlayerGood = [&](C_TFPlayer *pl)
+	auto isPlayerGood = [&](C_TFPlayer* pl)
 	{
 		if (!pl || pl->deadflag() || pl->GetCenter().DistTo(local->GetShootPos()) > 449.0f || pl->InCond(TF_COND_STEALTHED))
 		{
@@ -400,7 +405,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 
 		if (medigun->m_hHealingTarget().Get())
 		{
-			static C_BaseEntity *last{};
+			static C_BaseEntity* last{};
 
 			if (medigun->m_bChargeRelease())
 			{
@@ -422,7 +427,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 					return false;
 				}
 
-				auto mult{ 1.44f };
+				auto mult{1.44f};
 
 				if (medigun->GetMedigunType() == MEDIGUN_QUICKFIX)
 				{
@@ -448,14 +453,14 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 
 	if (potential.empty())
 	{
-		for (auto ent : H::Entities->GetGroup(EEntGroup::PLAYERS_TEAMMATES))
+		for (const auto ent : H::Entities->GetGroup(EEntGroup::PLAYERS_TEAMMATES))
 		{
 			if (!ent || ent == local)
 			{
 				continue;
 			}
 
-			auto pl{ ent->As<C_TFPlayer>() };
+			auto pl{ent->As<C_TFPlayer>()};
 
 			if (!isPlayerGood(pl))
 			{
@@ -468,9 +473,9 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 
 	if ((cmd->tick_count % 2) && G::bCanPrimaryAttack && !potential.empty())
 	{
-		for (int n{ 0 }; n < static_cast<int>(potential.size()); n++)
+		for (int n{0}; n < static_cast<int>(potential.size()); n++)
 		{
-			auto pl{ potential[n] };
+			const auto pl{potential[n]};
 
 			if (!isPlayerGood(pl))
 			{
@@ -479,7 +484,7 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 				continue;
 			}
 
-			auto angle{ Math::CalcAngle(local->GetShootPos(), pl->GetCenter()) };
+			const auto angle{Math::CalcAngle(local->GetShootPos(), pl->GetCenter())};
 
 			H::AimUtils->FixMovement(cmd, angle);
 
@@ -503,9 +508,9 @@ void CMisc::autoMedigun(CUserCmd *cmd)
 	}
 }
 
-void CMisc::movementLock(CUserCmd *cmd)
+void CMisc::MovementLock(CUserCmd* cmd)
 {
-	static auto active{ false };
+	static auto active{false};
 
 	if (!CFG::Misc_Movement_Lock_Key)
 	{
@@ -514,7 +519,7 @@ void CMisc::movementLock(CUserCmd *cmd)
 		return;
 	}
 
-	auto local{ H::Entities->GetLocal() };
+	const auto local{H::Entities->GetLocal()};
 
 	if (!local || (local->m_fFlags() & FL_ONGROUND))
 	{
@@ -523,14 +528,14 @@ void CMisc::movementLock(CUserCmd *cmd)
 		return;
 	}
 
-	auto &vel{ local->m_vecVelocity() };
-	static Vec3 last_tick_vel{};
+	const auto& vel{local->m_vecVelocity()};
+	static Vec3 lastTickVel{};
 
-	static auto angles{ cmd->viewangles };
+	static auto angles{cmd->viewangles};
 
 	if (!active
 		&& static_cast<int>(vel.x) == 0 && static_cast<int>(vel.y) == 0 && static_cast<int>(vel.z) == -6
-		&& static_cast<int>(last_tick_vel.x) == 0 && static_cast<int>(last_tick_vel.y) == 0 && static_cast<int>(last_tick_vel.z) == -6)
+		&& static_cast<int>(lastTickVel.x) == 0 && static_cast<int>(lastTickVel.y) == 0 && static_cast<int>(lastTickVel.z) == -6)
 	{
 		active = true;
 
@@ -547,7 +552,7 @@ void CMisc::movementLock(CUserCmd *cmd)
 		}
 	}
 
-	last_tick_vel = vel;
+	lastTickVel = vel;
 
 	if (active && static_cast<int>(vel.x) != 0 && static_cast<int>(vel.y) != 0 && static_cast<int>(vel.z) != -6)
 	{
@@ -564,13 +569,13 @@ void CMisc::movementLock(CUserCmd *cmd)
 		return;
 	}
 
-	auto fuck{ DEG2RAD((angles.y - cmd->viewangles.y) + 90.0f) };
+	const auto angle = DEG2RAD((angles.y - cmd->viewangles.y) + 90.0f);
 
-	cmd->forwardmove = sinf(fuck) * 450.0f;
-	cmd->sidemove = cosf(fuck) * 450.0f;
+	cmd->forwardmove = sinf(angle) * 450.0f;
+	cmd->sidemove = cosf(angle) * 450.0f;
 }
 
-void CMisc::mvmInstaRespawn()
+void CMisc::MvmInstaRespawn()
 {
 	if (!H::Input->IsDown(CFG::Misc_MVM_Instant_Respawn_Key)
 		|| I::EngineVGui->IsGameUIVisible()
@@ -580,7 +585,7 @@ void CMisc::mvmInstaRespawn()
 		return;
 	}
 
-	auto *kv{ new KeyValues("MVM_Revive_Response") };
+	auto* kv{new KeyValues("MVM_Revive_Response")};
 
 	kv->SetInt("accepted", 1);
 
