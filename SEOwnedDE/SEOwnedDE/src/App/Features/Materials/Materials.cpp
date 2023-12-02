@@ -4,14 +4,14 @@
 #include "../VisualUtils/VisualUtils.h"
 #include "../LagRecords/LagRecords.h"
 
-void SetModelStencilForOutlines(C_BaseEntity *pEntity)
+void SetModelStencilForOutlines(C_BaseEntity* pEntity)
 {
-	IMatRenderContext *pRenderContext = I::MaterialSystem->GetRenderContext();
+	IMatRenderContext* pRenderContext = I::MaterialSystem->GetRenderContext();
 
 	if (!pRenderContext)
 		return;
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return;
@@ -23,10 +23,10 @@ void SetModelStencilForOutlines(C_BaseEntity *pEntity)
 			if (!CFG::Outlines_Players_Active)
 				return false;
 
-			auto pPlayer = pEntity->As<C_TFPlayer>();
+			const auto pPlayer = pEntity->As<C_TFPlayer>();
 
-			bool bIsLocal = pPlayer == pLocal;
-			bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
+			const bool bIsLocal = pPlayer == pLocal;
+			const bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
 
 			if (CFG::Outlines_Players_Ignore_Local && bIsLocal)
 				return false;
@@ -34,24 +34,23 @@ void SetModelStencilForOutlines(C_BaseEntity *pEntity)
 			if (CFG::Outlines_Players_Ignore_Friends && bIsFriend)
 				return false;
 
-			if (!bIsLocal)
+			if (!bIsLocal && !bIsFriend)
 			{
-				if (!bIsFriend)
+				if (CFG::Outlines_Players_Ignore_Teammates && pPlayer->m_iTeamNum() == pLocal->m_iTeamNum())
 				{
-					if (CFG::Outlines_Players_Ignore_Teammates && pPlayer->m_iTeamNum() == pLocal->m_iTeamNum())
+					if (CFG::Outlines_Players_Show_Teammate_Medics)
 					{
-						if (CFG::Outlines_Players_Show_Teammate_Medics)
-						{
-							if (pPlayer->m_iClass() != TF_CLASS_MEDIC)
-								return false;
-						}
-
-						else return false;
+						if (pPlayer->m_iClass() != TF_CLASS_MEDIC)
+							return false;
 					}
-
-					if (CFG::Outlines_Players_Ignore_Enemies && pPlayer->m_iTeamNum() != pLocal->m_iTeamNum())
+					else
+					{
 						return false;
+					}
 				}
+
+				if (CFG::Outlines_Players_Ignore_Enemies && pPlayer->m_iTeamNum() != pLocal->m_iTeamNum())
+					return false;
 			}
 		}
 
@@ -82,7 +81,10 @@ void SetModelStencilForOutlines(C_BaseEntity *pEntity)
 							return false;
 					}
 
-					else return false;
+					else
+					{
+						return false;
+					}
 				}
 
 				if (CFG::Outlines_Buildings_Ignore_Enemies && pBuilding->m_iTeamNum() != pLocal->m_iTeamNum())
@@ -96,28 +98,30 @@ void SetModelStencilForOutlines(C_BaseEntity *pEntity)
 	};
 
 	if (!IsEntGoingToBeGlowed())
+	{
 		pRenderContext->SetStencilEnable(false);
+	}
 
 	else
 	{
-		ShaderStencilState_t State = {};
-		State.m_bEnable = true;
-		State.m_nReferenceValue = 1;
-		State.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
-		State.m_PassOp = STENCILOPERATION_REPLACE;
-		State.m_FailOp = STENCILOPERATION_KEEP;
-		State.m_ZFailOp = STENCILOPERATION_REPLACE;
-		State.SetStencilState(pRenderContext);
+		ShaderStencilState_t state = {};
+		state.m_bEnable = true;
+		state.m_nReferenceValue = 1;
+		state.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
+		state.m_PassOp = STENCILOPERATION_REPLACE;
+		state.m_FailOp = STENCILOPERATION_KEEP;
+		state.m_ZFailOp = STENCILOPERATION_REPLACE;
+		state.SetStencilState(pRenderContext);
 	}
 }
 
 void CMaterials::Initialize()
 {
-	static ConVar *mat_hdr_level = I::CVar->FindVar("mat_hdr_level");
+	static ConVar* mat_hdr_level = I::CVar->FindVar("mat_hdr_level");
 
 	if (!m_pFlat)
 	{
-		auto *kv = new KeyValues("VertexLitGeneric");
+		auto* kv = new KeyValues("VertexLitGeneric");
 		kv->SetString("$dummy", "dummy");
 		kv->SetString("$basetexture", "vgui/white_additive");
 		kv->SetString("$bumpmap", "vgui/white_additive");
@@ -127,13 +131,14 @@ void CMaterials::Initialize()
 		kv->SetString("$cloakPassEnabled", "1");
 		kv->SetString("$nodecal", "1");
 		kv->SetString("$model", "1");
-		if (auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+		if (const auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+
 		m_pFlat = I::MaterialSystem->CreateMaterial("seo_material_flat", kv);
 	}
 
 	if (!m_pShaded)
 	{
-		auto *kv = new KeyValues("VertexLitGeneric");
+		auto* kv = new KeyValues("VertexLitGeneric");
 		kv->SetString("$basetexture", "vgui/white_additive");
 		kv->SetString("$bumpmap", "models/player/shared/shared_normal");
 		kv->SetString("$selfillum", "1");
@@ -142,13 +147,14 @@ void CMaterials::Initialize()
 		kv->SetString("$cloakPassEnabled", "1");
 		kv->SetString("$nodecal", "1");
 		kv->SetString("$model", "1");
-		if (auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+		if (const auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+
 		m_pShaded = I::MaterialSystem->CreateMaterial("seo_material_shaded", kv);
 	}
 
 	if (!m_pGlossy)
 	{
-		auto *kv = new KeyValues("VertexLitGeneric");
+		auto* kv = new KeyValues("VertexLitGeneric");
 		kv->SetString("$basetexture", "vgui/white_additive");
 		kv->SetString("$bumpmap", "models/player/shared/shared_normal");
 		kv->SetString("$envmap", "cubemaps/cubemap_sheen002");
@@ -161,13 +167,14 @@ void CMaterials::Initialize()
 		kv->SetString("$cloakPassEnabled", "1");
 		kv->SetString("$nodecal", "1");
 		kv->SetString("$model", "1");
-		if (auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+		if (const auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+
 		m_pGlossy = I::MaterialSystem->CreateMaterial("seo_material_glossy", kv);
 	}
 
 	if (!m_pGlow)
 	{
-		auto *kv = new KeyValues("VertexLitGeneric");
+		auto* kv = new KeyValues("VertexLitGeneric");
 		kv->SetString("$basetexture", "vgui/white_additive");
 		kv->SetString("$bumpmap", "models/player/shared/shared_normal");
 		kv->SetString("$envmap", "effects/saxxy_gold");
@@ -183,7 +190,8 @@ void CMaterials::Initialize()
 		kv->SetString("$cloakPassEnabled", "1");
 		kv->SetString("$nodecal", "1");
 		kv->SetString("$model", "1");
-		if (auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+		if (const auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+
 		m_pGlow = I::MaterialSystem->CreateMaterial("seo_material_glow", kv);
 		m_pGlowEnvmapTint = m_pGlow->FindVar("$envmaptint", nullptr);
 		m_pGlowSelfillumTint = m_pGlow->FindVar("$selfillumtint", nullptr);
@@ -191,7 +199,7 @@ void CMaterials::Initialize()
 
 	if (!m_pPlastic)
 	{
-		auto *kv = new KeyValues("VertexLitGeneric");
+		auto* kv = new KeyValues("VertexLitGeneric");
 		kv->SetString("$basetexture", "models/player/shared/ice_player");
 		kv->SetString("$bumpmap", "models/player/shared/shared_normal");
 		kv->SetString("$phong", "1");
@@ -203,13 +211,14 @@ void CMaterials::Initialize()
 		kv->SetString("$cloakPassEnabled", "1");
 		kv->SetString("$nodecal", "1");
 		kv->SetString("$model", "1");
-		if (auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+		if (const auto proxies = kv->FindKey("Proxies", true)) { proxies->FindKey("invis", true); }
+
 		m_pPlastic = I::MaterialSystem->CreateMaterial("seo_material_plastic", kv);
 	}
 
 	if (!m_pFlatNoInvis)
 	{
-		auto *kv = new KeyValues("VertexLitGeneric");
+		auto* kv = new KeyValues("VertexLitGeneric");
 		kv->SetString("$basetexture", "vgui/white_additive");
 		kv->SetString("$bumpmap", "vgui/white_additive");
 		kv->SetString("$selfillum", "1");
@@ -217,12 +226,13 @@ void CMaterials::Initialize()
 		kv->SetString("$selfillumFresnelMinMaxExp", "[0.4999 0.5 1]");
 		kv->SetString("$nodecal", "1");
 		kv->SetString("$model", "1");
+
 		m_pFlatNoInvis = I::MaterialSystem->CreateMaterial("seo_material_flat_no_invis", kv);
 	}
 
 	if (!m_pShadedNoInvis)
 	{
-		auto *kv = new KeyValues("VertexLitGeneric");
+		auto* kv = new KeyValues("VertexLitGeneric");
 		kv->SetString("$basetexture", "vgui/white_additive");
 		kv->SetString("$bumpmap", "models/player/shared/shared_normal");
 		kv->SetString("$selfillum", "1");
@@ -230,26 +240,29 @@ void CMaterials::Initialize()
 		kv->SetString("$selfillumFresnelMinMaxExp", "[0.1 0.5 2]");
 		kv->SetString("$nodecal", "1");
 		kv->SetString("$model", "1");
+
 		m_pShadedNoInvis = I::MaterialSystem->CreateMaterial("seo_material_shaded_no_invis", kv);
 	}
 }
 
-void CMaterials::DrawEntity(C_BaseEntity *pEntity)
+void CMaterials::DrawEntity(C_BaseEntity* pEntity)
 {
 	SetModelStencilForOutlines(pEntity);
 
 	m_bRendering = true;
 
-	float flOldInvisibility = pEntity->GetClassId() == ETFClassIds::CTFPlayer ? pEntity->As<C_TFPlayer>()->m_flInvisibility() : -1.0f;
+	const float flOldInvisibility = pEntity->GetClassId() == ETFClassIds::CTFPlayer ? pEntity->As<C_TFPlayer>()->m_flInvisibility() : -1.0f;
 
-	if (flOldInvisibility > 0.99f) {
+	if (flOldInvisibility > 0.99f)
+	{
 		pEntity->As<C_TFPlayer>()->m_flInvisibility() = 0.0f;
 		I::RenderView->SetBlend(0.0f);
 	}
 
 	pEntity->DrawModel(STUDIO_RENDER);
 
-	if (flOldInvisibility > 0.99f) {
+	if (flOldInvisibility > 0.99f)
+	{
 		pEntity->As<C_TFPlayer>()->m_flInvisibility() = flOldInvisibility;
 		I::RenderView->SetBlend(1.0f);
 	}
@@ -261,24 +274,24 @@ void CMaterials::DrawEntity(C_BaseEntity *pEntity)
 
 void CMaterials::RunLagRecords()
 {
-	auto pRenderContext = I::MaterialSystem->GetRenderContext();
+	const auto pRenderContext = I::MaterialSystem->GetRenderContext();
 
 	if (!pRenderContext || !CFG::Materials_Players_Active || CFG::Materials_Players_Ignore_LagRecords)
 		return;
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return;
 
-	auto pWeapon = H::Entities->GetWeapon();
+	const auto pWeapon = H::Entities->GetWeapon();
 
 	if (!pWeapon)
 		return;
 
-	auto WeaponType = H::AimUtils->GetWeaponType(pWeapon);
+	const auto weaponType = H::AimUtils->GetWeaponType(pWeapon);
 
-	if (WeaponType == EWeaponType::HITSCAN)
+	if (weaponType == EWeaponType::HITSCAN)
 	{
 		if (!CFG::Aimbot_Active
 			|| !CFG::Aimbot_Hitscan_Active
@@ -286,8 +299,7 @@ void CMaterials::RunLagRecords()
 			|| !CFG::Aimbot_Hitscan_Target_LagRecords)
 			return;
 	}
-
-	else if (WeaponType == EWeaponType::MELEE)
+	else if (weaponType == EWeaponType::MELEE)
 	{
 		if (!CFG::Aimbot_Active
 			|| !CFG::Aimbot_Melee_Active
@@ -295,8 +307,10 @@ void CMaterials::RunLagRecords()
 			|| !CFG::Aimbot_Melee_Target_LagRecords)
 			return;
 	}
-
-	else return;
+	else
+	{
+		return;
+	}
 
 	m_bRenderingOriginalMat = false;
 
@@ -307,12 +321,12 @@ void CMaterials::RunLagRecords()
 	if (CFG::Materials_Players_No_Depth)
 		pRenderContext->DepthRange(0.0f, 0.2f);
 
-	for (auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ENEMIES))
+	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ENEMIES))
 	{
 		if (!pEntity)
 			continue;
 
-		auto pPlayer = pEntity->As<C_TFPlayer>();
+		const auto pPlayer = pEntity->As<C_TFPlayer>();
 
 		if (pPlayer->deadflag())
 			continue;
@@ -329,7 +343,7 @@ void CMaterials::RunLagRecords()
 		{
 			for (int n = 1; n < nRecords; n++)
 			{
-				auto pRecord = F::LagRecords->GetRecord(pPlayer, n, true);
+				const auto pRecord = F::LagRecords->GetRecord(pPlayer, n, true);
 
 				if (!pRecord || !F::VisualUtils->IsOnScreenNoEntity(pLocal, pRecord->m_vAbsOrigin) || !F::LagRecords->DiffersFromCurrent(pRecord))
 					continue;
@@ -338,7 +352,7 @@ void CMaterials::RunLagRecords()
 
 				F::LagRecordMatrixHelper->Set(pRecord);
 				m_bRendering = true;
-				float flOldInvisibility = pPlayer->m_flInvisibility();
+				const float flOldInvisibility = pPlayer->m_flInvisibility();
 				pPlayer->m_flInvisibility() = 0.0f;
 				pPlayer->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 				pPlayer->m_flInvisibility() = flOldInvisibility;
@@ -346,10 +360,9 @@ void CMaterials::RunLagRecords()
 				F::LagRecordMatrixHelper->Restore();
 			}
 		}
-
 		else
 		{
-			auto pRecord = F::LagRecords->GetRecord(pPlayer, nRecords - 1, true);
+			const auto pRecord = F::LagRecords->GetRecord(pPlayer, nRecords - 1, true);
 
 			if (!pRecord || !F::VisualUtils->IsOnScreenNoEntity(pLocal, pRecord->m_vAbsOrigin) || !F::LagRecords->DiffersFromCurrent(pRecord))
 				continue;
@@ -358,7 +371,7 @@ void CMaterials::RunLagRecords()
 
 			F::LagRecordMatrixHelper->Set(pRecord);
 			m_bRendering = true;
-			float flOldInvisibility = pPlayer->m_flInvisibility();
+			const float flOldInvisibility = pPlayer->m_flInvisibility();
 			pPlayer->m_flInvisibility() = 0.0f;
 			pPlayer->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 			pPlayer->m_flInvisibility() = flOldInvisibility;
@@ -390,12 +403,12 @@ void CMaterials::Run()
 		return;
 	}
 
-	auto pRenderContext = I::MaterialSystem->GetRenderContext();
+	const auto pRenderContext = I::MaterialSystem->GetRenderContext();
 
 	if (!pRenderContext)
 		return;
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return;
@@ -404,20 +417,19 @@ void CMaterials::Run()
 
 	RunLagRecords();
 
-	auto GetMaterial = [&](int nIndex) -> IMaterial *
-	{
+	auto GetMaterial = [&](int nIndex) -> IMaterial* {
 		//don't forget to change me if more materials are added!
 		m_bRenderingOriginalMat = nIndex == 0 || nIndex > 5;
 
 		switch (nIndex)
 		{
-			case 0: return nullptr;
-			case 1: return m_pFlat;
-			case 2: return m_pShaded;
-			case 3: return m_pGlossy;
-			case 4: return m_pGlow;
-			case 5: return m_pPlastic;
-			default: return nullptr;
+		case 0: return nullptr;
+		case 1: return m_pFlat;
+		case 2: return m_pShaded;
+		case 3: return m_pGlossy;
+		case 4: return m_pGlow;
+		case 5: return m_pPlastic;
+		default: return nullptr;
 		}
 	};
 
@@ -425,7 +437,7 @@ void CMaterials::Run()
 	{
 		I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
 
-		auto pMaterial = GetMaterial(CFG::Materials_Players_Material);
+		const auto pMaterial = GetMaterial(CFG::Materials_Players_Material);
 
 		if (pMaterial)
 			I::ModelRender->ForcedMaterialOverride(pMaterial);
@@ -436,18 +448,18 @@ void CMaterials::Run()
 		if (CFG::Materials_Players_No_Depth)
 			pRenderContext->DepthRange(0.0f, 0.2f);
 
-		for (auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
+		for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
 		{
 			if (!pEntity)
 				continue;
 
-			auto pPlayer = pEntity->As<C_TFPlayer>();
+			const auto pPlayer = pEntity->As<C_TFPlayer>();
 
 			if (pPlayer->deadflag())
 				continue;
 
-			bool bIsLocal = pPlayer == pLocal;
-			bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
+			const bool bIsLocal = pPlayer == pLocal;
+			const bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
 
 			if (CFG::Materials_Players_Ignore_Local && bIsLocal)
 				continue;
@@ -467,7 +479,10 @@ void CMaterials::Run()
 								continue;
 						}
 
-						else continue;
+						else
+						{
+							continue;
+						}
 					}
 
 					if (CFG::Materials_Players_Ignore_Enemies && pPlayer->m_iTeamNum() != pLocal->m_iTeamNum())
@@ -478,17 +493,17 @@ void CMaterials::Run()
 			if (!F::VisualUtils->IsOnScreen(pLocal, pPlayer))
 				continue;
 
-			auto Color = F::VisualUtils->GetEntityColor(pLocal, pPlayer);
+			const auto entColor = F::VisualUtils->GetEntityColor(pLocal, pPlayer);
 
 			if (pMaterial && pMaterial != m_pGlow)
-				I::RenderView->SetColorModulation(Color);
+				I::RenderView->SetColorModulation(entColor);
 
 			if (pMaterial == m_pGlow)
-				m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(Color.r), ColorUtils::ToFloat(Color.g), ColorUtils::ToFloat(Color.b));
+				m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(entColor.r), ColorUtils::ToFloat(entColor.g), ColorUtils::ToFloat(entColor.b));
 
 			DrawEntity(pPlayer);
 
-			C_BaseEntity *pAttach = pPlayer->FirstMoveChild();
+			C_BaseEntity* pAttach = pPlayer->FirstMoveChild();
 
 			for (int n = 0; n < 32; n++)
 			{
@@ -516,7 +531,7 @@ void CMaterials::Run()
 	{
 		I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
 
-		auto pMaterial = GetMaterial(CFG::Materials_Buildings_Material);
+		const auto pMaterial = GetMaterial(CFG::Materials_Buildings_Material);
 
 		if (pMaterial)
 			I::ModelRender->ForcedMaterialOverride(pMaterial);
@@ -527,17 +542,17 @@ void CMaterials::Run()
 		if (CFG::Materials_Buildings_No_Depth)
 			pRenderContext->DepthRange(0.0f, 0.2f);
 
-		for (auto pEntity : H::Entities->GetGroup(EEntGroup::BUILDINGS_ALL))
+		for (const auto pEntity : H::Entities->GetGroup(EEntGroup::BUILDINGS_ALL))
 		{
 			if (!pEntity)
 				continue;
 
-			auto pBuilding = pEntity->As<C_BaseObject>();
+			const auto pBuilding = pEntity->As<C_BaseObject>();
 
 			if (pBuilding->m_bPlacing())
 				continue;
 
-			bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pBuilding, pLocal);
+			const bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pBuilding, pLocal);
 
 			if (CFG::Materials_Buildings_Ignore_Local && bIsLocal)
 				continue;
@@ -552,7 +567,10 @@ void CMaterials::Run()
 							continue;
 					}
 
-					else continue;
+					else
+					{
+						continue;
+					}
 				}
 
 				if (CFG::Materials_Buildings_Ignore_Enemies && pBuilding->m_iTeamNum() != pLocal->m_iTeamNum())
@@ -562,13 +580,13 @@ void CMaterials::Run()
 			if (!F::VisualUtils->IsOnScreen(pLocal, pBuilding))
 				continue;
 
-			auto Color = F::VisualUtils->GetEntityColor(pLocal, pBuilding);
+			const auto entColor = F::VisualUtils->GetEntityColor(pLocal, pBuilding);
 
 			if (pMaterial && pMaterial != m_pGlow)
-				I::RenderView->SetColorModulation(Color);
+				I::RenderView->SetColorModulation(entColor);
 
 			if (pMaterial == m_pGlow)
-				m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(Color.r), ColorUtils::ToFloat(Color.g), ColorUtils::ToFloat(Color.b));
+				m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(entColor.r), ColorUtils::ToFloat(entColor.g), ColorUtils::ToFloat(entColor.b));
 
 			DrawEntity(pBuilding);
 		}
@@ -587,7 +605,7 @@ void CMaterials::Run()
 	{
 		I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
 
-		auto pMaterial = GetMaterial(CFG::Materials_World_Material);
+		const auto pMaterial = GetMaterial(CFG::Materials_World_Material);
 
 		if (pMaterial)
 			I::ModelRender->ForcedMaterialOverride(pMaterial);
@@ -600,18 +618,18 @@ void CMaterials::Run()
 
 		if (!CFG::Materials_World_Ignore_HealthPacks)
 		{
-			auto Color = CFG::Color_HealthPack;
+			const auto color = CFG::Color_HealthPack;
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::HEALTHPACKS))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::HEALTHPACKS))
 			{
 				if (!pEntity || !F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
 				if (pMaterial && pMaterial != m_pGlow)
-					I::RenderView->SetColorModulation(Color);
+					I::RenderView->SetColorModulation(color);
 
 				if (pMaterial == m_pGlow)
-					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(Color.r), ColorUtils::ToFloat(Color.g), ColorUtils::ToFloat(Color.b));
+					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(color.r), ColorUtils::ToFloat(color.g), ColorUtils::ToFloat(color.b));
 
 				DrawEntity(pEntity);
 			}
@@ -619,18 +637,18 @@ void CMaterials::Run()
 
 		if (!CFG::Materials_World_Ignore_AmmoPacks)
 		{
-			auto Color = CFG::Color_AmmoPack;
+			const auto color = CFG::Color_AmmoPack;
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::AMMOPACKS))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::AMMOPACKS))
 			{
 				if (!pEntity || !F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
 				if (pMaterial && pMaterial != m_pGlow)
-					I::RenderView->SetColorModulation(Color);
+					I::RenderView->SetColorModulation(color);
 
 				if (pMaterial == m_pGlow)
-					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(Color.r), ColorUtils::ToFloat(Color.g), ColorUtils::ToFloat(Color.b));
+					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(color.r), ColorUtils::ToFloat(color.g), ColorUtils::ToFloat(color.b));
 
 				DrawEntity(pEntity);
 			}
@@ -638,18 +656,18 @@ void CMaterials::Run()
 
 		if (!CFG::Materials_World_Ignore_Halloween_Gift)
 		{
-			auto Color = CFG::Color_Halloween_Gift;
+			const auto color = CFG::Color_Halloween_Gift;
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::HALLOWEEN_GIFT))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::HALLOWEEN_GIFT))
 			{
 				if (!pEntity || !pEntity->ShouldDraw() || !F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
 				if (pMaterial && pMaterial != m_pGlow)
-					I::RenderView->SetColorModulation(Color);
+					I::RenderView->SetColorModulation(color);
 
 				if (pMaterial == m_pGlow)
-					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(Color.r), ColorUtils::ToFloat(Color.g), ColorUtils::ToFloat(Color.b));
+					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(color.r), ColorUtils::ToFloat(color.g), ColorUtils::ToFloat(color.b));
 
 				DrawEntity(pEntity);
 			}
@@ -657,35 +675,35 @@ void CMaterials::Run()
 
 		if (!CFG::Materials_World_Ignore_MVM_Money)
 		{
-			auto Color = CFG::Color_MVM_Money;
+			const auto color = CFG::Color_MVM_Money;
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::MVM_MONEY))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::MVM_MONEY))
 			{
 				if (!pEntity || !pEntity->ShouldDraw() || !F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
 				if (pMaterial && pMaterial != m_pGlow)
-					I::RenderView->SetColorModulation(Color);
+					I::RenderView->SetColorModulation(color);
 
 				if (pMaterial == m_pGlow)
-					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(Color.r), ColorUtils::ToFloat(Color.g), ColorUtils::ToFloat(Color.b));
+					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(color.r), ColorUtils::ToFloat(color.g), ColorUtils::ToFloat(color.b));
 
 				DrawEntity(pEntity);
 			}
 		}
 
-		bool bIgnoringAllProjectiles = CFG::Materials_World_Ignore_LocalProjectiles
+		const bool bIgnoringAllProjectiles = CFG::Materials_World_Ignore_LocalProjectiles
 			&& CFG::Materials_World_Ignore_EnemyProjectiles
 			&& CFG::Materials_World_Ignore_TeammateProjectiles;
 
 		if (!bIgnoringAllProjectiles)
 		{
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::PROJECTILES_ALL))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PROJECTILES_ALL))
 			{
 				if (!pEntity || !pEntity->ShouldDraw())
 					continue;
 
-				bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pEntity, pLocal);
+				const bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pEntity, pLocal);
 
 				if (CFG::Materials_World_Ignore_LocalProjectiles && bIsLocal)
 					continue;
@@ -702,13 +720,13 @@ void CMaterials::Run()
 				if (!F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
-				auto Color = F::VisualUtils->GetEntityColor(pLocal, pEntity);
+				const auto color = F::VisualUtils->GetEntityColor(pLocal, pEntity);
 
 				if (pMaterial && pMaterial != m_pGlow)
-					I::RenderView->SetColorModulation(Color);
+					I::RenderView->SetColorModulation(color);
 
 				if (pMaterial == m_pGlow)
-					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(Color.r), ColorUtils::ToFloat(Color.g), ColorUtils::ToFloat(Color.b));
+					m_pGlowEnvmapTint->SetVecValue(ColorUtils::ToFloat(color.r), ColorUtils::ToFloat(color.g), ColorUtils::ToFloat(color.b));
 
 				DrawEntity(pEntity);
 			}

@@ -2,10 +2,10 @@
 
 #include "../CFG.h"
 
-int CEnginePrediction::GetTickbase(CUserCmd *pCmd, C_TFPlayer *pLocal)
+int CEnginePrediction::GetTickbase(CUserCmd* pCmd, C_TFPlayer* pLocal)
 {
 	static int nTick = 0;
-	static CUserCmd *pLastCmd = nullptr;
+	static CUserCmd* pLastCmd = nullptr;
 
 	if (pCmd)
 	{
@@ -20,19 +20,19 @@ int CEnginePrediction::GetTickbase(CUserCmd *pCmd, C_TFPlayer *pLocal)
 	return nTick;
 }
 
-void CEnginePrediction::Start(CUserCmd *pCmd)
+void CEnginePrediction::Start(CUserCmd* pCmd)
 {
 	if (!I::MoveHelper)
 		return;
 
-	if (auto pLocal = H::Entities->GetLocal())
+	if (const auto pLocal = H::Entities->GetLocal())
 	{
 		flags = pLocal->m_fFlags();
 
 		pLocal->SetCurrentCommand(pCmd);
 
-		static const int max = std::numeric_limits<int>::max();
-		*I::RandomSeed = MD5_PseudoRandom(pCmd->command_number) & max;
+		static constexpr int MAX_INT = std::numeric_limits<int>::max();
+		*I::RandomSeed = MD5_PseudoRandom(pCmd->command_number) & MAX_INT;
 
 		m_fOldCurrentTime = I::GlobalVars->curtime;
 		m_fOldFrameTime = I::GlobalVars->frametime;
@@ -74,7 +74,7 @@ void CEnginePrediction::Start(CUserCmd *pCmd)
 
 void CEnginePrediction::End()
 {
-	if (auto pLocal = H::Entities->GetLocal())
+	if (const auto pLocal = H::Entities->GetLocal())
 	{
 		I::GlobalVars->curtime = m_fOldCurrentTime;
 		I::GlobalVars->frametime = m_fOldFrameTime;
