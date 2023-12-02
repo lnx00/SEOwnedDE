@@ -1,6 +1,6 @@
 #pragma once
+#include <MinHook/MinHook.h>
 
-#include "MinHook/MinHook.h"
 #include "../Singleton/Singleton.h"
 #include <vector>
 

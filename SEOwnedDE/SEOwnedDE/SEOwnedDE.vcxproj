@@ -47,11 +47,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -213,11 +215,11 @@
     <ClCompile Include="src\SDK\TF2\NetVars\NetVars.cpp" />
     <ClCompile Include="src\Utils\Color\Color.cpp" />
     <ClCompile Include="src\Utils\HookManager\HookManager.cpp" />
-    <ClCompile Include="src\Utils\HookManager\MinHook\buffer.c" />
-    <ClCompile Include="src\Utils\HookManager\MinHook\hde\hde32.c" />
-    <ClCompile Include="src\Utils\HookManager\MinHook\hde\hde64.c" />
-    <ClCompile Include="src\Utils\HookManager\MinHook\hook.c" />
-    <ClCompile Include="src\Utils\HookManager\MinHook\trampoline.c" />
+    <ClCompile Include="include\MinHook\buffer.c" />
+    <ClCompile Include="include\MinHook\hde\hde32.c" />
+    <ClCompile Include="include\MinHook\hde\hde64.c" />
+    <ClCompile Include="include\MinHook\hook.c" />
+    <ClCompile Include="include\MinHook\trampoline.c" />
     <ClCompile Include="src\Utils\InterfaceManager\InterfaceManager.cpp" />
     <ClCompile Include="src\Utils\Memory\Memory.cpp" />
     <ClCompile Include="src\Utils\SignatureManager\SignatureManager.cpp" />
@@ -387,17 +389,17 @@
     <ClInclude Include="src\Utils\Assert\Assert.h" />
     <ClInclude Include="src\Utils\Color\Color.h" />
     <ClInclude Include="src\Utils\Config\Config.h" />
-    <ClInclude Include="src\Utils\Config\json.hpp" />
+    <ClInclude Include="include\nlohmann\json.hpp" />
     <ClInclude Include="src\Utils\Hash\Hash.h" />
     <ClInclude Include="src\Utils\HookManager\HookManager.h" />
-    <ClInclude Include="src\Utils\HookManager\MinHook\buffer.h" />
-    <ClInclude Include="src\Utils\HookManager\MinHook\hde\hde32.h" />
-    <ClInclude Include="src\Utils\HookManager\MinHook\hde\hde64.h" />
-    <ClInclude Include="src\Utils\HookManager\MinHook\hde\pstdint.h" />
-    <ClInclude Include="src\Utils\HookManager\MinHook\hde\table32.h" />
-    <ClInclude Include="src\Utils\HookManager\MinHook\hde\table64.h" />
-    <ClInclude Include="src\Utils\HookManager\MinHook\MinHook.h" />
-    <ClInclude Include="src\Utils\HookManager\MinHook\trampoline.h" />
+    <ClInclude Include="include\MinHook\buffer.h" />
+    <ClInclude Include="include\MinHook\hde\hde32.h" />
+    <ClInclude Include="include\MinHook\hde\hde64.h" />
+    <ClInclude Include="include\MinHook\hde\pstdint.h" />
+    <ClInclude Include="include\MinHook\hde\table32.h" />
+    <ClInclude Include="include\MinHook\hde\table64.h" />
+    <ClInclude Include="include\MinHook\MinHook.h" />
+    <ClInclude Include="include\MinHook\trampoline.h" />
     <ClInclude Include="src\Utils\InterfaceManager\InterfaceManager.h" />
     <ClInclude Include="src\Utils\Math\Math.h" />
     <ClInclude Include="src\Utils\Memory\Memory.h" />

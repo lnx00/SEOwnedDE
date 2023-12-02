@@ -1,11 +1,10 @@
 #pragma once
+#include <nlohmann/json.hpp>
 
 #include <vector>
 #include <typeinfo>
 #include <fstream>
 #include <iomanip>
-
-#include "json.hpp"
 
 namespace Config
 {
