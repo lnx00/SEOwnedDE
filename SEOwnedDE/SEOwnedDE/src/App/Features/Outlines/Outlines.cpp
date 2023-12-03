@@ -52,7 +52,7 @@ void COutlines::Initialize()
 
 	if (!m_pMatHaloAddToScreen)
 	{
-		auto kv = new KeyValues("UnlitGeneric");
+		const auto kv = new KeyValues("UnlitGeneric");
 		kv->SetString("$dummy", "dummy");
 		kv->SetString("$basetexture", "seo_outline_buffer0");
 		kv->SetString("$additive", "1");
@@ -61,7 +61,7 @@ void COutlines::Initialize()
 
 	if (!m_pMatBlurX)
 	{
-		auto kv = new KeyValues("BlurFilterX");
+		const auto kv = new KeyValues("BlurFilterX");
 		kv->SetString("$dummy", "dummy");
 		kv->SetString("$basetexture", "seo_outline_buffer0");
 		m_pMatBlurX = I::MaterialSystem->CreateMaterial("seo_outline_material_blurx", kv);
@@ -69,7 +69,7 @@ void COutlines::Initialize()
 
 	if (!m_pMatBlurY)
 	{
-		auto kv = new KeyValues("BlurFilterY");
+		const auto kv = new KeyValues("BlurFilterY");
 		kv->SetString("$dummy", "dummy");
 		kv->SetString("$basetexture", "seo_outline_buffer1");
 		m_pMatBlurY = I::MaterialSystem->CreateMaterial("seo_outline_material_blury", kv);
@@ -77,14 +77,14 @@ void COutlines::Initialize()
 	}
 }
 
-void COutlines::DrawEntity(C_BaseEntity *pEntity, bool bModel)
+void COutlines::DrawEntity(C_BaseEntity* pEntity, bool bModel)
 {
 	m_bRendering = true;
 
 	if (!bModel)
 		m_bRenderingOutlines = true;
 
-	float flOldInvisibility = pEntity->GetClassId() == ETFClassIds::CTFPlayer ? pEntity->As<C_TFPlayer>()->m_flInvisibility() : -1.0f;
+	const float flOldInvisibility = pEntity->GetClassId() == ETFClassIds::CTFPlayer ? pEntity->As<C_TFPlayer>()->m_flInvisibility() : -1.0f;
 
 	if (flOldInvisibility > 0.99f)
 	{
@@ -126,27 +126,28 @@ void COutlines::RunModels()
 	if (!CFG::Outlines_Active || I::EngineVGui->IsGameUIVisible() || G::bRenderingSpyCamera)
 		return;
 
-	int w = H::Draw->GetScreenW(), h = H::Draw->GetScreenH();
+	const int w = H::Draw->GetScreenW();
+	const int h = H::Draw->GetScreenH();
 
 	if (w < 1 || h < 1 || w > 4096 || h > 2160)
 		return;
 
-	auto pRC = I::MaterialSystem->GetRenderContext();
+	const auto pRC = I::MaterialSystem->GetRenderContext();
 
 	if (!pRC)
 		return;
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return;
 
-	ShaderStencilState_t StencilStateDisable = {};
-	StencilStateDisable.m_bEnable = false;
+	ShaderStencilState_t stencilStateDisable = {};
+	stencilStateDisable.m_bEnable = false;
 
 	float flOriginalColor[3] = {};
 	I::RenderView->GetColorModulation(flOriginalColor);
-	float flOriginalBlend = I::RenderView->GetBlend();
+	const float flOriginalBlend = I::RenderView->GetBlend();
 
 	SetModelStencil(pRC);
 
@@ -155,18 +156,18 @@ void COutlines::RunModels()
 
 	if (CFG::Outlines_Players_Active)
 	{
-		for (auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
+		for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
 		{
 			if (!pEntity)
 				continue;
 
-			auto pPlayer = pEntity->As<C_TFPlayer>();
+			const auto pPlayer = pEntity->As<C_TFPlayer>();
 
 			if (pPlayer->deadflag())
 				continue;
 
-			bool bIsLocal = pPlayer == pLocal;
-			bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
+			const bool bIsLocal = pPlayer == pLocal;
+			const bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
 
 			if (CFG::Outlines_Players_Ignore_Local && bIsLocal)
 				continue;
@@ -185,8 +186,10 @@ void COutlines::RunModels()
 							if (pPlayer->m_iClass() != TF_CLASS_MEDIC)
 								continue;
 						}
-
-						else continue;
+						else
+						{
+							continue;
+						}
 					}
 
 					if (CFG::Outlines_Players_Ignore_Enemies && pPlayer->m_iTeamNum() != pLocal->m_iTeamNum())
@@ -197,14 +200,14 @@ void COutlines::RunModels()
 			if (!F::VisualUtils->IsOnScreen(pLocal, pPlayer))
 				continue;
 
-			auto Color = F::VisualUtils->GetEntityColor(pLocal, pPlayer);
+			const auto entColor = F::VisualUtils->GetEntityColor(pLocal, pPlayer);
 
-			m_vecOutlineEntities.emplace_back(OutlineEntity_t{ pPlayer, Color, CFG::Outlines_Players_Alpha });
+			m_vecOutlineEntities.emplace_back(OutlineEntity_t{pPlayer, entColor, CFG::Outlines_Players_Alpha});
 
 			if (!F::Materials->HasDrawn(pPlayer))
 				DrawEntity(pPlayer, true);
 
-			C_BaseEntity *pAttach = pPlayer->FirstMoveChild();
+			C_BaseEntity* pAttach = pPlayer->FirstMoveChild();
 
 			for (int n = 0; n < 32; n++)
 			{
@@ -213,7 +216,7 @@ void COutlines::RunModels()
 
 				if (pAttach->ShouldDraw())
 				{
-					m_vecOutlineEntities.emplace_back(OutlineEntity_t{ pAttach, Color, CFG::Outlines_Players_Alpha });
+					m_vecOutlineEntities.emplace_back(OutlineEntity_t{pAttach, entColor, CFG::Outlines_Players_Alpha});
 
 					if (!F::Materials->HasDrawn(pAttach))
 						DrawEntity(pAttach, true);
@@ -226,17 +229,17 @@ void COutlines::RunModels()
 
 	if (CFG::Outlines_Buildings_Active)
 	{
-		for (auto pEntity : H::Entities->GetGroup(EEntGroup::BUILDINGS_ALL))
+		for (const auto pEntity : H::Entities->GetGroup(EEntGroup::BUILDINGS_ALL))
 		{
 			if (!pEntity)
 				continue;
 
-			auto pBuilding = pEntity->As<C_BaseObject>();
+			const auto pBuilding = pEntity->As<C_BaseObject>();
 
 			if (pBuilding->m_bPlacing())
 				continue;
 
-			bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pBuilding, pLocal);
+			const bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pBuilding, pLocal);
 
 			if (CFG::Outlines_Buildings_Ignore_Local && bIsLocal)
 				continue;
@@ -251,7 +254,10 @@ void COutlines::RunModels()
 							continue;
 					}
 
-					else continue;
+					else
+					{
+						continue;
+					}
 				}
 
 				if (CFG::Outlines_Buildings_Ignore_Enemies && pBuilding->m_iTeamNum() != pLocal->m_iTeamNum())
@@ -261,9 +267,9 @@ void COutlines::RunModels()
 			if (!F::VisualUtils->IsOnScreen(pLocal, pBuilding))
 				continue;
 
-			auto Color = F::VisualUtils->GetEntityColor(pLocal, pBuilding);
+			const auto entColor = F::VisualUtils->GetEntityColor(pLocal, pBuilding);
 
-			m_vecOutlineEntities.emplace_back(OutlineEntity_t{ pBuilding, Color, CFG::Outlines_Buildings_Alpha });
+			m_vecOutlineEntities.emplace_back(OutlineEntity_t{pBuilding, entColor, CFG::Outlines_Buildings_Alpha});
 
 			if (!F::Materials->HasDrawn(pBuilding))
 				DrawEntity(pBuilding, true);
@@ -274,14 +280,14 @@ void COutlines::RunModels()
 	{
 		if (!CFG::Outlines_World_Ignore_HealthPacks)
 		{
-			auto Color = CFG::Color_HealthPack;
+			const auto color = CFG::Color_HealthPack;
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::HEALTHPACKS))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::HEALTHPACKS))
 			{
 				if (!pEntity || !F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
-				m_vecOutlineEntities.emplace_back(OutlineEntity_t{ pEntity, Color, CFG::Outlines_World_Alpha });
+				m_vecOutlineEntities.emplace_back(OutlineEntity_t{pEntity, color, CFG::Outlines_World_Alpha});
 
 				if (!F::Materials->HasDrawn(pEntity))
 					DrawEntity(pEntity, true);
@@ -290,14 +296,14 @@ void COutlines::RunModels()
 
 		if (!CFG::Outlines_World_Ignore_AmmoPacks)
 		{
-			auto Color = CFG::Color_AmmoPack;
+			const auto color = CFG::Color_AmmoPack;
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::AMMOPACKS))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::AMMOPACKS))
 			{
 				if (!pEntity || !F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
-				m_vecOutlineEntities.emplace_back(OutlineEntity_t{ pEntity, Color, CFG::Outlines_World_Alpha });
+				m_vecOutlineEntities.emplace_back(OutlineEntity_t{pEntity, color, CFG::Outlines_World_Alpha});
 
 				if (!F::Materials->HasDrawn(pEntity))
 					DrawEntity(pEntity, true);
@@ -306,14 +312,14 @@ void COutlines::RunModels()
 
 		if (!CFG::Outlines_World_Ignore_Halloween_Gift)
 		{
-			auto Color = CFG::Color_Halloween_Gift;
+			const auto color = CFG::Color_Halloween_Gift;
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::HALLOWEEN_GIFT))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::HALLOWEEN_GIFT))
 			{
 				if (!pEntity || !pEntity->ShouldDraw() || !F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
-				m_vecOutlineEntities.emplace_back(OutlineEntity_t{ pEntity, Color, CFG::Outlines_World_Alpha });
+				m_vecOutlineEntities.emplace_back(OutlineEntity_t{pEntity, color, CFG::Outlines_World_Alpha});
 
 				if (!F::Materials->HasDrawn(pEntity))
 					DrawEntity(pEntity, true);
@@ -322,32 +328,32 @@ void COutlines::RunModels()
 
 		if (!CFG::Outlines_World_Ignore_MVM_Money)
 		{
-			auto Color = CFG::Color_MVM_Money;
+			const auto color = CFG::Color_MVM_Money;
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::MVM_MONEY))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::MVM_MONEY))
 			{
 				if (!pEntity || !pEntity->ShouldDraw() || !F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
-				m_vecOutlineEntities.emplace_back(OutlineEntity_t{ pEntity, Color, CFG::Outlines_World_Alpha });
+				m_vecOutlineEntities.emplace_back(OutlineEntity_t{pEntity, color, CFG::Outlines_World_Alpha});
 
 				if (!F::Materials->HasDrawn(pEntity))
 					DrawEntity(pEntity, true);
 			}
 		}
 
-		bool bIgnoringAllProjectiles = CFG::Outlines_World_Ignore_LocalProjectiles
+		const bool bIgnoringAllProjectiles = CFG::Outlines_World_Ignore_LocalProjectiles
 			&& CFG::Outlines_World_Ignore_EnemyProjectiles
 			&& CFG::Outlines_World_Ignore_TeammateProjectiles;
 
 		if (!bIgnoringAllProjectiles)
 		{
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::PROJECTILES_ALL))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PROJECTILES_ALL))
 			{
 				if (!pEntity || !pEntity->ShouldDraw())
 					continue;
 
-				bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pEntity, pLocal);
+				const bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pEntity, pLocal);
 
 				if (CFG::Outlines_World_Ignore_LocalProjectiles && bIsLocal)
 					continue;
@@ -364,9 +370,9 @@ void COutlines::RunModels()
 				if (!F::VisualUtils->IsOnScreen(pLocal, pEntity))
 					continue;
 
-				auto Color = F::VisualUtils->GetEntityColor(pLocal, pEntity);
+				const auto color = F::VisualUtils->GetEntityColor(pLocal, pEntity);
 
-				m_vecOutlineEntities.emplace_back(OutlineEntity_t{ pEntity, Color, CFG::Outlines_World_Alpha });
+				m_vecOutlineEntities.emplace_back(OutlineEntity_t{pEntity, color, CFG::Outlines_World_Alpha});
 
 				if (!F::Materials->HasDrawn(pEntity))
 					DrawEntity(pEntity, true);
@@ -374,7 +380,7 @@ void COutlines::RunModels()
 		}
 	}
 
-	StencilStateDisable.SetStencilState(pRC);
+	stencilStateDisable.SetStencilState(pRC);
 
 	I::ModelRender->ForcedMaterialOverride(nullptr);
 	I::RenderView->SetColorModulation(flOriginalColor);
@@ -391,12 +397,13 @@ void COutlines::Run()
 		return;
 	}
 
-	int w = H::Draw->GetScreenW(), h = H::Draw->GetScreenH();
+	const int w = H::Draw->GetScreenW();
+	const int h = H::Draw->GetScreenH();
 
 	if (w < 1 || h < 1 || w > 4096 || h > 2160)
 		return;
 
-	auto pRC = I::MaterialSystem->GetRenderContext();
+	const auto pRC = I::MaterialSystem->GetRenderContext();
 
 	if (!pRC)
 		return;
@@ -404,12 +411,12 @@ void COutlines::Run()
 	if (CFG::Outlines_Style == 0)
 		m_pBloomAmount->SetIntValue(CFG::Outlines_Bloom_Amount);
 
-	ShaderStencilState_t StencilStateDisable = {};
-	StencilStateDisable.m_bEnable = false;
+	ShaderStencilState_t stencilStateDisable = {};
+	stencilStateDisable.m_bEnable = false;
 
 	float flOriginalColor[3] = {};
 	I::RenderView->GetColorModulation(flOriginalColor);
-	float flOriginalBlend = I::RenderView->GetBlend();
+	const float flOriginalBlend = I::RenderView->GetBlend();
 
 	if (m_vecOutlineEntities.empty())
 		return;
@@ -423,13 +430,14 @@ void COutlines::Run()
 		pRC->ClearColor4ub(0, 0, 0, 0);
 		pRC->ClearBuffers(true, false, false);
 
-		for (const auto &Entity : m_vecOutlineEntities) {
-			I::RenderView->SetBlend(Entity.m_flAlpha);
-			I::RenderView->SetColorModulation(ColorUtils::ToFloat(Entity.m_Color.r), ColorUtils::ToFloat(Entity.m_Color.g), ColorUtils::ToFloat(Entity.m_Color.b));
-			DrawEntity(Entity.m_pEntity, false);
+		for (const auto& entity : m_vecOutlineEntities)
+		{
+			I::RenderView->SetBlend(entity.m_flAlpha);
+			I::RenderView->SetColorModulation(ColorUtils::ToFloat(entity.m_Color.r), ColorUtils::ToFloat(entity.m_Color.g), ColorUtils::ToFloat(entity.m_Color.b));
+			DrawEntity(entity.m_pEntity, false);
 		}
 
-		StencilStateDisable.SetStencilState(pRC);
+		stencilStateDisable.SetStencilState(pRC);
 	}
 	pRC->PopRenderTargetAndViewport();
 
@@ -446,26 +454,26 @@ void COutlines::Run()
 		pRC->PopRenderTargetAndViewport();
 	}
 
-	ShaderStencilState_t SEffect = {};
-	SEffect.m_bEnable = true;
-	SEffect.m_nWriteMask = 0x0;
-	SEffect.m_nTestMask = 0xFF;
-	SEffect.m_nReferenceValue = 0;
-	SEffect.m_CompareFunc = STENCILCOMPARISONFUNCTION_EQUAL;
-	SEffect.m_PassOp = STENCILOPERATION_KEEP;
-	SEffect.m_FailOp = STENCILOPERATION_KEEP;
-	SEffect.m_ZFailOp = STENCILOPERATION_KEEP;
-	SEffect.SetStencilState(pRC);
+	ShaderStencilState_t sEffect = {};
+	sEffect.m_bEnable = true;
+	sEffect.m_nWriteMask = 0x0;
+	sEffect.m_nTestMask = 0xFF;
+	sEffect.m_nReferenceValue = 0;
+	sEffect.m_CompareFunc = STENCILCOMPARISONFUNCTION_EQUAL;
+	sEffect.m_PassOp = STENCILOPERATION_KEEP;
+	sEffect.m_FailOp = STENCILOPERATION_KEEP;
+	sEffect.m_ZFailOp = STENCILOPERATION_KEEP;
+	sEffect.SetStencilState(pRC);
 
 	switch (CFG::Outlines_Style)
 	{
-		case 0:
+	case 0:
 		{
 			pRC->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 0, 0, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
 			break;
 		}
 
-		case 1:
+	case 1:
 		{
 			pRC->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -1, -1, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
 			pRC->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -1, 1, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
@@ -474,7 +482,7 @@ void COutlines::Run()
 			break;
 		}
 
-		case 2:
+	case 2:
 		{
 			pRC->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -2, -1, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
 			pRC->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 2, 1, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
@@ -483,7 +491,7 @@ void COutlines::Run()
 			break;
 		}
 
-		case 3:
+	case 3:
 		{
 			pRC->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -2, -2, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
 			pRC->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, -2, 2, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
@@ -492,10 +500,10 @@ void COutlines::Run()
 			break;
 		}
 
-		default: break;
+	default: break;
 	}
 
-	StencilStateDisable.SetStencilState(pRC);
+	stencilStateDisable.SetStencilState(pRC);
 
 	I::ModelRender->ForcedMaterialOverride(nullptr);
 	I::RenderView->SetColorModulation(flOriginalColor);
@@ -544,14 +552,14 @@ void COutlines::CleanUp()
 	m_bCleaningUp = false;
 }
 
-void COutlines::SetModelStencil(IMatRenderContext *pRenderContext)
+void COutlines::SetModelStencil(IMatRenderContext* pRenderContext)
 {
-	ShaderStencilState_t State = {};
-	State.m_bEnable = true;
-	State.m_nReferenceValue = 1;
-	State.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
-	State.m_PassOp = STENCILOPERATION_REPLACE;
-	State.m_FailOp = STENCILOPERATION_KEEP;
-	State.m_ZFailOp = STENCILOPERATION_REPLACE;
-	State.SetStencilState(pRenderContext);
+	ShaderStencilState_t state = {};
+	state.m_bEnable = true;
+	state.m_nReferenceValue = 1;
+	state.m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
+	state.m_PassOp = STENCILOPERATION_REPLACE;
+	state.m_FailOp = STENCILOPERATION_KEEP;
+	state.m_ZFailOp = STENCILOPERATION_REPLACE;
+	state.SetStencilState(pRenderContext);
 }
