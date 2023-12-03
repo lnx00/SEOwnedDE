@@ -2310,24 +2310,24 @@ void CMenu::MainWindow()
 					continue;
 				}
 
-				CPlayers::PlayerInfo custom_info{};
+				PlayerPriority custom_info{};
 
 				F::Players->GetInfo(n, custom_info);
 
 				auto bx{ m_nCursorX };
 				auto by{ m_nCursorY };
 
-				if (custom_info.m_ignored)
+				if (custom_info.Ignored)
 				{
 					playerListButton(Utils::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_Friend, false);
 				}
 
-				else if (custom_info.m_cheater)
+				else if (custom_info.Cheater)
 				{
 					playerListButton(Utils::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_Cheater, false);
 				}
 
-				else if (custom_info.m_retard_legit)
+				else if (custom_info.RetardLegit)
 				{
 					playerListButton(Utils::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_RetardLegit, false);
 				}
@@ -2340,25 +2340,25 @@ void CMenu::MainWindow()
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"ignored", 60, custom_info.m_ignored ? CFG::Color_Friend : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"ignored", 60, custom_info.Ignored ? CFG::Color_Friend : CFG::Menu_Text_Inactive, true))
 				{
-					F::Players->Mark(n, { !custom_info.m_ignored, false });
+					F::Players->Mark(n, { !custom_info.Ignored, false });
 				}
 
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"cheater", 60, custom_info.m_cheater ? CFG::Color_Cheater : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"cheater", 60, custom_info.Cheater ? CFG::Color_Cheater : CFG::Menu_Text_Inactive, true))
 				{
-					F::Players->Mark(n, { false, !custom_info.m_cheater });
+					F::Players->Mark(n, { false, !custom_info.Cheater });
 				}
 
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"retard legit", 60, custom_info.m_retard_legit ? CFG::Color_RetardLegit : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"retard legit", 60, custom_info.RetardLegit ? CFG::Color_RetardLegit : CFG::Menu_Text_Inactive, true))
 				{
-					F::Players->Mark(n, { false, false, !custom_info.m_retard_legit });
+					F::Players->Mark(n, { false, false, !custom_info.RetardLegit });
 				}
 
 				m_nCursorX = bx;

@@ -61,16 +61,16 @@ Color_t CVisualUtils::GetEntityColor(C_TFPlayer *pLocal, C_BaseEntity *pEntity)
 
 		if (pPlayer != pLocal)
 		{
-			CPlayers::PlayerInfo info{};
+			PlayerPriority info{};
 
 			F::Players->GetInfo(pPlayer->entindex(), info);
 
-			if (info.m_cheater)
+			if (info.Cheater)
 			{
 				return CFG::Color_Cheater;
 			}
 
-			if (info.m_retard_legit)
+			if (info.RetardLegit)
 			{
 				return CFG::Color_RetardLegit;
 			}

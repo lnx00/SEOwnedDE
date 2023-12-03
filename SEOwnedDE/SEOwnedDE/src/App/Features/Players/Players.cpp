@@ -1,30 +1,21 @@
 #include "Players.h"
 
-struct Player
-{
-	hash::hash_t m_steam_id{};
-	CPlayers::PlayerInfo m_info{};
-};
-
-std::vector<Player> players_vec{};
-std::string log_path{};
-
 void CPlayers::Parse()
 {
-	if (log_path.empty())
+	if (m_LogPath.empty())
 	{
-		log_path = std::filesystem::current_path().string() + "\\SEOwnedDE\\";
+		m_LogPath = std::filesystem::current_path().string() + "\\SEOwnedDE\\";
 
-		if (!std::filesystem::exists(log_path))
+		if (!std::filesystem::exists(m_LogPath))
 		{
-			std::filesystem::create_directories(log_path);
+			std::filesystem::create_directories(m_LogPath);
 		}
 
-		log_path += "players.json";
+		m_LogPath += "players.json";
 
-		if (!std::filesystem::exists(log_path))
+		if (!std::filesystem::exists(m_LogPath))
 		{
-			std::ofstream file(log_path, std::ios::app);
+			std::ofstream file(m_LogPath, std::ios::app);
 
 			if (!file.is_open())
 			{
@@ -35,12 +26,12 @@ void CPlayers::Parse()
 		}
 	}
 
-	if (!players_vec.empty())
+	if (!m_Players.empty())
 	{
 		return;
 	}
 
-	std::ifstream file(log_path);
+	std::ifstream file(m_LogPath);
 
 	if (!file.is_open() || file.peek() == std::ifstream::traits_type::eof())
 	{
@@ -51,43 +42,43 @@ void CPlayers::Parse()
 
 	file >> j;
 
-	for (const auto &item : j.items())
+	for (const auto& item : j.items())
 	{
 		Player p
-		{ 
+		{
 			HASH_RT(item.key().c_str()),
 			{
 				j[item.key()]["ignored"].get<bool>(),
 				j[item.key()]["cheater"].get<bool>(),
 				j[item.key()]["retardlegit"].get<bool>()
-			} 
+			}
 		};
 
-		players_vec.push_back(p);
+		m_Players.push_back(p);
 	}
 }
 
-void CPlayers::Mark(int entindex, const PlayerInfo &info)
+void CPlayers::Mark(int entindex, const PlayerPriority& info)
 {
 	if (entindex == I::EngineClient->GetLocalPlayer())
 	{
 		return;
 	}
 
-	player_info_t player_info{};
+	player_info_t playerInfo{};
 
-	if (!I::EngineClient->GetPlayerInfo(entindex, &player_info) || player_info.fakeplayer)
+	if (!I::EngineClient->GetPlayerInfo(entindex, &playerInfo) || playerInfo.fakeplayer)
 	{
 		return;
 	}
 
-	Player *ptr{};
+	Player* ptr{};
 
-	auto steam_id{ HASH_RT(std::string_view(player_info.guid).data()) };
+	auto steam_id{HASH_RT(std::string_view(playerInfo.guid).data())};
 
-	for (auto &pl : players_vec)
+	for (auto& pl : m_Players)
 	{
-		if (pl.m_steam_id != steam_id)
+		if (pl.SteamID != steam_id)
 		{
 			continue;
 		}
@@ -99,40 +90,40 @@ void CPlayers::Mark(int entindex, const PlayerInfo &info)
 
 	if (!ptr)
 	{
-		players_vec.push_back({ steam_id, info });
+		m_Players.push_back({steam_id, info});
 
-		ptr = &players_vec.back();
+		ptr = &m_Players.back();
 	}
 
-	ptr->m_info = info;
+	ptr->Info = info;
 
 	nlohmann::json j{};
 
-	std::ifstream read_file(log_path);
+	std::ifstream readFile(m_LogPath);
 
-	if (read_file.is_open() && read_file.peek() != std::ifstream::traits_type::eof())
+	if (readFile.is_open() && readFile.peek() != std::ifstream::traits_type::eof())
 	{
-		read_file >> j;
+		readFile >> j;
 	}
 
-	read_file.close();
+	readFile.close();
 
-	std::ofstream file(log_path);
+	std::ofstream file(m_LogPath);
 
 	if (!file.is_open())
 	{
 		return;
 	}
 
-	auto key{ std::string(player_info.guid) };
+	auto key{std::string(playerInfo.guid)};
 
-	j[key]["ignored"] = ptr->m_info.m_ignored;
-	j[key]["cheater"] = ptr->m_info.m_cheater;
-	j[key]["retardlegit"] = ptr->m_info.m_retard_legit;
+	j[key]["ignored"] = ptr->Info.Ignored;
+	j[key]["cheater"] = ptr->Info.Cheater;
+	j[key]["retardlegit"] = ptr->Info.RetardLegit;
 
-	if (!ptr->m_info.m_ignored && !ptr->m_info.m_cheater && !ptr->m_info.m_retard_legit)
+	if (!ptr->Info.Ignored && !ptr->Info.Cheater && !ptr->Info.RetardLegit)
 	{
-		j.erase(std::string(player_info.guid));
+		j.erase(std::string(playerInfo.guid));
 	}
 
 	file << std::setw(4) << j;
@@ -140,30 +131,30 @@ void CPlayers::Mark(int entindex, const PlayerInfo &info)
 	file.close();
 }
 
-bool CPlayers::GetInfo(int entindex, PlayerInfo &out)
+bool CPlayers::GetInfo(int entindex, PlayerPriority& out)
 {
 	if (entindex == I::EngineClient->GetLocalPlayer())
 	{
 		return false;
 	}
 
-	player_info_t player_info{};
+	player_info_t playerInfo{};
 
-	if (!I::EngineClient->GetPlayerInfo(entindex, &player_info) || player_info.fakeplayer)
+	if (!I::EngineClient->GetPlayerInfo(entindex, &playerInfo) || playerInfo.fakeplayer)
 	{
 		return false;
 	}
 
-	auto steam_id{ HASH_RT(std::string_view(player_info.guid).data()) };
+	const auto steamID{HASH_RT(std::string_view(playerInfo.guid).data())};
 
-	for (const auto &pl : players_vec)
+	for (const auto& pl : m_Players)
 	{
-		if (pl.m_steam_id != steam_id)
+		if (pl.SteamID != steamID)
 		{
 			continue;
 		}
 
-		out = pl.m_info;
+		out = pl.Info;
 
 		return true;
 	}
@@ -171,18 +162,18 @@ bool CPlayers::GetInfo(int entindex, PlayerInfo &out)
 	return false;
 }
 
-bool CPlayers::GetInfoGUID(const std::string &guid, PlayerInfo &out)
+bool CPlayers::GetInfoGUID(const std::string& guid, PlayerPriority& out)
 {
-	auto steam_id{ HASH_RT(guid.c_str()) };
+	const auto steamID{HASH_RT(guid.c_str())};
 
-	for (const auto &pl : players_vec)
+	for (const auto& pl : m_Players)
 	{
-		if (pl.m_steam_id != steam_id)
+		if (pl.SteamID != steamID)
 		{
 			continue;
 		}
 
-		out = pl.m_info;
+		out = pl.Info;
 
 		return true;
 	}

@@ -62,23 +62,23 @@ MAKE_HOOK(
 
 		if (HASH_RT(event->GetName()) == player_connect_client && bClientOnly && CFG::Visuals_Chat_Player_List_Info)
 		{
-			CPlayers::PlayerInfo pi{};
+			PlayerPriority pi{};
 
 			if (F::Players->GetInfoGUID(event->GetString("networkid"), pi))
 			{
 				const char *const name{ event->GetString("name") };
 
-				if (pi.m_ignored)
+				if (pi.Ignored)
 				{
 					I::ClientModeShared->PrintToChat(std::format("\x1{} is marked as \x8{}[Ignored]", name, CFG::Color_Friend.toHexStr()).c_str());
 				}
 
-				if (pi.m_cheater)
+				if (pi.Cheater)
 				{
 					I::ClientModeShared->PrintToChat(std::format("\x1{} is marked as \x8{}[Cheater]", name, CFG::Color_Cheater.toHexStr()).c_str());
 				}
 
-				if (pi.m_retard_legit)
+				if (pi.RetardLegit)
 				{
 					I::ClientModeShared->PrintToChat(std::format("\x1{} is marked as \x8{}[Retard Legit]", name, CFG::Color_RetardLegit.toHexStr()).c_str());
 				}

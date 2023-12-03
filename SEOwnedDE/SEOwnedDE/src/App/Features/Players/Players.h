@@ -2,20 +2,29 @@
 
 #include "../../../SDK/SDK.h"
 
+struct PlayerPriority
+{
+	bool Ignored{};
+	bool Cheater{};
+	bool RetardLegit{};
+};
+
 class CPlayers
 {
-public:
-	struct PlayerInfo
+	struct Player
 	{
-		bool m_ignored{};
-		bool m_cheater{};
-		bool m_retard_legit{};
+		hash::hash_t SteamID = {};
+		PlayerPriority Info = {};
 	};
 
+	std::vector<Player> m_Players;
+	std::string m_LogPath;
+
+public:
 	void Parse();
-	void Mark(int entindex, const PlayerInfo &info);
-	bool GetInfo(int entindex, PlayerInfo &out);
-	bool GetInfoGUID(const std::string &guid, PlayerInfo &out);
+	void Mark(int entindex, const PlayerPriority& info);
+	bool GetInfo(int entindex, PlayerPriority& out);
+	bool GetInfoGUID(const std::string& guid, PlayerPriority& out);
 };
 
 MAKE_SINGLETON_SCOPED(CPlayers, Players, F);

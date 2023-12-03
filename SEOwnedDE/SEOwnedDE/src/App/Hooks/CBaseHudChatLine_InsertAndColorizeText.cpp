@@ -31,21 +31,21 @@ MAKE_HOOK(
 				}
 			}
 
-			CPlayers::PlayerInfo pi{};
+			PlayerPriority pi{};
 
 			if (F::Players->GetInfo(clientIndex, pi))
 			{
-				if (pi.m_ignored)
+				if (pi.Ignored)
 				{
 					prefix = std::format(L"\x8{}[Ignored] \x3", CFG::Color_Friend.toHexStrW());
 				}
 
-				if (pi.m_cheater)
+				if (pi.Cheater)
 				{
 					prefix = std::format(L"\x8{}[Cheater] \x3", CFG::Color_Cheater.toHexStrW());
 				}
 
-				if (pi.m_retard_legit)
+				if (pi.RetardLegit)
 				{
 					prefix = std::format(L"\x8{}[Retard Legit] \x3", CFG::Color_RetardLegit.toHexStrW());
 				}

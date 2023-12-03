@@ -15,7 +15,7 @@ MAKE_HOOK(
 	{
 		for (int n{}; n < I::EngineClient->GetMaxClients() + 1; n++)
 		{
-			CPlayers::PlayerInfo pi{};
+			PlayerPriority pi{};
 
 			if (F::Players->GetInfo(n, pi))
 			{
@@ -26,17 +26,17 @@ MAKE_HOOK(
 					continue;
 				}
 
-				if (pi.m_ignored)
+				if (pi.Ignored)
 				{
 					I::ClientModeShared->PrintToChat(std::format("\x1{} is marked as \x8{}[Ignored]", pi_game.name, CFG::Color_Friend.toHexStr()).c_str());
 				}
 
-				if (pi.m_cheater)
+				if (pi.Cheater)
 				{
 					I::ClientModeShared->PrintToChat(std::format("\x1{} is marked as \x8{}[Cheater]", pi_game.name, CFG::Color_Cheater.toHexStr()).c_str());
 				}
 
-				if (pi.m_retard_legit)
+				if (pi.RetardLegit)
 				{
 					I::ClientModeShared->PrintToChat(std::format("\x1{} is marked as \x8{}[Retard Legit]", pi_game.name, CFG::Color_RetardLegit.toHexStr()).c_str());
 				}
