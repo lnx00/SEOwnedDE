@@ -50,7 +50,7 @@ void CPaint::Initialize()
 
 	if (!m_pMatHaloAddToScreen)
 	{
-		auto kv = new KeyValues("UnlitGeneric");
+		const auto kv = new KeyValues("UnlitGeneric");
 		kv->SetString("$basetexture", "seo_paint_buffer0");
 		kv->SetString("$additive", "1");
 		m_pMatHaloAddToScreen = I::MaterialSystem->CreateMaterial("seo_paint_material", kv);
@@ -58,14 +58,14 @@ void CPaint::Initialize()
 
 	if (!m_pMatBlurX)
 	{
-		auto kv = new KeyValues("BlurFilterX");
+		const auto kv = new KeyValues("BlurFilterX");
 		kv->SetString("$basetexture", "seo_paint_buffer0");
 		m_pMatBlurX = I::MaterialSystem->CreateMaterial("seo_paint_material_blurx", kv);
 	}
 
 	if (!m_pMatBlurY)
 	{
-		auto kv = new KeyValues("BlurFilterY");
+		const auto kv = new KeyValues("BlurFilterY");
 		kv->SetString("$basetexture", "seo_paint_buffer1");
 		m_pMatBlurY = I::MaterialSystem->CreateMaterial("seo_paint_material_blury", kv);
 		m_pBloomAmount = m_pMatBlurY->FindVar("$bloomamount", nullptr);
@@ -74,21 +74,21 @@ void CPaint::Initialize()
 
 void CPaint::Run()
 {
-	auto RenderLine = [&](const Vector &v1, const Vector &v2, Color_t c, bool bZBuffer)
+	auto RenderLine = [&](const Vector& v1, const Vector& v2, Color_t c, bool bZBuffer)
 	{
-		reinterpret_cast<void(__cdecl *)(const Vector &, const Vector &, Color_t, bool)>(Signatures::RenderLine.Get())(v1, v2, c, bZBuffer);
+		reinterpret_cast<void(__cdecl *)(const Vector&, const Vector&, Color_t, bool)>(Signatures::RenderLine.Get())(v1, v2, c, bZBuffer);
 	};
 
 	auto Rainbow = [&](int nTick)
 	{
-		float rate = 3.0f;
-		float t = TICKS_TO_TIME(nTick);
+		constexpr float rate = 3.0f;
+		const float t = TICKS_TO_TIME(nTick);
 
-		int r = std::lround(std::cosf(I::GlobalVars->realtime + t * rate + 0.0f) * 127.5f + 127.5f);
-		int g = std::lround(std::cosf(I::GlobalVars->realtime + t * rate + 2.0f) * 127.5f + 127.5f);
-		int b = std::lround(std::cosf(I::GlobalVars->realtime + t * rate + 4.0f) * 127.5f + 127.5f);
+		const int r = std::lround(std::cosf(I::GlobalVars->realtime + t * rate + 0.0f) * 127.5f + 127.5f);
+		const int g = std::lround(std::cosf(I::GlobalVars->realtime + t * rate + 2.0f) * 127.5f + 127.5f);
+		const int b = std::lround(std::cosf(I::GlobalVars->realtime + t * rate + 4.0f) * 127.5f + 127.5f);
 
-		return Color_t{ static_cast<byte>(r), static_cast<byte>(g), static_cast<byte>(b), static_cast<byte>(255) };
+		return Color_t{static_cast<byte>(r), static_cast<byte>(g), static_cast<byte>(b), static_cast<byte>(255)};
 	};
 
 	int w = H::Draw->GetScreenW(), h = H::Draw->GetScreenH();
@@ -98,21 +98,24 @@ void CPaint::Run()
 
 	Initialize();
 
-	if (!CFG::Visuals_Paint_Active) {
+	if (!CFG::Visuals_Paint_Active)
+	{
 		m_mapPositions.clear();
 		return;
 	}
 
 	auto pLocal = H::Entities->GetLocal();
 
-	if (!pLocal) {
+	if (!pLocal)
+	{
 		m_mapPositions.clear();
 		return;
 	}
 
 	auto pRenderContext = I::MaterialSystem->GetRenderContext();
 
-	if (!pRenderContext) {
+	if (!pRenderContext)
+	{
 		m_mapPositions.clear();
 		return;
 	}
@@ -138,17 +141,20 @@ void CPaint::Run()
 				Vec3 vStart = pLocal->GetShootPos();
 				Vec3 vEnd = vStart + (vForward * 9001.0f);
 
-				Ray_t Ray = {};
-				Ray.Init(vStart, vEnd);
-				trace_t Trace = {};
-				CTraceFilterWorldCustom Filter = {};
+				Ray_t ray = {};
+				ray.Init(vStart, vEnd);
+				trace_t trace = {};
+				CTraceFilterWorldCustom filter = {};
 
-				I::EngineTrace->TraceRay(Ray, MASK_SOLID, &Filter, &Trace);
+				I::EngineTrace->TraceRay(ray, MASK_SOLID, &filter, &trace);
 
-				m_mapPositions[nTick].push_back({ Trace.endpos, I::GlobalVars->curtime });
+				m_mapPositions[nTick].push_back({trace.endpos, I::GlobalVars->curtime});
 			}
 
-			else nTick = 0;
+			else
+			{
+				nTick = 0;
+			}
 
 			if (H::Input->IsPressed(CFG::Visuals_Paint_Erase_Key))
 			{
@@ -171,11 +177,12 @@ void CPaint::Run()
 
 		I::ModelRender->ForcedMaterialOverride(m_pMatGlowColor);
 
-		for (auto it = m_mapPositions.begin(); it != m_mapPositions.end(); it++)
+		for (auto it = m_mapPositions.begin(); it != m_mapPositions.end(); ++it)
 		{
-			auto &v = it->second;
+			auto& v = it->second;
 
-			if (v.empty()) {
+			if (v.empty())
+			{
 				m_mapPositions.erase(it);
 				continue;
 			}
@@ -184,20 +191,23 @@ void CPaint::Run()
 			{
 				for (size_t n = 1; n < v.size(); n++)
 				{
-					if (auto flLifeTime = CFG::Visuals_Paint_LifeTime)
+					auto flLifeTime = CFG::Visuals_Paint_LifeTime;
+					if (flLifeTime != 0.f)
 					{
-						if (fabsf(I::GlobalVars->curtime - v[n].m_flTimeAdded) > flLifeTime) {
+						if (fabsf(I::GlobalVars->curtime - v[n].TimeAdded) > flLifeTime)
+						{
 							v.erase(v.begin() + n);
 							continue;
 						}
 
-						if (fabsf(I::GlobalVars->curtime - v[n - 1].m_flTimeAdded) > flLifeTime) {
+						if (fabsf(I::GlobalVars->curtime - v[n - 1].TimeAdded) > flLifeTime)
+						{
 							v.erase(v.begin() + (n - 1));
 							continue;
 						}
 					}
 
-					RenderLine(v[n].m_vPosition, v[n - 1].m_vPosition, Rainbow(n), false);
+					RenderLine(v[n].Position, v[n - 1].Position, Rainbow(n), false);
 				}
 
 				bDrewSomething = true;
@@ -220,23 +230,23 @@ void CPaint::Run()
 		}
 		pRenderContext->PopRenderTargetAndViewport();
 
-		ShaderStencilState_t SEffect = {};
-		SEffect.m_bEnable = true;
-		SEffect.m_nWriteMask = 0x0;
-		SEffect.m_nTestMask = 0xFF;
-		SEffect.m_nReferenceValue = 0;
-		SEffect.m_CompareFunc = STENCILCOMPARISONFUNCTION_EQUAL;
-		SEffect.m_PassOp = STENCILOPERATION_KEEP;
-		SEffect.m_FailOp = STENCILOPERATION_KEEP;
-		SEffect.m_ZFailOp = STENCILOPERATION_KEEP;
-		SEffect.SetStencilState(pRenderContext);
+		ShaderStencilState_t sEffect = {};
+		sEffect.m_bEnable = true;
+		sEffect.m_nWriteMask = 0x0;
+		sEffect.m_nTestMask = 0xFF;
+		sEffect.m_nReferenceValue = 0;
+		sEffect.m_CompareFunc = STENCILCOMPARISONFUNCTION_EQUAL;
+		sEffect.m_PassOp = STENCILOPERATION_KEEP;
+		sEffect.m_FailOp = STENCILOPERATION_KEEP;
+		sEffect.m_ZFailOp = STENCILOPERATION_KEEP;
+		sEffect.SetStencilState(pRenderContext);
 
 		pRenderContext->DrawScreenSpaceRectangle(m_pMatHaloAddToScreen, 0, 0, w, h, 0.0f, 0.0f, w - 1, h - 1, w, h);
 	}
 
-	ShaderStencilState_t StencilStateDisable = {};
-	StencilStateDisable.m_bEnable = false;
-	StencilStateDisable.SetStencilState(pRenderContext);
+	ShaderStencilState_t stencilStateDisable = {};
+	stencilStateDisable.m_bEnable = false;
+	stencilStateDisable.SetStencilState(pRenderContext);
 }
 
 void CPaint::CleanUp()
