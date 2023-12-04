@@ -5,7 +5,7 @@
 static Vec3 g_vShiftStart = {};
 static bool g_bStartedShiftOnGround = false;
 
-bool CRapidFire::ShouldStart(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon)
+bool CRapidFire::ShouldStart(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon)
 {
 	if (G::nTicksSinceCanFire < 24 || G::nTargetIndex <= 1 || !G::bFiring || Shifting::bShifting || Shifting::bRecharging || Shifting::bShiftingWarp)
 		return false;
@@ -22,24 +22,25 @@ bool CRapidFire::ShouldStart(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon)
 	return true;
 }
 
-void CRapidFire::Run(CUserCmd *pCmd, bool *pSendPacket)
+void CRapidFire::Run(CUserCmd* pCmd, bool* pSendPacket)
 {
 	Shifting::bRapidFireWantShift = false;
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return;
 
-	auto pWeapon = H::Entities->GetWeapon();
+	const auto pWeapon = H::Entities->GetWeapon();
 
 	if (!pWeapon)
 		return;
 
-	if (ShouldStart(pLocal, pWeapon)) 
+	if (ShouldStart(pLocal, pWeapon))
 	{
 		//hacky
-		if (G::nTicksTargetSame < CFG::Exploits_RapidFire_Min_Ticks_Target_Same) {
+		if (G::nTicksTargetSame < CFG::Exploits_RapidFire_Min_Ticks_Target_Same)
+		{
 			pCmd->buttons &= ~IN_ATTACK;
 			G::bFiring = false;
 			return;
@@ -72,23 +73,24 @@ void CRapidFire::Run(CUserCmd *pCmd, bool *pSendPacket)
 	}
 }
 
-bool CRapidFire::ShouldExitCreateMove(CUserCmd *pCmd)
+bool CRapidFire::ShouldExitCreateMove(CUserCmd* pCmd)
 {
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return false;
 
-	auto WalkTo = [&](const Vec3 &vFrom, const Vec3 &vTo, float flScale) -> void
+	auto WalkTo = [&](const Vec3& vFrom, const Vec3& vTo, float flScale) -> void
 	{
-		Vec3 vDelta = vTo - vFrom;
+		const Vec3 vDelta = vTo - vFrom;
 
 		if (vDelta.Length() == 0.0f)
 			return;
 
-		Vec3 vDeltaMove = { vDelta.x, vDelta.y, 0.0f }, vDeltaDir = {};
+		const Vec3 vDeltaMove = {vDelta.x, vDelta.y, 0.0f};
+		Vec3 vDeltaDir = {};
 		Math::VectorAngles(vDeltaMove, vDeltaDir);
-		float flYaw = DEG2RAD(vDeltaDir.y - pCmd->viewangles.y);
+		const float flYaw = DEG2RAD(vDeltaDir.y - pCmd->viewangles.y);
 		pCmd->forwardmove = cosf(flYaw) * (450.0f * flScale);
 		pCmd->sidemove = -sinf(flYaw) * (450.0f * flScale);
 	};
@@ -97,7 +99,8 @@ bool CRapidFire::ShouldExitCreateMove(CUserCmd *pCmd)
 	{
 		m_ShiftCmd.command_number = pCmd->command_number;
 
-		if (!m_bSetCommand) {
+		if (!m_bSetCommand)
+		{
 			*pCmd = m_ShiftCmd;
 			m_bSetCommand = true;
 		}
@@ -112,15 +115,15 @@ bool CRapidFire::ShouldExitCreateMove(CUserCmd *pCmd)
 		{
 			auto IsRapidFireWeapon = []()
 			{
-				if (auto pWeapon = H::Entities->GetWeapon())
+				if (const auto pWeapon = H::Entities->GetWeapon())
 				{
 					switch (pWeapon->GetWeaponID())
 					{
-						case TF_WEAPON_MINIGUN:
-						case TF_WEAPON_PISTOL:
-						case TF_WEAPON_PISTOL_SCOUT:
-						case TF_WEAPON_SMG: return true;
-						default: return false;
+					case TF_WEAPON_MINIGUN:
+					case TF_WEAPON_PISTOL:
+					case TF_WEAPON_PISTOL_SCOUT:
+					case TF_WEAPON_SMG: return true;
+					default: return false;
 					}
 				}
 
@@ -137,14 +140,14 @@ bool CRapidFire::ShouldExitCreateMove(CUserCmd *pCmd)
 	return false;
 }
 
-bool CRapidFire::IsWeaponSupported(C_TFWeaponBase *pWeapon)
+bool CRapidFire::IsWeaponSupported(C_TFWeaponBase* pWeapon)
 {
-	auto nWeaponType = H::AimUtils->GetWeaponType(pWeapon);
+	const auto nWeaponType = H::AimUtils->GetWeaponType(pWeapon);
 
 	if (nWeaponType == EWeaponType::MELEE || nWeaponType == EWeaponType::OTHER)
 		return false;
 
-	auto nWeaponID = pWeapon->GetWeaponID();
+	const auto nWeaponID = pWeapon->GetWeaponID();
 
 	if (nWeaponID == TF_WEAPON_CROSSBOW
 		|| nWeaponID == TF_WEAPON_COMPOUND_BOW
