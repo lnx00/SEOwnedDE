@@ -2,9 +2,6 @@
 
 #include "../CFG.h"
 
-static Vec3 g_vShiftStart = {};
-static bool g_bStartedShiftOnGround = false;
-
 bool CRapidFire::ShouldStart(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon)
 {
 	if (G::nTicksSinceCanFire < 24 || G::nTargetIndex <= 1 || !G::bFiring || Shifting::bShifting || Shifting::bRecharging || Shifting::bShiftingWarp)
@@ -68,8 +65,8 @@ void CRapidFire::Run(CUserCmd* pCmd, bool* pSendPacket)
 
 		*pSendPacket = true;
 
-		g_vShiftStart = pLocal->m_vecOrigin();
-		g_bStartedShiftOnGround = pLocal->m_fFlags() & FL_ONGROUND;
+		m_vShiftStart = pLocal->m_vecOrigin();
+		m_bStartedShiftOnGround = pLocal->m_fFlags() & FL_ONGROUND;
 	}
 }
 
@@ -105,10 +102,10 @@ bool CRapidFire::ShouldExitCreateMove(CUserCmd* pCmd)
 			m_bSetCommand = true;
 		}
 
-		if (CFG::Exploits_RapidFire_Antiwarp && g_bStartedShiftOnGround)
+		if (CFG::Exploits_RapidFire_Antiwarp && m_bStartedShiftOnGround)
 		{
 			*pCmd = m_ShiftCmd;
-			WalkTo(pLocal->m_vecOrigin(), g_vShiftStart, Math::RemapValClamped(static_cast<float>(CFG::Exploits_RapidFire_Ticks), 14.0f, 22.0f, 0.605f, 1.0f));
+			WalkTo(pLocal->m_vecOrigin(), m_vShiftStart, Math::RemapValClamped(static_cast<float>(CFG::Exploits_RapidFire_Ticks), 14.0f, 22.0f, 0.605f, 1.0f));
 		}
 
 		else

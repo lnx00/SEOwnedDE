@@ -8,6 +8,9 @@ class CRapidFire
 	bool m_bShiftSilentAngles = false;
 	bool m_bSetCommand = false;
 
+	Vec3 m_vShiftStart = {};
+	bool m_bStartedShiftOnGround = false;
+
 	bool ShouldStart(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon);
 
 public:
