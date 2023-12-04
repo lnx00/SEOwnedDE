@@ -228,23 +228,19 @@ namespace SDKUtils
 		return nTextureIdOut;
 	}
 
-	static void WalkTo(CUserCmd *cmd, const Vec3 &from, const Vec3 &to, float scale)
+	static void WalkTo(CUserCmd* pCmd, const Vec3& from, const Vec3& to, float scale)
 	{
-		auto delta{ to - from };
+		auto delta = to - from;
 
 		if (delta.Length() == 0.0f)
-		{
 			return;
-		}
 
-		Vec3 delta_dir{};
+		Vec3 deltaDir{};
+		Math::VectorAngles({ delta.x, delta.y, 0.0f }, deltaDir);
 
-		Math::VectorAngles({ delta.x, delta.y, 0.0f }, delta_dir);
-
-		auto yaw{ DEG2RAD(delta_dir.y - cmd->viewangles.y) };
-
-		cmd->forwardmove = cosf(yaw) * (450.0f * scale);
-		cmd->sidemove = -sinf(yaw) * (450.0f * scale);
+		const auto yaw{ DEG2RAD(deltaDir.y - pCmd->viewangles.y) };
+		pCmd->forwardmove = std::cosf(yaw) * (450.0f * scale);
+		pCmd->sidemove = -std::sinf(yaw) * (450.0f * scale);
 	}
 }
 

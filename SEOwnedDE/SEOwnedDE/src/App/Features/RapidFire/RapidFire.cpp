@@ -2,6 +2,21 @@
 
 #include "../CFG.h"
 
+bool IsRapidFireWeapon(C_TFWeaponBase* pWeapon)
+{
+	if (!pWeapon)
+		return false;
+
+	switch (pWeapon->GetWeaponID())
+	{
+	case TF_WEAPON_MINIGUN:
+	case TF_WEAPON_PISTOL:
+	case TF_WEAPON_PISTOL_SCOUT:
+	case TF_WEAPON_SMG: return true;
+	default: return false;
+	}
+}
+
 bool CRapidFire::ShouldStart(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon)
 {
 	if (G::nTicksSinceCanFire < 24 || G::nTargetIndex <= 1 || !G::bFiring || Shifting::bShifting || Shifting::bRecharging || Shifting::bShiftingWarp)
@@ -77,21 +92,6 @@ bool CRapidFire::ShouldExitCreateMove(CUserCmd* pCmd)
 	if (!pLocal)
 		return false;
 
-	auto WalkTo = [&](const Vec3& vFrom, const Vec3& vTo, float flScale) -> void
-	{
-		const Vec3 vDelta = vTo - vFrom;
-
-		if (vDelta.Length() == 0.0f)
-			return;
-
-		const Vec3 vDeltaMove = {vDelta.x, vDelta.y, 0.0f};
-		Vec3 vDeltaDir = {};
-		Math::VectorAngles(vDeltaMove, vDeltaDir);
-		const float flYaw = DEG2RAD(vDeltaDir.y - pCmd->viewangles.y);
-		pCmd->forwardmove = cosf(flYaw) * (450.0f * flScale);
-		pCmd->sidemove = -sinf(flYaw) * (450.0f * flScale);
-	};
-
 	if (Shifting::bShifting && !Shifting::bShiftingWarp)
 	{
 		m_ShiftCmd.command_number = pCmd->command_number;
@@ -105,29 +105,14 @@ bool CRapidFire::ShouldExitCreateMove(CUserCmd* pCmd)
 		if (CFG::Exploits_RapidFire_Antiwarp && m_bStartedShiftOnGround)
 		{
 			*pCmd = m_ShiftCmd;
-			WalkTo(pLocal->m_vecOrigin(), m_vShiftStart, Math::RemapValClamped(static_cast<float>(CFG::Exploits_RapidFire_Ticks), 14.0f, 22.0f, 0.605f, 1.0f));
+			const float moveScale = Math::RemapValClamped(static_cast<float>(CFG::Exploits_RapidFire_Ticks), 14.0f, 22.0f, 0.605f, 1.0f);
+			SDKUtils::WalkTo(pCmd, pLocal->m_vecOrigin(), m_vShiftStart, moveScale);
 		}
 
 		else
 		{
-			auto IsRapidFireWeapon = []()
-			{
-				if (const auto pWeapon = H::Entities->GetWeapon())
-				{
-					switch (pWeapon->GetWeaponID())
-					{
-					case TF_WEAPON_MINIGUN:
-					case TF_WEAPON_PISTOL:
-					case TF_WEAPON_PISTOL_SCOUT:
-					case TF_WEAPON_SMG: return true;
-					default: return false;
-					}
-				}
-
-				return false;
-			};
-
-			if (IsRapidFireWeapon())
+			const auto pWeapon = H::Entities->GetWeapon();
+			if (IsRapidFireWeapon(pWeapon))
 				*pCmd = m_ShiftCmd;
 		}
 
