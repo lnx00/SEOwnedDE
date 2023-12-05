@@ -9,34 +9,33 @@ bool CSpectatorList::GetSpectators()
 {
 	m_vecSpectators.clear();
 
-	auto pLocal = H::Entities->GetLocal();
-
+	const auto pLocal = H::Entities->GetLocal();
 	if (!pLocal || pLocal->deadflag())
 		return false;
 
+	// TODO: Move this to entity cache
 	for (int n = 1; n < I::EngineClient->GetMaxClients() + 1; n++)
 	{
-		auto pEntity = I::ClientEntityList->GetClientEntity(n);
-
+		// Is the entity valid?
+		const auto pEntity = I::ClientEntityList->GetClientEntity(n);
 		if (!pEntity || pEntity->IsDormant() || pEntity->GetClassId() != ETFClassIds::CTFPlayer)
 			continue;
 
-		auto pPlayer = pEntity->As<C_TFPlayer>();
-
+		// Is the local player valid?
+		const auto pPlayer = pEntity->As<C_TFPlayer>();
 		if (!pPlayer->deadflag() || pPlayer->m_hObserverTarget().Get() != pLocal)
 			continue;
 
-		int nMode = pPlayer->m_iObserverMode();
-
+		// Are they spectating?
+		const int nMode = pPlayer->m_iObserverMode();
 		if (nMode != OBS_MODE_IN_EYE && nMode != OBS_MODE_CHASE)
 			continue;
 
-		player_info_t PlayerInfo = {};
-
-		if (!I::EngineClient->GetPlayerInfo(n, &PlayerInfo))
+		player_info_t playerInfo = {};
+		if (!I::EngineClient->GetPlayerInfo(n, &playerInfo))
 			continue;
 
-		m_vecSpectators.emplace_back(Spectator_t{ Utils::ConvertUtf8ToWide(PlayerInfo.name), nMode});
+		m_vecSpectators.emplace_back(Spectator_t{Utils::ConvertUtf8ToWide(playerInfo.name), nMode});
 	}
 
 	return !m_vecSpectators.empty();
@@ -44,10 +43,9 @@ bool CSpectatorList::GetSpectators()
 
 void CSpectatorList::Drag()
 {
-	int nMouseX = H::Input->GetMouseX();
-	int nMouseY = H::Input->GetMouseY();
+	const int nMouseX = H::Input->GetMouseX();
+	const int nMouseY = H::Input->GetMouseY();
 
-	bool bHovered = false;
 	static bool bDragging = false;
 
 	if (!bDragging && F::Menu->IsMenuWindowHovered())
@@ -56,21 +54,26 @@ void CSpectatorList::Drag()
 	static int nDeltaX = 0;
 	static int nDeltaY = 0;
 
-	int nListX = CFG::Visuals_SpectatorList_Pos_X;
-	int nListY = CFG::Visuals_SpectatorList_Pos_Y;
+	const int nListX = CFG::Visuals_SpectatorList_Pos_X;
+	const int nListY = CFG::Visuals_SpectatorList_Pos_Y;
 
-	bHovered = nMouseX > nListX && nMouseX < nListX + LIST_WIDTH && nMouseY > nListY && nMouseY < nListY + CFG::Menu_Drag_Bar_Height;
+	const bool bHovered = nMouseX > nListX && nMouseX < nListX + LIST_WIDTH && nMouseY > nListY && nMouseY < nListY + CFG::Menu_Drag_Bar_Height;
 
-	if (bHovered && H::Input->IsPressed(VK_LBUTTON)) {
+	// Start dragging
+	if (bHovered && H::Input->IsPressed(VK_LBUTTON))
+	{
 		nDeltaX = nMouseX - nListX;
 		nDeltaY = nMouseY - nListY;
 		bDragging = true;
 	}
 
+	// Stop dragging
 	if (!H::Input->IsPressed(VK_LBUTTON) && !H::Input->IsHeld(VK_LBUTTON))
 		bDragging = false;
 
-	if (bDragging) {
+	// Update the location
+	if (bDragging)
+	{
 		CFG::Visuals_SpectatorList_Pos_X = nMouseX - nDeltaX;
 		CFG::Visuals_SpectatorList_Pos_Y = nMouseY - nDeltaY;
 	}
@@ -81,37 +84,43 @@ void CSpectatorList::Run()
 	if (!CFG::Visuals_SpectatorList_Active)
 		return;
 
+	// Anti screenshot?
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
 	{
 		return;
 	}
 
+	// In menu?
 	if (!F::Menu->IsOpen() && (I::EngineVGui->IsGameUIVisible() || SDKUtils::BInEndOfMatch()))
 		return;
 
 	if (F::Menu->IsOpen())
 		Drag();
 
-	auto OutlineColor = []() -> Color_t {
-		Color_t Out = CFG::Menu_Accent_Secondary;
-		Out.a = static_cast<byte>(CFG::Visuals_SpectatorList_Outline_Alpha * 255.0f);
-		return Out;
+	const auto outlineColor = []() -> Color_t
+	{
+		Color_t out = CFG::Menu_Accent_Secondary;
+		out.a = static_cast<byte>(CFG::Visuals_SpectatorList_Outline_Alpha * 255.0f);
+		return out;
 	}();
 
-	auto BackgroundColor = []() -> Color_t {
-		Color_t Out = CFG::Menu_Background;
-		Out.a = static_cast<byte>(CFG::Visuals_SpectatorList_Background_Alpha * 255.0f);
-		return Out;
+	const auto backgroundColor = []() -> Color_t
+	{
+		Color_t out = CFG::Menu_Background;
+		out.a = static_cast<byte>(CFG::Visuals_SpectatorList_Background_Alpha * 255.0f);
+		return out;
 	}();
 
+	// Background
 	H::Draw->Rect(
 		CFG::Visuals_SpectatorList_Pos_X,
 		CFG::Visuals_SpectatorList_Pos_Y,
 		LIST_WIDTH,
 		CFG::Menu_Drag_Bar_Height,
-		BackgroundColor
+		backgroundColor
 	);
 
+	// Title
 	H::Draw->String(
 		H::Fonts->Get(EFonts::Menu),
 		CFG::Visuals_SpectatorList_Pos_X + (LIST_WIDTH / 2),
@@ -121,66 +130,73 @@ void CSpectatorList::Run()
 		"Spectators"
 	);
 
+	// Outline
 	H::Draw->OutlinedRect(
 		CFG::Visuals_SpectatorList_Pos_X,
 		CFG::Visuals_SpectatorList_Pos_Y,
 		LIST_WIDTH,
 		CFG::Menu_Drag_Bar_Height,
-		OutlineColor
+		outlineColor
 	);
 
+	// Are there any spectators?
 	if (!GetSpectators())
 		return;
 
 	for (size_t n = 0; n < m_vecSpectators.size(); n++)
 	{
-		const auto &Spectator = m_vecSpectators[n];
+		const auto& spectator = m_vecSpectators[n];
 
+		// Background
 		H::Draw->Rect(
 			CFG::Visuals_SpectatorList_Pos_X,
 			CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1,
 			LIST_WIDTH,
 			CFG::Menu_Drag_Bar_Height + 1,
-			BackgroundColor
+			backgroundColor
 		);
 
-		int nModeX = CFG::Visuals_SpectatorList_Pos_X;
-		int nModeOffsetX = LIST_WIDTH / 8;
-		int nTextY = CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1;
-		int nTextX = nModeX + nModeOffsetX + CFG::Menu_Spacing_X;
-		int nY = CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1;
+		const int nModeX = CFG::Visuals_SpectatorList_Pos_X;
+		const int nModeOffsetX = LIST_WIDTH / 8;
+		const int nTextY = CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1;
+		const int nTextX = nModeX + nModeOffsetX + CFG::Menu_Spacing_X;
+		const int nY = CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1;
 
-		H::Draw->Line(nModeX + nModeOffsetX, nY, nModeX + nModeOffsetX, nY + CFG::Menu_Drag_Bar_Height, OutlineColor);
+		// Divider
+		H::Draw->Line(nModeX + nModeOffsetX, nY, nModeX + nModeOffsetX, nY + CFG::Menu_Drag_Bar_Height, outlineColor);
 
+		// Spectator mode
 		H::Draw->String(
 			H::Fonts->Get(EFonts::Menu),
 			nModeX + (nModeOffsetX / 2),
 			nTextY + (CFG::Menu_Drag_Bar_Height / 2) + 1,
 			CFG::Menu_Text_Inactive,
 			POS_CENTERXY,
-			Spectator.m_nMode == OBS_MODE_IN_EYE ? "1st" : "3rd"
+			spectator.Mode == OBS_MODE_IN_EYE ? "1st" : "3rd"
 		);
 
 		I::MatSystemSurface->DisableClipping(false);
 		I::MatSystemSurface->SetClippingRect(nModeX, nTextY, (nModeX + LIST_WIDTH) - (CFG::Menu_Spacing_X + 1), nTextY + CFG::Menu_Drag_Bar_Height);
 
+		// Player name
 		H::Draw->String(
 			H::Fonts->Get(EFonts::Menu),
 			nTextX,
 			nTextY + (CFG::Menu_Drag_Bar_Height / 2) + 1,
 			CFG::Menu_Text_Inactive,
 			POS_CENTERY,
-			Spectator.m_wsName.c_str()
+			spectator.Name.c_str()
 		);
 
 		I::MatSystemSurface->DisableClipping(true);
 
+		// Outline
 		H::Draw->OutlinedRect(
 			CFG::Visuals_SpectatorList_Pos_X,
 			CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1,
 			LIST_WIDTH,
 			CFG::Menu_Drag_Bar_Height + 1,
-			OutlineColor
+			outlineColor
 		);
 	}
 }

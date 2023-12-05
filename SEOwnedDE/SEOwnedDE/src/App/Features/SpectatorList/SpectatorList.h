@@ -4,17 +4,15 @@
 
 class CSpectatorList
 {
-private:
-	struct Spectator_t {
-		std::wstring m_wsName = {};
-		int m_nMode = 0;
+	struct Spectator_t
+	{
+		std::wstring Name = {};
+		int Mode = 0;
 	};
 
 	std::vector<Spectator_t> m_vecSpectators = {};
 
 	bool GetSpectators();
-
-private:
 	void Drag();
 
 public:
