@@ -13,17 +13,11 @@ bool CSpectatorList::GetSpectators()
 	if (!pLocal || pLocal->deadflag())
 		return false;
 
-	// TODO: Move this to entity cache
-	for (int n = 1; n < I::EngineClient->GetMaxClients() + 1; n++)
+	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_OBSERVER))
 	{
-		// Is the entity valid?
-		const auto pEntity = I::ClientEntityList->GetClientEntity(n);
-		if (!pEntity || pEntity->IsDormant() || pEntity->GetClassId() != ETFClassIds::CTFPlayer)
-			continue;
-
 		// Is the local player valid?
 		const auto pPlayer = pEntity->As<C_TFPlayer>();
-		if (!pPlayer->deadflag() || pPlayer->m_hObserverTarget().Get() != pLocal)
+		if (pPlayer->m_hObserverTarget().Get() != pLocal)
 			continue;
 
 		// Are they spectating?
@@ -32,10 +26,10 @@ bool CSpectatorList::GetSpectators()
 			continue;
 
 		player_info_t playerInfo = {};
-		if (!I::EngineClient->GetPlayerInfo(n, &playerInfo))
+		if (!I::EngineClient->GetPlayerInfo(pPlayer->entindex(), &playerInfo))
 			continue;
 
-		m_vecSpectators.emplace_back(Spectator_t{Utils::ConvertUtf8ToWide(playerInfo.name), nMode});
+		m_vecSpectators.emplace_back(Utils::ConvertUtf8ToWide(playerInfo.name), nMode);
 	}
 
 	return !m_vecSpectators.empty();
@@ -172,7 +166,7 @@ void CSpectatorList::Run()
 			nTextY + (CFG::Menu_Drag_Bar_Height / 2) + 1,
 			CFG::Menu_Text_Inactive,
 			POS_CENTERXY,
-			spectator.Mode == OBS_MODE_IN_EYE ? "1st" : "3rd"
+			spectator.m_nMode == OBS_MODE_IN_EYE ? "1st" : "3rd"
 		);
 
 		I::MatSystemSurface->DisableClipping(false);

@@ -46,6 +46,12 @@ void CEntityHelper::UpdateCache()
 				{
 					int nPlayerTeam = 0;
 
+					const auto pPlayer = pEntity->As<C_TFPlayer>();
+					if (pPlayer->deadflag() && pPlayer->m_iObserverMode() != OBS_MODE_NONE)
+					{
+						m_mapGroups[EEntGroup::PLAYERS_OBSERVER].push_back(pEntity);
+					}
+
 					if (!pEntity->As<C_BaseEntity>()->IsInValidTeam(&nPlayerTeam))
 						continue;
 

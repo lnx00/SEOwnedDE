@@ -7,7 +7,7 @@ class CSpectatorList
 	struct Spectator_t
 	{
 		std::wstring Name = {};
-		int Mode = 0;
+		int m_nMode = 0;
 	};
 
 	std::vector<Spectator_t> m_vecSpectators = {};
