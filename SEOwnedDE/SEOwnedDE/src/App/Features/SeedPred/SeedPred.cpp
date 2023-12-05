@@ -4,37 +4,29 @@
 
 float CalcMantissaStep(float val)
 {
-	const auto rawVal{reinterpret_cast<int&>(val)};
-	const auto exponent{(rawVal >> 23) & 0xFF};
+	// Calculate the delta to the next representable value
+	const float nextValue = std::nextafter(val, std::numeric_limits<float>::infinity());
+	float mantissaStep = nextValue - val;
+	mantissaStep *= 1000.f;
 
-	const auto result{powf(2.0f, static_cast<float>(exponent - (127 + 23))) * 1000.0f};
-
-	static std::vector<float> mantissas{};
-
-	if (mantissas.empty())
+	// Calculate a lookup table for the steps
+	static const std::vector<float> MANTISSAS = []
 	{
-		auto mantissa{1.0f};
-
-		for (auto n{0}; n < 16; n++)
+		std::vector<float> result;
+		result.reserve(16);
+		for (int i = 0; i < 16; i++)
 		{
-			mantissas.push_back(mantissa);
-
-			mantissa *= 2.0f;
-		}
-	}
-
-	auto closest = [](const std::vector<float>& vec, float value)
-	{
-		const auto it{std::ranges::lower_bound(vec, value)};
-		if (it == vec.end())
-		{
-			return value;
+			result.push_back(std::powf(2, i));
 		}
 
-		return *it;
-	};
+		return result;
+	}();
 
-	return closest(mantissas, result);
+	// Get the closest mantissa
+	const auto it = std::ranges::lower_bound(MANTISSAS, mantissaStep);
+	const float closestResult = (it == MANTISSAS.end()) ? mantissaStep : *it;
+
+	return closestResult;
 }
 
 void CSeedPred::AskForPlayerPerf()
@@ -45,14 +37,16 @@ void CSeedPred::AskForPlayerPerf()
 		return;
 	}
 
-	const auto weapon{H::Entities->GetWeapon()};
+	// Does the current weapon have spread?
+	const auto weapon = H::Entities->GetWeapon();
 	if (!weapon || !(weapon->GetDamageType() & DMG_BULLET) || H::AimUtils->GetWeaponType(weapon) != EWeaponType::HITSCAN || weapon->GetWeaponSpread() <= 0.0f)
 	{
 		Reset();
 		return;
 	}
 
-	if (C_TFPlayer* local{H::Entities->GetLocal()})
+	// Are we dead?
+	if (const auto local = H::Entities->GetLocal())
 	{
 		if (local->deadflag())
 		{
@@ -61,15 +55,15 @@ void CSeedPred::AskForPlayerPerf()
 		}
 	}
 
+	// Are we already waiting? | TODO: Add timer so it doesn't eat CPU...
 	if (m_WaitingForPP)
 	{
 		return;
 	}
 
+	// Request perf data
 	I::ClientState->SendStringCmd("playerperf");
-
 	m_AskTime = static_cast<float>(Plat_FloatTime());
-
 	m_WaitingForPP = true;
 }
 
@@ -86,11 +80,9 @@ bool CSeedPred::ParsePlayerPerf(bf_read& msgData)
 	msgData.Seek(0);
 
 	std::string msg(rawMsg);
-
 	msg.erase(msg.begin()); //STX
 
 	std::smatch matches{};
-
 	std::regex_match(msg, matches, std::regex(R"((\d+.\d+)\s\d+\s\d+\s\d+.\d+\s\d+.\d+\svel\s\d+.\d+)"));
 
 	if (matches.size() == 2)
@@ -104,7 +96,6 @@ bool CSeedPred::ParsePlayerPerf(bf_read& msgData)
 		if (newServerTime > m_ServerTime)
 		{
 			m_PrevServerTime = m_ServerTime;
-
 			m_ServerTime = newServerTime;
 
 			m_ResponseTime = static_cast<float>(Plat_FloatTime() - m_AskTime);
@@ -115,19 +106,18 @@ bool CSeedPred::ParsePlayerPerf(bf_read& msgData)
 				{
 					if (m_GuessTime > 0.0f)
 					{
-						const float delta{m_ServerTime - m_GuessTime};
-
+						// Is our server time synchronized?
+						const float delta = m_ServerTime - m_GuessTime;
 						if (delta == 0.0f)
 						{
 							m_Synced = true;
-
 							m_SyncOffset = m_GuessDelta;
 						}
 					}
 
+					// Update the guessed delta & time
 					m_GuessDelta = m_ServerTime - m_PrevServerTime;
-
-					m_GuessTime = m_ServerTime + (m_GuessDelta);
+					m_GuessTime = m_ServerTime + m_GuessDelta;
 				}
 			}
 		}
@@ -140,9 +130,9 @@ bool CSeedPred::ParsePlayerPerf(bf_read& msgData)
 
 int CSeedPred::GetSeed()
 {
-	float time{(m_ServerTime + m_SyncOffset + m_ResponseTime) * 1000.0f};
-
-	return *reinterpret_cast<int*>(reinterpret_cast<char*>(&time)) & 255;
+	const float time = (m_ServerTime + m_SyncOffset + m_ResponseTime) * 1000.0f;
+	const auto seed = std::bit_cast<int32_t>(time) & 255;
+	return seed;
 }
 
 void CSeedPred::Reset()
@@ -167,21 +157,16 @@ void CSeedPred::AdjustAngles(CUserCmd* cmd)
 
 	const auto local{H::Entities->GetLocal()};
 	if (!local)
-	{
 		return;
-	}
 
 	const auto weapon{H::Entities->GetWeapon()};
 	if (!weapon || !(weapon->GetDamageType() & DMG_BULLET))
-	{
 		return;
-	}
 
+	// Does the weapon have spread?
 	const auto spread{weapon->GetWeaponSpread()};
 	if (spread <= 0.0f)
-	{
 		return;
-	}
 
 	auto bulletsPerShot{weapon->GetWeaponInfo()->GetWeaponData(TF_WEAPON_PRIMARY_MODE).m_nBulletsPerShot};
 	bulletsPerShot = static_cast<int>(SDKUtils::AttribHookValue(static_cast<float>(bulletsPerShot), "mult_bullets_per_shot", weapon));
@@ -190,44 +175,33 @@ void CSeedPred::AdjustAngles(CUserCmd* cmd)
 
 	std::vector<Vec3> bulletCorrections{};
 	Vec3 averageSpread{};
-	auto seed{GetSeed()};
+	int seed = GetSeed();
 
-	for (auto bullet{0}; bullet < bulletsPerShot; bullet++)
+	for (int bullet = 0; bullet < bulletsPerShot; bullet++)
 	{
 		SDKUtils::RandomSeed(seed++);
 
-		auto firePerfect{false};
-
+		// Check if we'll get a guaranteed perfect shot
 		if (bullet == 0)
 		{
-			const auto timeSinceLastShot{(local->m_nTickBase() * TICK_INTERVAL) - weapon->m_flLastFireTime()};
+			const auto timeSinceLastShot = (local->m_nTickBase() * TICK_INTERVAL) - weapon->m_flLastFireTime();
 
-			if (bulletsPerShot > 1 && timeSinceLastShot > 0.25f)
+			if ((bulletsPerShot == 1 && timeSinceLastShot > 1.25f) || (bulletsPerShot > 1 && timeSinceLastShot > 0.25f))
 			{
-				firePerfect = true;
-			}
-			else if (bulletsPerShot == 1 && timeSinceLastShot > 1.25f)
-			{
-				firePerfect = true;
+				return;
 			}
 		}
 
-		if (firePerfect)
-		{
-			return;
-		}
-
+		// No perfect shot. Let's guess the spread!
 		const auto x{SDKUtils::RandomFloat(-0.5f, 0.5f) + SDKUtils::RandomFloat(-0.5f, 0.5f)};
 		const auto y{SDKUtils::RandomFloat(-0.5f, 0.5f) + SDKUtils::RandomFloat(-0.5f, 0.5f)};
 
 		Vec3 forward{}, right{}, up{};
-
 		Math::AngleVectors(cmd->viewangles, &forward, &right, &up);
 
-		Vector fixedSpread{forward + (right * x * spread) + (up * y * spread)};
-
+		// Calculate the spread vector
+		Vec3 fixedSpread = forward + (right * x * spread) + (up * y * spread);
 		fixedSpread.NormalizeInPlace();
-
 		averageSpread += fixedSpread;
 
 		bulletCorrections.push_back(fixedSpread);
@@ -235,8 +209,8 @@ void CSeedPred::AdjustAngles(CUserCmd* cmd)
 
 	averageSpread /= static_cast<float>(bulletsPerShot);
 
+	// Find the closest spread to average
 	Vec3 fixedSpread{FLT_MAX, FLT_MAX, FLT_MAX};
-
 	for (const auto& curSpread : bulletCorrections)
 	{
 		if (curSpread.DistTo(averageSpread) < fixedSpread.DistTo(averageSpread))
@@ -248,7 +222,8 @@ void CSeedPred::AdjustAngles(CUserCmd* cmd)
 	Vec3 fixedAngles{};
 	Math::VectorAngles(fixedSpread, fixedAngles);
 
-	const Vec3 correction{cmd->viewangles - fixedAngles};
+	// Apply the spread correction
+	const Vec3 correction = cmd->viewangles - fixedAngles;
 	cmd->viewangles += correction;
 	Math::ClampAngles(cmd->viewangles);
 
@@ -262,11 +237,13 @@ void CSeedPred::Paint()
 		return;
 	}
 
+	// Anti-Screenshot
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
 	{
 		return;
 	}
 
+	// Indicator
 	if (CFG::Exploits_SeedPred_DrawIndicator)
 	{
 		const std::chrono::hh_mm_ss time{std::chrono::seconds(static_cast<int>(m_ServerTime))};
@@ -290,6 +267,16 @@ void CSeedPred::Paint()
 			x, y,
 			!m_Synced ? Color_t{250, 130, 49, 255} : Color_t{32, 191, 107, 255}, POS_DEFAULT,
 			!m_Synced ? "syncing.." : std::format("synced ({})", m_SyncOffset).c_str()
+		);
+
+		y += 10;
+
+		H::Draw->String
+		(
+			H::Fonts->Get(EFonts::ESP_SMALL),
+			x, y,
+			{200, 200, 200, 255}, POS_DEFAULT,
+			std::format("seed: {}", GetSeed()).c_str()
 		);
 	}
 }
