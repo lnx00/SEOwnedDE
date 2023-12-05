@@ -210,17 +210,20 @@ void CSeedPred::AdjustAngles(CUserCmd* cmd)
 	averageSpread /= static_cast<float>(bulletsPerShot);
 
 	// Find the closest spread to average
-	Vec3 fixedSpread{FLT_MAX, FLT_MAX, FLT_MAX};
-	for (const auto& curSpread : bulletCorrections)
+	const auto fixedSpread = std::ranges::min_element(bulletCorrections,
+	                                                  [&](const Vec3& lhs, const Vec3& rhs)
+	                                                  {
+		                                                  return lhs.DistTo(averageSpread) < rhs.DistTo(averageSpread);
+	                                                  });
+
+	// Is there a minimum?
+	if (fixedSpread == bulletCorrections.end())
 	{
-		if (curSpread.DistTo(averageSpread) < fixedSpread.DistTo(averageSpread))
-		{
-			fixedSpread = curSpread;
-		}
+		return;
 	}
 
 	Vec3 fixedAngles{};
-	Math::VectorAngles(fixedSpread, fixedAngles);
+	Math::VectorAngles(*fixedSpread, fixedAngles);
 
 	// Apply the spread correction
 	const Vec3 correction = cmd->viewangles - fixedAngles;
