@@ -2,6 +2,41 @@
 
 #include "../CFG.h"
 
+float CalcMantissaStep(float val)
+{
+	const auto rawVal{reinterpret_cast<int&>(val)};
+	const auto exponent{(rawVal >> 23) & 0xFF};
+
+	const auto result{powf(2.0f, static_cast<float>(exponent - (127 + 23))) * 1000.0f};
+
+	static std::vector<float> mantissas{};
+
+	if (mantissas.empty())
+	{
+		auto mantissa{1.0f};
+
+		for (auto n{0}; n < 16; n++)
+		{
+			mantissas.push_back(mantissa);
+
+			mantissa *= 2.0f;
+		}
+	}
+
+	auto closest = [](const std::vector<float>& vec, float value)
+	{
+		const auto it{std::ranges::lower_bound(vec, value)};
+		if (it == vec.end())
+		{
+			return value;
+		}
+
+		return *it;
+	};
+
+	return closest(mantissas, result);
+}
+
 void CSeedPred::AskForPlayerPerf()
 {
 	if (!CFG::Exploits_SeedPred_Active)
@@ -234,41 +269,6 @@ void CSeedPred::Paint()
 
 	if (CFG::Exploits_SeedPred_DrawIndicator)
 	{
-		auto calcMantissaStep = [](float val)
-		{
-			const auto rawVal{reinterpret_cast<int&>(val)};
-			const auto exponent{(rawVal >> 23) & 0xFF};
-
-			const auto result{powf(2.0f, static_cast<float>(exponent - (127 + 23))) * 1000.0f};
-
-			static std::vector<float> mantissas{};
-
-			if (mantissas.empty())
-			{
-				auto mantissa{1.0f};
-
-				for (auto n{0}; n < 16; n++)
-				{
-					mantissas.push_back(mantissa);
-
-					mantissa *= 2.0f;
-				}
-			}
-
-			auto closest = [](const std::vector<float>& vec, float value)
-			{
-				const auto it{std::ranges::lower_bound(vec, value)};
-				if (it == vec.end())
-				{
-					return value;
-				}
-
-				return *it;
-			};
-
-			return closest(mantissas, result);
-		};
-
 		const std::chrono::hh_mm_ss time{std::chrono::seconds(static_cast<int>(m_ServerTime))};
 
 		int x{2};
@@ -279,7 +279,7 @@ void CSeedPred::Paint()
 			H::Fonts->Get(EFonts::ESP_SMALL),
 			x, y,
 			{200, 200, 200, 255}, POS_DEFAULT,
-			std::format("{}h {}m {}s (step {:.0f})", time.hours().count(), time.minutes().count(), time.seconds().count(), calcMantissaStep(m_ServerTime)).c_str()
+			std::format("{}h {}m {}s (step {:.0f})", time.hours().count(), time.minutes().count(), time.seconds().count(), CalcMantissaStep(m_ServerTime)).c_str()
 		);
 
 		y += 10;
