@@ -3,19 +3,19 @@
 #include "../../TF2/ivmodelinfo.h"
 #include "../../TF2/c_baseentity.h"
 
-C_TFPlayer *CEntityHelper::GetLocal()
+C_TFPlayer* CEntityHelper::GetLocal()
 {
-	if (auto pEntity = I::ClientEntityList->GetClientEntity(I::EngineClient->GetLocalPlayer()))
+	if (const auto pEntity = I::ClientEntityList->GetClientEntity(I::EngineClient->GetLocalPlayer()))
 		return pEntity->As<C_TFPlayer>();
 
 	return nullptr;
 }
 
-C_TFWeaponBase *CEntityHelper::GetWeapon()
+C_TFWeaponBase* CEntityHelper::GetWeapon()
 {
-	if (auto pLocal = GetLocal())
+	if (const auto pLocal = GetLocal())
 	{
-		if (auto pEntity = pLocal->m_hActiveWeapon().Get())
+		if (const auto pEntity = pLocal->m_hActiveWeapon().Get())
 			return pEntity->As<C_TFWeaponBase>();
 	}
 
@@ -24,7 +24,7 @@ C_TFWeaponBase *CEntityHelper::GetWeapon()
 
 void CEntityHelper::UpdateCache()
 {
-	if (auto pLocal = GetLocal())
+	if (const auto pLocal = GetLocal())
 	{
 		int nLocalTeam = 0;
 
@@ -33,7 +33,7 @@ void CEntityHelper::UpdateCache()
 
 		for (int n = 1; n < I::ClientEntityList->GetHighestEntityIndex(); n++)
 		{
-			IClientEntity *pClientEntity = I::ClientEntityList->GetClientEntity(n);
+			IClientEntity* pClientEntity = I::ClientEntityList->GetClientEntity(n);
 
 			if (!pClientEntity || pClientEntity->IsDormant())
 				continue;
@@ -42,7 +42,7 @@ void CEntityHelper::UpdateCache()
 
 			switch (pEntity->GetClassId())
 			{
-				case ETFClassIds::CTFPlayer:
+			case ETFClassIds::CTFPlayer:
 				{
 					int nPlayerTeam = 0;
 
@@ -61,9 +61,9 @@ void CEntityHelper::UpdateCache()
 					break;
 				}
 
-				case ETFClassIds::CObjectSentrygun:
-				case ETFClassIds::CObjectDispenser:
-				case ETFClassIds::CObjectTeleporter:
+			case ETFClassIds::CObjectSentrygun:
+			case ETFClassIds::CObjectDispenser:
+			case ETFClassIds::CObjectTeleporter:
 				{
 					int nObjectTeam = 0;
 
@@ -76,19 +76,19 @@ void CEntityHelper::UpdateCache()
 					break;
 				}
 
-				case ETFClassIds::CTFProjectile_Rocket:
-				case ETFClassIds::CTFProjectile_SentryRocket:
-				case ETFClassIds::CTFProjectile_Jar:
-				case ETFClassIds::CTFProjectile_JarGas:
-				case ETFClassIds::CTFProjectile_JarMilk:
-				case ETFClassIds::CTFProjectile_Arrow:
-				case ETFClassIds::CTFProjectile_Flare:
-				case ETFClassIds::CTFProjectile_Cleaver:
-				case ETFClassIds::CTFProjectile_HealingBolt:
-				case ETFClassIds::CTFGrenadePipebombProjectile:
-				case ETFClassIds::CTFProjectile_BallOfFire:
-				case ETFClassIds::CTFProjectile_EnergyRing:
-				case ETFClassIds::CTFProjectile_EnergyBall:
+			case ETFClassIds::CTFProjectile_Rocket:
+			case ETFClassIds::CTFProjectile_SentryRocket:
+			case ETFClassIds::CTFProjectile_Jar:
+			case ETFClassIds::CTFProjectile_JarGas:
+			case ETFClassIds::CTFProjectile_JarMilk:
+			case ETFClassIds::CTFProjectile_Arrow:
+			case ETFClassIds::CTFProjectile_Flare:
+			case ETFClassIds::CTFProjectile_Cleaver:
+			case ETFClassIds::CTFProjectile_HealingBolt:
+			case ETFClassIds::CTFGrenadePipebombProjectile:
+			case ETFClassIds::CTFProjectile_BallOfFire:
+			case ETFClassIds::CTFProjectile_EnergyRing:
+			case ETFClassIds::CTFProjectile_EnergyBall:
 				{
 					int nProjectileTeam = 0;
 
@@ -97,7 +97,7 @@ void CEntityHelper::UpdateCache()
 
 					if (pEntity->GetClassId() == ETFClassIds::CTFGrenadePipebombProjectile)
 					{
-						auto pPipebomb = pEntity->As<C_TFGrenadePipebombProjectile>();
+						const auto pPipebomb = pEntity->As<C_TFGrenadePipebombProjectile>();
 
 						/*if (pPipebomb->m_iType() == TF_GL_MODE_REMOTE_DETONATE_PRACTICE)
 							continue;*/
@@ -112,7 +112,7 @@ void CEntityHelper::UpdateCache()
 					break;
 				}
 
-				case ETFClassIds::CBaseAnimating:
+			case ETFClassIds::CBaseAnimating:
 				{
 					if (IsHealthPack(pEntity))
 						m_mapGroups[EEntGroup::HEALTHPACKS].push_back(pEntity);
@@ -123,20 +123,20 @@ void CEntityHelper::UpdateCache()
 					break;
 				}
 
-				case ETFClassIds::CTFAmmoPack:
+			case ETFClassIds::CTFAmmoPack:
 				{
 					m_mapGroups[EEntGroup::AMMOPACKS].push_back(pEntity);
 					break;
 				}
 
-				case ETFClassIds::CHalloweenGiftPickup:
+			case ETFClassIds::CHalloweenGiftPickup:
 				{
 					m_mapGroups[EEntGroup::HALLOWEEN_GIFT].push_back(pEntity);
 
 					break;
 				}
 
-				case ETFClassIds::CCurrencyPack:
+			case ETFClassIds::CCurrencyPack:
 				{
 					if (pEntity->As<C_CurrencyPack>()->m_bDistributed())
 					{
@@ -148,7 +148,7 @@ void CEntityHelper::UpdateCache()
 					break;
 				}
 
-				default: break;
+			default: break;
 			}
 		}
 	}
@@ -182,4 +182,12 @@ void CEntityHelper::UpdateModelIndexes()
 	m_mapAmmoPacks[I::ModelInfoClient->GetModelIndex("models/items/ammopack_small_bday.mdl")] = true;
 	m_mapAmmoPacks[I::ModelInfoClient->GetModelIndex("models/items/ammopack_medium_bday.mdl")] = true;
 	m_mapAmmoPacks[I::ModelInfoClient->GetModelIndex("models/items/ammopack_large_bday.mdl")] = true;
+}
+
+void CEntityHelper::ClearCache()
+{
+	for (auto& group : m_mapGroups | std::views::values)
+	{
+		group.clear();
+	}
 }
