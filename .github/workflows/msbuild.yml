@@ -45,6 +45,6 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: Phosphor
+        name: SEOwnedDE
         path: ${{env.SOLUTION_FILE_PATH}}/bin/${{env.BUILD_CONFIGURATION}}/
         if-no-files-found: error
