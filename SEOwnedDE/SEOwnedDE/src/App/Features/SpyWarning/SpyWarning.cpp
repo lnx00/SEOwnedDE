@@ -4,16 +4,17 @@
 
 #include "../VisualUtils/VisualUtils.h"
 
-#define SCREEN_OFFSET_X_SCALE 0.5f
-#define SCREEN_OFFSET_Y_SCALE 0.2f
-#define ARROW_RADIUS 32.0f
-#define MAX_DIST 500.0f
+constexpr auto SCREEN_OFFSET_X_SCALE = 0.5f;
+constexpr auto SCREEN_OFFSET_Y_SCALE = 0.2f;
+constexpr auto ARROW_RADIUS = 32.0f;
+constexpr auto MAX_DIST = 500.0f;
 
 void CSpyWarning::Run()
 {
 	if (!CFG::Viuals_SpyWarning_Active)
 		return;
 
+	// Anti screenshot?
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
 	{
 		return;
@@ -23,24 +24,21 @@ void CSpyWarning::Run()
 	if (!pLocal || pLocal->deadflag())
 		return;
 
-	struct Player_t
-	{
-		C_TFPlayer* Player{};
-		Vec3 Position{};
-	};
-
-	std::vector<Player_t> spies{};
+	std::vector<C_TFPlayer*> spies{};
+	const auto localRenderCenter = pLocal->GetRenderCenter();
 	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ENEMIES))
 	{
 		if (!pEntity)
 			continue;
 
+		// Is the player valid?
 		const auto pPlayer = pEntity->As<C_TFPlayer>();
-		if (pPlayer->GetRenderCenter().DistTo(pLocal->GetRenderCenter()) > MAX_DIST)
+		if (!pPlayer || pPlayer->deadflag() || pPlayer->m_iClass() != TF_CLASS_SPY)
 			continue;
 
-		// Is the player an alive spy?
-		if (!pPlayer || pPlayer->deadflag() || pPlayer->m_iClass() != TF_CLASS_SPY)
+		// Maximum distance
+		const auto renderCenter = pPlayer->GetRenderCenter();
+		if (renderCenter.DistTo(localRenderCenter) > MAX_DIST)
 			continue;
 
 		// Are we in a halloween kart?
@@ -59,20 +57,20 @@ void CSpyWarning::Run()
 			continue;
 
 		// Is the spy in FOV?
-		if (Math::CalcFov(I::EngineClient->GetViewAngles(), Math::CalcAngle(pLocal->GetShootPos(), pPlayer->GetRenderCenter())) < 70.0f)
+		if (Math::CalcFov(I::EngineClient->GetViewAngles(), Math::CalcAngle(pLocal->GetShootPos(), renderCenter)) < 70.0f)
 			continue;
 
 		// Ignore invisible
 		if (CFG::Viuals_SpyWarning_Ignore_Invisible)
 		{
-			if (!H::AimUtils->TracePositionWorld(pLocal->GetShootPos(), pPlayer->GetRenderCenter()))
+			if (!H::AimUtils->TracePositionWorld(pLocal->GetShootPos(), renderCenter))
 				continue;
 		}
 
-		spies.push_back({pPlayer, pPlayer->GetRenderCenter()});
+		spies.push_back(pPlayer);
 	}
 
-	// Announce spy in voicemenu
+	// Announce spy
 	static bool lastEmpty = spies.empty();
 	if (spies.empty() != lastEmpty)
 	{
@@ -87,26 +85,28 @@ void CSpyWarning::Run()
 	// Indicator (Icon + Triangle)
 	if (!I::EngineVGui->IsGameUIVisible())
 	{
-		for (const auto& spy : spies)
+		// Direction triangle
+		for (const auto& pPlayer : spies)
 		{
-			const auto pPlayer = spy.Player;
-
 			if (!pPlayer)
 				continue;
 
 			const int nScreenCenterX = static_cast<int>(static_cast<float>(H::Draw->GetScreenW()) * SCREEN_OFFSET_X_SCALE);
 			const int nScreenCenterY = static_cast<int>(static_cast<float>(H::Draw->GetScreenH()) * SCREEN_OFFSET_Y_SCALE);
+			const auto spyPos = pPlayer->GetRenderCenter();
 
 			Vec3 vScreen = {};
-			H::Draw->ScreenPosition(spy.Position, vScreen);
+			H::Draw->ScreenPosition(spyPos, vScreen);
 
 			Vec3 vAngle = {};
 			Math::VectorAngles({nScreenCenterX - vScreen.x, nScreenCenterY - vScreen.y, 0.0f}, vAngle);
 
 			const float flYaw = DEG2RAD(vAngle.y);
 
-			const float flRadius = Math::RemapValClamped(pLocal->GetShootPos().DistTo(spy.Position), 0.0f, MAX_DIST, ARROW_RADIUS, ARROW_RADIUS * 2.0f);
-			const float flScale = Math::RemapValClamped(pLocal->GetShootPos().DistTo(spy.Position), 0.0f, MAX_DIST, 2.0f, 1.0f);
+			// Scale the triangle
+			const auto dist = pLocal->GetShootPos().DistTo(spyPos);
+			const float flRadius = Math::RemapValClamped(dist, 0.0f, MAX_DIST, ARROW_RADIUS, ARROW_RADIUS * 2.0f);
+			const float flScale = Math::RemapValClamped(dist, 0.0f, MAX_DIST, 2.0f, 1.0f);
 
 			const float flDrawX = nScreenCenterX - flRadius * cosf(flYaw);
 			const float flDrawY = nScreenCenterY - flRadius * sinf(flYaw);
@@ -118,7 +118,6 @@ void CSpyWarning::Run()
 			};
 
 			Math::RotateTriangle(vPoints, vAngle.y);
-
 			H::Draw->FilledTriangle(vPoints, F::VisualUtils->GetEntityColor(pLocal, pPlayer));
 		}
 
