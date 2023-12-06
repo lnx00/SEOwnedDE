@@ -178,9 +178,9 @@ void CSpyCamera::Run()
 		}
 
 		// Render the camera
-		G::bRenderingSpyCamera = true;
+		m_IsRendering = true;
 		I::ViewRender->RenderView(setup, VIEW_CLEAR_COLOR | VIEW_CLEAR_DEPTH | VIEW_CLEAR_STENCIL, RENDERVIEW_UNSPECIFIED);
-		G::bRenderingSpyCamera = false;
+		m_IsRendering = false;
 
 		// Outline
 		H::Draw->OutlinedRect(

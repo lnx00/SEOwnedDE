@@ -4,12 +4,13 @@
 #include "../Features/Outlines/Outlines.h"
 
 #include "../Features/CFG.h"
+#include "../Features/SpyCamera/SpyCamera.h"
 
 MAKE_HOOK(
 	IVModelRender_DrawModelExecute, Memory::GetVFunc(I::ModelRender, 19),
 	void, __fastcall, void *ecx, void *edx, const DrawModelState_t &state, ModelRenderInfo_t &pInfo, matrix3x4_t *pCustomBoneToWorld)
 {
-	if (!G::bRenderingSpyCamera)
+	if (!F::SpyCamera->IsRendering())
 	{
 		auto pClientEntity = I::ClientEntityList->GetClientEntity(pInfo.entity_index);
 		

@@ -3,6 +3,7 @@
 #include "../CFG.h"
 #include "../VisualUtils/VisualUtils.h"
 #include "../LagRecords/LagRecords.h"
+#include "../SpyCamera/SpyCamera.h"
 
 void SetModelStencilForOutlines(C_BaseEntity* pEntity)
 {
@@ -395,7 +396,7 @@ void CMaterials::Run()
 	if (!m_mapDrawnEntities.empty())
 		m_mapDrawnEntities.clear();
 
-	if (!CFG::Materials_Active || I::EngineVGui->IsGameUIVisible() || G::bRenderingSpyCamera)
+	if (!CFG::Materials_Active || I::EngineVGui->IsGameUIVisible() || F::SpyCamera->IsRendering())
 		return;
 
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())

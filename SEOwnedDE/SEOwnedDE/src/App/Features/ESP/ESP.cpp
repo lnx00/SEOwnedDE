@@ -1,6 +1,7 @@
 #include "ESP.h"
 
 #include "../CFG.h"
+#include "../SpyCamera/SpyCamera.h"
 #include "../VisualUtils/VisualUtils.h"
 
 constexpr int SPACING_X = 2;
@@ -228,7 +229,7 @@ void CESP::DrawBones(C_TFPlayer* pPlayer, Color_t color)
 
 void CESP::Run()
 {
-	if (!CFG::ESP_Active || I::EngineVGui->IsGameUIVisible() || SDKUtils::BInEndOfMatch() || G::bRenderingSpyCamera)
+	if (!CFG::ESP_Active || I::EngineVGui->IsGameUIVisible() || SDKUtils::BInEndOfMatch() || F::SpyCamera->IsRendering())
 		return;
 
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())

@@ -3,6 +3,7 @@
 #include "../Features/CFG.h"
 #include "../Features/VisualUtils/VisualUtils.h"
 #include "../Features/ProjectileSim//ProjectileSim.h"
+#include "../Features/SpyCamera/SpyCamera.h"
 
 void RenderLine(const Vector &v1, const Vector &v2, Color_t c, bool bZBuffer)
 {
@@ -50,7 +51,7 @@ void SniperLines()
 	};
 
 	if (!CFG::ESP_Active || !CFG::ESP_Players_Active || !CFG::ESP_Players_Sniper_Lines
-		|| I::EngineVGui->IsGameUIVisible() || SDKUtils::BInEndOfMatch() || G::bRenderingSpyCamera)
+		|| I::EngineVGui->IsGameUIVisible() || SDKUtils::BInEndOfMatch() || F::SpyCamera->IsRendering())
 		return;
 
 	auto pLocal = H::Entities->GetLocal();

@@ -276,7 +276,7 @@ namespace G
 	inline bool bStartedFakeTaunt = false;
 	inline float flFakeTauntStartYaw = 0.0f;
 
-	inline bool bRenderingSpyCamera = false;
+	//inline bool bRenderingSpyCamera = false;
 
 	inline CViewSetup View = {};
 

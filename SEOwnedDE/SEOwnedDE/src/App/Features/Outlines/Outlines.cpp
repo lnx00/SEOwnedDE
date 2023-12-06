@@ -2,6 +2,7 @@
 
 #include "../CFG.h"
 #include "../Materials/Materials.h"
+#include "../SpyCamera/SpyCamera.h"
 #include "../VisualUtils/VisualUtils.h"
 
 #pragma warning (disable : 4244) //possible loss of data (int to float)
@@ -123,7 +124,7 @@ void COutlines::RunModels()
 	if (!m_vecOutlineEntities.empty())
 		m_vecOutlineEntities.clear();
 
-	if (!CFG::Outlines_Active || I::EngineVGui->IsGameUIVisible() || G::bRenderingSpyCamera)
+	if (!CFG::Outlines_Active || I::EngineVGui->IsGameUIVisible() || F::SpyCamera->IsRendering())
 		return;
 
 	const int w = H::Draw->GetScreenW();
@@ -389,7 +390,7 @@ void COutlines::RunModels()
 
 void COutlines::Run()
 {
-	if (!CFG::Outlines_Active || I::EngineVGui->IsGameUIVisible() || G::bRenderingSpyCamera)
+	if (!CFG::Outlines_Active || I::EngineVGui->IsGameUIVisible() || F::SpyCamera->IsRendering())
 		return;
 
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
