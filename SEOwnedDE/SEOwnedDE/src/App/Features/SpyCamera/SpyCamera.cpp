@@ -131,7 +131,7 @@ void CSpyCamera::Run()
 		return a->GetCenter().DistTo(pLocal->GetCenter()) < b->GetCenter().DistTo(pLocal->GetCenter());
 	}))
 	{
-		auto& setup = G::View;
+		auto& setup = m_ViewSetup;
 
 		// Set the camera rect
 		setup.x = CFG::Visuals_SpyCamera_Pos_X + 1;

@@ -7,9 +7,9 @@ MAKE_HOOK(
 	CViewRender_RenderView, Signatures::CViewRender_RenderView.Get(),
 	void, __fastcall, void *ecx, void *edx, const CViewSetup &view, int nClearFlags, int whatToDraw)
 {
-	I::ViewRender = reinterpret_cast<IViewRender *>(ecx);
+	I::ViewRender = static_cast<IViewRender*>(ecx);
 
 	CALL_ORIGINAL(ecx, edx, view, nClearFlags, whatToDraw);
 
-	G::View = view;
+	F::SpyCamera->UpdateViewSetup(view);
 }
