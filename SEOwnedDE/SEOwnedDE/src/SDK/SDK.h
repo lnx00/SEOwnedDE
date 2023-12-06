@@ -275,8 +275,6 @@ namespace G
 
 	inline bool bStartedFakeTaunt = false;
 	inline float flFakeTauntStartYaw = 0.0f;
-
-	inline auto in_CViewRender_DrawViewModels{ false };
 }
 
 namespace Shifting
