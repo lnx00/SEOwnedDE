@@ -19,61 +19,64 @@ void CSpyWarning::Run()
 		return;
 	}
 
-	auto pLocal = H::Entities->GetLocal();
-
+	const auto pLocal = H::Entities->GetLocal();
 	if (!pLocal || pLocal->deadflag())
 		return;
 
 	struct Player_t
 	{
-		C_TFPlayer *m_pPlayer{};
-		Vec3 m_vPos{};
+		C_TFPlayer* Player{};
+		Vec3 Position{};
 	};
 
 	std::vector<Player_t> spies{};
-
-	for (auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ENEMIES))
+	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ENEMIES))
 	{
 		if (!pEntity)
 			continue;
 
-		auto pPlayer = pEntity->As<C_TFPlayer>();
-
+		const auto pPlayer = pEntity->As<C_TFPlayer>();
 		if (pPlayer->GetRenderCenter().DistTo(pLocal->GetRenderCenter()) > MAX_DIST)
 			continue;
 
+		// Is the player an alive spy?
 		if (!pPlayer || pPlayer->deadflag() || pPlayer->m_iClass() != TF_CLASS_SPY)
 			continue;
 
+		// Are we in a halloween kart?
 		if (pPlayer->InCond(TF_COND_HALLOWEEN_KART) || pPlayer->InCond(TF_COND_HALLOWEEN_GHOST_MODE))
 			continue;
 
+		// Ignore cloaked
 		if (CFG::Viuals_SpyWarning_Ignore_Cloaked)
 		{
 			if (pPlayer->InCond(TF_COND_STEALTHED) || pPlayer->m_flInvisibility() >= 0.8f)
-				continue;		
+				continue;
 		}
 
+		// Ignore friends
 		if (CFG::Viuals_SpyWarning_Ignore_Friends && pPlayer->IsPlayerOnSteamFriendsList())
 			continue;
 
+		// Is the spy in FOV?
 		if (Math::CalcFov(I::EngineClient->GetViewAngles(), Math::CalcAngle(pLocal->GetShootPos(), pPlayer->GetRenderCenter())) < 70.0f)
 			continue;
 
+		// Ignore invisible
 		if (CFG::Viuals_SpyWarning_Ignore_Invisible)
 		{
 			if (!H::AimUtils->TracePositionWorld(pLocal->GetShootPos(), pPlayer->GetRenderCenter()))
 				continue;
 		}
 
-		spies.push_back({ pPlayer, pPlayer->GetRenderCenter() });
+		spies.push_back({pPlayer, pPlayer->GetRenderCenter()});
 	}
 
-	static bool last_empty{ spies.empty() };
-
-	if (spies.empty() != last_empty)
+	// Announce spy in voicemenu
+	static bool lastEmpty = spies.empty();
+	if (spies.empty() != lastEmpty)
 	{
-		last_empty = spies.empty();
+		lastEmpty = spies.empty();
 
 		if (!spies.empty() && CFG::Viuals_SpyWarning_Announce)
 		{
@@ -81,33 +84,34 @@ void CSpyWarning::Run()
 		}
 	}
 
+	// Indicator (Icon + Triangle)
 	if (!I::EngineVGui->IsGameUIVisible())
 	{
-		for (const auto &spy : spies)
+		for (const auto& spy : spies)
 		{
-			auto pPlayer = spy.m_pPlayer;
+			const auto pPlayer = spy.Player;
 
 			if (!pPlayer)
 				continue;
 
-			int nScreenCenterX = static_cast<int>(static_cast<float>(H::Draw->GetScreenW()) * SCREEN_OFFSET_X_SCALE);
-			int nScreenCenterY = static_cast<int>(static_cast<float>(H::Draw->GetScreenH()) * SCREEN_OFFSET_Y_SCALE);
+			const int nScreenCenterX = static_cast<int>(static_cast<float>(H::Draw->GetScreenW()) * SCREEN_OFFSET_X_SCALE);
+			const int nScreenCenterY = static_cast<int>(static_cast<float>(H::Draw->GetScreenH()) * SCREEN_OFFSET_Y_SCALE);
 
 			Vec3 vScreen = {};
-			H::Draw->ScreenPosition(spy.m_vPos, vScreen);
+			H::Draw->ScreenPosition(spy.Position, vScreen);
 
 			Vec3 vAngle = {};
-			Math::VectorAngles({ nScreenCenterX - vScreen.x, nScreenCenterY - vScreen.y, 0.0f }, vAngle);
+			Math::VectorAngles({nScreenCenterX - vScreen.x, nScreenCenterY - vScreen.y, 0.0f}, vAngle);
 
-			float flYaw = DEG2RAD(vAngle.y);
+			const float flYaw = DEG2RAD(vAngle.y);
 
-			float flRadius = Math::RemapValClamped(pLocal->GetShootPos().DistTo(spy.m_vPos), 0.0f, MAX_DIST, ARROW_RADIUS, ARROW_RADIUS * 2.0f);
-			float flScale = Math::RemapValClamped(pLocal->GetShootPos().DistTo(spy.m_vPos), 0.0f, MAX_DIST, 2.0f, 1.0f);
+			const float flRadius = Math::RemapValClamped(pLocal->GetShootPos().DistTo(spy.Position), 0.0f, MAX_DIST, ARROW_RADIUS, ARROW_RADIUS * 2.0f);
+			const float flScale = Math::RemapValClamped(pLocal->GetShootPos().DistTo(spy.Position), 0.0f, MAX_DIST, 2.0f, 1.0f);
 
-			float flDrawX = nScreenCenterX - flRadius * cosf(flYaw);
-			float flDrawY = nScreenCenterY - flRadius * sinf(flYaw);
+			const float flDrawX = nScreenCenterX - flRadius * cosf(flYaw);
+			const float flDrawY = nScreenCenterY - flRadius * sinf(flYaw);
 
-			std::array<Vec2, 3> vPoints = {
+			std::array vPoints = {
 				Vec2(flDrawX + (6.0f * flScale), flDrawY + (6.0f * flScale)),
 				Vec2(flDrawX - (4.0f * flScale), flDrawY),
 				Vec2(flDrawX + (6.0f * flScale), flDrawY - (6.0f * flScale))
@@ -118,10 +122,11 @@ void CSpyWarning::Run()
 			H::Draw->FilledTriangle(vPoints, F::VisualUtils->GetEntityColor(pLocal, pPlayer));
 		}
 
+		// Spy icon
 		if (!spies.empty())
 		{
-			int nScreenCenterX = static_cast<int>(static_cast<float>(H::Draw->GetScreenW()) * SCREEN_OFFSET_X_SCALE);
-			int nScreenCenterY = static_cast<int>(static_cast<float>(H::Draw->GetScreenH()) * SCREEN_OFFSET_Y_SCALE);
+			const int nScreenCenterX = static_cast<int>(static_cast<float>(H::Draw->GetScreenW()) * SCREEN_OFFSET_X_SCALE);
+			const int nScreenCenterY = static_cast<int>(static_cast<float>(H::Draw->GetScreenH()) * SCREEN_OFFSET_Y_SCALE);
 
 			H::Draw->Texture(nScreenCenterX, nScreenCenterY, 36, 36, F::VisualUtils->GetClassIcon(TF_CLASS_SPY), POS_CENTERXY);
 		}
