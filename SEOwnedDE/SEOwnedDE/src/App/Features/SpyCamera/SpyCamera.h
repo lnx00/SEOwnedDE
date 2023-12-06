@@ -4,7 +4,6 @@
 
 class CSpyCamera
 {
-private:
 	void Drag();
 
 public:

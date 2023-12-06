@@ -52,7 +52,7 @@ void CEntityHelper::UpdateCache()
 						m_mapGroups[EEntGroup::PLAYERS_OBSERVER].push_back(pEntity);
 					}
 
-					if (!pEntity->As<C_BaseEntity>()->IsInValidTeam(&nPlayerTeam))
+					if (!pEntity->IsInValidTeam(&nPlayerTeam))
 						continue;
 
 					m_mapGroups[EEntGroup::PLAYERS_ALL].push_back(pEntity);
