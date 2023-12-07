@@ -5,7 +5,7 @@
 class CStickyJump
 {
 public:
-	void Run(CUserCmd *cmd);
+	void Run(CUserCmd* cmd);
 };
 
 MAKE_SINGLETON_SCOPED(CStickyJump, StickyJump, F);
