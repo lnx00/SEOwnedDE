@@ -4,7 +4,6 @@
 
 class CTeamWellBeing
 {
-private:
 	void Drag();
 
 public:
