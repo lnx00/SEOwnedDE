@@ -192,13 +192,13 @@ int CVisualUtils::GetBuildingTextureId(C_BaseObject* pObject)
 
 int CVisualUtils::GetHealthIconTextureId()
 {
-	static int nOut = CreateTextureFromArray(Icons::health, 64, 64);
+	static int nOut = CreateTextureFromVTF("sprites/healbeam.vtf");
 	return nOut;
 }
 
 int CVisualUtils::GetAmmoIconTextureId()
 {
-	static int nOut = CreateTextureFromArray(Icons::ammo, 64, 64);
+	static int nOut = CreateTextureFromVTF("hud/hud_obj_status_ammo_64");
 	return nOut;
 }
 
