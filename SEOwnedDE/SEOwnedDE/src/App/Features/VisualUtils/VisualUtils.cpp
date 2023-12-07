@@ -127,17 +127,16 @@ int CVisualUtils::CreateTextureFromVTF(const char* name)
 int CVisualUtils::GetClassIcon(int nClassNum)
 {
 	//what are arrays
-	// TODO: Use the game's textures
 
-	static int nScout = CreateTextureFromArray(Icons::leaderboard_class_scout, 64, 64);
-	static int nSoldier = CreateTextureFromArray(Icons::leaderboard_class_soldier, 64, 64);
-	static int nPyro = CreateTextureFromArray(Icons::leaderboard_class_pyro, 64, 64);
-	static int nDemoman = CreateTextureFromArray(Icons::leaderboard_class_demo, 64, 64);
-	static int nHeavy = CreateTextureFromArray(Icons::leaderboard_class_heavy, 64, 64);
-	static int nEngineer = CreateTextureFromArray(Icons::leaderboard_class_engineer, 64, 64);
-	static int nMedic = CreateTextureFromArray(Icons::leaderboard_class_medic, 64, 64);
-	static int nSniper = CreateTextureFromArray(Icons::leaderboard_class_sniper, 64, 64);
-	static int nSpy = CreateTextureFromArray(Icons::leaderboard_class_spy, 64, 64);
+	static int nScout = CreateTextureFromVTF("hud/leaderboard_class_scout.vtf");
+	static int nSoldier = CreateTextureFromVTF("hud/leaderboard_class_soldier.vtf");
+	static int nPyro = CreateTextureFromVTF("hud/leaderboard_class_scout.vtf");
+	static int nDemoman = CreateTextureFromVTF("hud/leaderboard_class_demo.vtf");
+	static int nHeavy = CreateTextureFromVTF("hud/leaderboard_class_heavy.vtf");
+	static int nEngineer = CreateTextureFromVTF("hud/leaderboard_class_engineer.vtf");
+	static int nMedic = CreateTextureFromVTF("hud/leaderboard_class_medic.vtf");
+	static int nSniper = CreateTextureFromVTF("hud/leaderboard_class_sniper.vtf");
+	static int nSpy = CreateTextureFromVTF("hud/leaderboard_class_spy.vtf");
 
 	switch (nClassNum)
 	{
