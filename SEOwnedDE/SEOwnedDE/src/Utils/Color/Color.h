@@ -14,6 +14,15 @@ struct Color_t
 	std::wstring toHexStrW();
 };
 
+namespace Colors
+{
+	constexpr Color_t RED = { 255, 0, 0, 255 };
+	constexpr Color_t GREEN = { 0, 255, 0, 255 };
+	constexpr Color_t BLUE = { 0, 0, 255, 255 };
+	constexpr Color_t WHITE = { 255, 255, 255, 255 };
+	constexpr Color_t BLACK = { 0, 0, 0, 255 };
+}
+
 namespace ColorUtils
 {
 	inline float ToFloat(unsigned char x)
@@ -23,7 +32,7 @@ namespace ColorUtils
 
 	inline unsigned long ToDWORD(Color_t x)
 	{
-		return static_cast<unsigned long>(((x.r & 0xFF) << 24) | ((x.g & 0xFF) << 16) | ((x.b & 0xFF) << 8) | (x.a & 0xFF));
+		return (x.r & 0xFF) << 24 | (x.g & 0xFF) << 16 | (x.b & 0xFF) << 8 | x.a & 0xFF;
 	}
 
 	Color_t HSLToRGB(float h, float s, float l);

@@ -6,7 +6,7 @@ class CWorldModulation
 {
 	bool m_bWorldWasModulated = false;
 
-	void ApplyModulation(Color_t clr, bool world, bool sky);
+	void ApplyModulation(const Color_t& clr, bool world, bool sky);
 
 public:
 	void UpdateWorldModulation();
