@@ -2,8 +2,6 @@
 
 #include "../CFG.h"
 
-#include "Icons.h"
-
 #include "../Players/Players.h"
 
 bool CVisualUtils::IsEntityOwnedBy(C_BaseEntity* pEntity, C_BaseEntity* pWho)
@@ -204,7 +202,7 @@ int CVisualUtils::GetAmmoIconTextureId()
 
 int CVisualUtils::GetHalloweenGiftTextureId()
 {
-	static int nOut = CreateTextureFromArray(Icons::halloween_gift, 50, 53);
+	static int nOut = CreateTextureFromVTF("models/props_halloween/halloween_gift.vtf");
 	return nOut;
 }
 
@@ -255,74 +253,6 @@ bool CVisualUtils::IsOnScreenNoEntity(const C_TFPlayer* pLocal, const Vec3& vAbs
 	}
 
 	return true;
-}
-
-int CVisualUtils::GetCat(int nFrame)
-{
-	if (nFrame < 0 || nFrame > 3)
-		return 0;
-
-	static const int ARR_FRAMES[4] =
-	{
-		CreateTextureFromArray(Icons::cat_0, 12, 12),
-		CreateTextureFromArray(Icons::cat_1, 12, 12),
-		CreateTextureFromArray(Icons::cat_2, 12, 12),
-		CreateTextureFromArray(Icons::cat_3, 12, 12)
-	};
-
-	return ARR_FRAMES[nFrame];
-}
-
-int CVisualUtils::GetCat2(int nFrame)
-{
-	if (nFrame < 0 || nFrame > 3)
-		return 0;
-
-	static const int ARR_FRAMES[4] =
-	{
-		CreateTextureFromArray(Icons::cat2_0, 12, 12),
-		CreateTextureFromArray(Icons::cat2_1, 12, 12),
-		CreateTextureFromArray(Icons::cat2_2, 12, 12),
-		CreateTextureFromArray(Icons::cat2_3, 12, 12)
-	};
-
-	return ARR_FRAMES[nFrame];
-}
-
-int CVisualUtils::GetCatSleep(int nFrame)
-{
-	if (nFrame < 0 || nFrame > 3)
-		return 0;
-
-	static const int ARR_FRAMES[4] =
-	{
-		CreateTextureFromArray(Icons::cat_sleep0, 16, 8),
-		CreateTextureFromArray(Icons::cat_sleep1, 16, 8),
-		CreateTextureFromArray(Icons::cat_sleep2, 16, 8),
-		CreateTextureFromArray(Icons::cat_sleep3, 16, 8)
-	};
-
-	return ARR_FRAMES[nFrame];
-}
-
-int CVisualUtils::GetCatRun(int nFrame)
-{
-	if (nFrame < 0 || nFrame > 7)
-		return 0;
-
-	static const int ARR_FRAMES[8] =
-	{
-		CreateTextureFromArray(Icons::cat_run0, 20, 13),
-		CreateTextureFromArray(Icons::cat_run1, 20, 13),
-		CreateTextureFromArray(Icons::cat_run2, 20, 13),
-		CreateTextureFromArray(Icons::cat_run3, 20, 13),
-		CreateTextureFromArray(Icons::cat_run4, 20, 13),
-		CreateTextureFromArray(Icons::cat_run5, 20, 13),
-		CreateTextureFromArray(Icons::cat_run6, 20, 13),
-		CreateTextureFromArray(Icons::cat_run7, 20, 13)
-	};
-
-	return ARR_FRAMES[nFrame];
 }
 
 Color_t CVisualUtils::Rainbow()

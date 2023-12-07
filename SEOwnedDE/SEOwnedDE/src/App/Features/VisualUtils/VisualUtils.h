@@ -23,11 +23,6 @@ public:
 	bool IsOnScreen(const C_TFPlayer* pLocal, const C_BaseEntity* pEntity);
 	bool IsOnScreenNoEntity(const C_TFPlayer* pLocal, const Vec3& vAbsOrigin);
 
-	int GetCat(int nFrame);
-	int GetCat2(int nFrame);
-	int GetCatSleep(int nFrame);
-	int GetCatRun(int nFrame);
-
 	Color_t Rainbow();
 	Color_t RainbowTickOffset(int nTick);
 };

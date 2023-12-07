@@ -261,7 +261,6 @@
     <ClInclude Include="src\App\Features\Triggerbot\AutoBackstab\AutoBackstab.h" />
     <ClInclude Include="src\App\Features\Triggerbot\AutoDetonate\AutoDetonate.h" />
     <ClInclude Include="src\App\Features\Triggerbot\Triggerbot.h" />
-    <ClInclude Include="src\App\Features\VisualUtils\Icons.h" />
     <ClInclude Include="src\App\Features\VisualUtils\VisualUtils.h" />
     <ClInclude Include="src\App\Features\WorldModulation\WorldModulation.h" />
     <ClInclude Include="src\App\Hooks\WINAPI_WndProc.h" />
