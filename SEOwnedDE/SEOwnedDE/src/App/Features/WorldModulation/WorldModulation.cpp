@@ -2,7 +2,7 @@
 
 #include "../CFG.h"
 
-void CWorldModulation::applyModulation(Color_t clr, bool world, bool sky)
+void CWorldModulation::ApplyModulation(Color_t clr, bool world, bool sky)
 {
 	if (!world && !sky)
 	{
@@ -11,8 +11,7 @@ void CWorldModulation::applyModulation(Color_t clr, bool world, bool sky)
 
 	for (auto h{ I::MaterialSystem->FirstMaterial() }; h != I::MaterialSystem->InvalidMaterial(); h = I::MaterialSystem->NextMaterial(h))
 	{
-		auto mat{ I::MaterialSystem->GetMaterial(h) };
-
+		const auto mat = I::MaterialSystem->GetMaterial(h);
 		if (!mat || mat->IsErrorMaterial() || !mat->IsPrecached())
 		{
 			continue;
@@ -21,13 +20,10 @@ void CWorldModulation::applyModulation(Color_t clr, bool world, bool sky)
 		if (world && std::string_view(mat->GetTextureGroupName()).find(TEXTURE_GROUP_WORLD) != std::string_view::npos
 			&& std::string_view(mat->GetName()).find("sky") == std::string_view::npos)
 		{
-			auto var{ mat->FindVar("$color2", nullptr) };
-
-			if (var)
+			if (const auto var = mat->FindVar("$color2", nullptr))
 			{
 				var->SetVecValue(ColorUtils::ToFloat(clr.r), ColorUtils::ToFloat(clr.g), ColorUtils::ToFloat(clr.b));
 			}
-
 			else
 			{
 				mat->ColorModulate(ColorUtils::ToFloat(clr.r), ColorUtils::ToFloat(clr.g), ColorUtils::ToFloat(clr.b));
@@ -45,11 +41,10 @@ void CWorldModulation::applyModulation(Color_t clr, bool world, bool sky)
 
 void CWorldModulation::UpdateWorldModulation()
 {
-	auto mode_changed = [&]()
+	auto modeChanged = [&]
 	{
-		static auto old{ CFG::Visuals_World_Modulation_Mode };
-
-		auto cur{ CFG::Visuals_World_Modulation_Mode };
+		static auto old = CFG::Visuals_World_Modulation_Mode;
+		const auto cur = CFG::Visuals_World_Modulation_Mode;
 
 		if (cur != old)
 		{
@@ -61,11 +56,10 @@ void CWorldModulation::UpdateWorldModulation()
 		return false;
 	};
 
-	auto ignore_sky_changed = [&]()
+	auto ignoreSkyChanged = [&]
 	{
-		static auto old{ CFG::Visuals_World_Modulation_No_Sky_Change };
-
-		auto cur{ CFG::Visuals_World_Modulation_No_Sky_Change };
+		static auto old = CFG::Visuals_World_Modulation_No_Sky_Change;
+		const auto cur = CFG::Visuals_World_Modulation_No_Sky_Change;
 
 		if (cur != old)
 		{
@@ -77,11 +71,10 @@ void CWorldModulation::UpdateWorldModulation()
 		return false;
 	};
 
-	bool reset_sky{};
-
-	if (ignore_sky_changed())
+	bool resetSky{};
+	if (ignoreSkyChanged())
 	{
-		reset_sky = true;
+		resetSky = true;
 	}
 
 	if (CFG::Visuals_World_Modulation_Mode == 0)
@@ -93,48 +86,45 @@ void CWorldModulation::UpdateWorldModulation()
 			return;
 		}
 
-		auto value_changed = [&]()
+		auto valueChanged = [&]()
 		{
 			static auto old{ CFG::Visuals_Night_Mode };
-
-			auto cur{ CFG::Visuals_Night_Mode };
+			const auto cur{ CFG::Visuals_Night_Mode };
 
 			if (cur != old)
 			{
 				old = cur;
-
 				return true;
 			}
 
 			return false;
 		};
 
-		if (!m_bWorldWasModulated || value_changed() || mode_changed() || reset_sky)
+		if (!m_bWorldWasModulated || valueChanged() || modeChanged() || resetSky)
 		{
-			auto col{ static_cast<byte>(Math::RemapValClamped(CFG::Visuals_Night_Mode, 0.0f, 100.0f, 255.0f, 5.0f)) };
+			const auto col{ static_cast<byte>(Math::RemapValClamped(CFG::Visuals_Night_Mode, 0.0f, 100.0f, 255.0f, 5.0f)) };
 
-			applyModulation({ col, col, col, static_cast<byte>(255) }, true, !CFG::Visuals_World_Modulation_No_Sky_Change);
+			ApplyModulation({ col, col, col, static_cast<byte>(255) }, true, !CFG::Visuals_World_Modulation_No_Sky_Change);
 		}
 
-		if (reset_sky && CFG::Visuals_World_Modulation_No_Sky_Change)
+		if (resetSky && CFG::Visuals_World_Modulation_No_Sky_Change)
 		{
-			applyModulation({ 255, 255, 255, 255 }, false, true);
+			ApplyModulation({ 255, 255, 255, 255 }, false, true);
 		}
 	}
 
 	else
 	{
-		if (!m_bWorldWasModulated || mode_changed())
+		if (!m_bWorldWasModulated || modeChanged())
 		{
-			applyModulation(CFG::Color_World, true, false);
-			applyModulation(CFG::Color_Sky, false, !CFG::Visuals_World_Modulation_No_Sky_Change);
+			ApplyModulation(CFG::Color_World, true, false);
+			ApplyModulation(CFG::Color_Sky, false, !CFG::Visuals_World_Modulation_No_Sky_Change);
 		}
 
-		auto world_value_changed = [&]()
+		auto worldValueChanged = [&]
 		{
 			static auto old{ CFG::Color_World };
-
-			auto cur{ CFG::Color_World };
+			const auto cur{ CFG::Color_World };
 
 			if (cur.r != old.r || cur.g != old.g || cur.b != old.b)
 			{
@@ -146,11 +136,10 @@ void CWorldModulation::UpdateWorldModulation()
 			return false;
 		};
 
-		auto sky_value_changed = [&]()
+		auto skyValueChanged = [&]
 		{
 			static auto old{ CFG::Color_Sky };
-
-			auto cur{ CFG::Color_Sky };
+			const auto cur{ CFG::Color_Sky };
 
 			if (cur.r != old.r || cur.g != old.g || cur.b != old.b)
 			{
@@ -162,23 +151,23 @@ void CWorldModulation::UpdateWorldModulation()
 			return false;
 		};
 
-		applyModulation(CFG::Color_World, world_value_changed(), false);
+		ApplyModulation(CFG::Color_World, worldValueChanged(), false);
 		
 		if (!CFG::Visuals_World_Modulation_No_Sky_Change)
 		{
-			applyModulation(CFG::Color_Sky, false, sky_value_changed());
+			ApplyModulation(CFG::Color_Sky, false, skyValueChanged());
 		}
 
-		if (reset_sky)
+		if (resetSky)
 		{
 			if (CFG::Visuals_World_Modulation_No_Sky_Change)
 			{
-				applyModulation({ 255, 255, 255, 255 }, false, true);
+				ApplyModulation({ 255, 255, 255, 255 }, false, true);
 			}
 
 			else
 			{
-				applyModulation(CFG::Color_Sky, false, true);
+				ApplyModulation(CFG::Color_Sky, false, true);
 			}
 		}
 	}
@@ -191,7 +180,7 @@ void CWorldModulation::RestoreWorldModulation()
 		return;
 	}
 
-	applyModulation({ 255, 255, 255, 255 }, true, true);
+	ApplyModulation({ 255, 255, 255, 255 }, true, true);
 
 	m_bWorldWasModulated = false;
 }
