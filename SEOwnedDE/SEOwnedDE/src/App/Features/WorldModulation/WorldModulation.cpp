@@ -54,7 +54,6 @@ void CWorldModulation::UpdateWorldModulation()
 		if (cur != old)
 		{
 			old = cur;
-
 			return true;
 		}
 
@@ -69,18 +68,13 @@ void CWorldModulation::UpdateWorldModulation()
 		if (cur != old)
 		{
 			old = cur;
-
 			return true;
 		}
 
 		return false;
 	};
 
-	bool resetSky = false;
-	if (ignoreSkyChanged())
-	{
-		resetSky = true;
-	}
+	const bool resetSky = ignoreSkyChanged();
 
 	// Night mode
 	if (CFG::Visuals_World_Modulation_Mode == 0)
@@ -134,7 +128,6 @@ void CWorldModulation::UpdateWorldModulation()
 			if (cur.r != old.r || cur.g != old.g || cur.b != old.b)
 			{
 				old = cur;
-
 				return true;
 			}
 
@@ -149,7 +142,6 @@ void CWorldModulation::UpdateWorldModulation()
 			if (cur.r != old.r || cur.g != old.g || cur.b != old.b)
 			{
 				old = cur;
-
 				return true;
 			}
 
