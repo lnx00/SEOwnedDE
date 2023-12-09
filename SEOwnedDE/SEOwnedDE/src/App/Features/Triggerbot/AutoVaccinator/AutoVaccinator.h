@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../SDK/SDK.h"
+#include "../../../../SDK/SDK.h"
 
 class CAutoVaccinator
 {
@@ -12,7 +12,7 @@ class CAutoVaccinator
 	void Reset();
 
 public:
-	void Run(CUserCmd* cmd);
+	void Run(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, CUserCmd* cmd);
 	void ProcessPlayerHurt(IGameEvent* event);
 	void PreventReload(CUserCmd* cmd);
 };

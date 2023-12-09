@@ -1,6 +1,6 @@
 #include "AutoVaccinator.h"
 
-#include "../CFG.h"
+#include "../../CFG.h"
 
 constexpr float HEALTH_LIMIT = 0.85f;
 
@@ -344,7 +344,7 @@ void CAutoVaccinator::Reset()
 	m_ShouldPop = false;
 }
 
-void CAutoVaccinator::Run(CUserCmd* cmd)
+void CAutoVaccinator::Run(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, CUserCmd* cmd)
 {
 	if (!CFG::AutoVaccinator_Active || !G::bCanPrimaryAttack)
 	{
@@ -352,24 +352,15 @@ void CAutoVaccinator::Run(CUserCmd* cmd)
 		return;
 	}
 
-	// Valid player?
-	const auto local{ H::Entities->GetLocal() };
-	if (!local || local->deadflag())
-	{
-		Reset();
-		return;
-	}
-
 	// Valid weapon?
-	const auto weapon{ H::Entities->GetWeapon() };
-	if (!weapon || weapon->GetWeaponID() != TF_WEAPON_MEDIGUN)
+	if (pWeapon->GetWeaponID() != TF_WEAPON_MEDIGUN)
 	{
 		Reset();
 		return;
 	}
 
 	// Valid medigun?
-	const auto medigun{ weapon->As<C_WeaponMedigun>() };
+	const auto medigun{ pWeapon->As<C_WeaponMedigun>() };
 	if (!medigun || medigun->GetChargeType() < 3)
 	{
 		Reset();
@@ -455,7 +446,7 @@ void CAutoVaccinator::Run(CUserCmd* cmd)
 		}
 		else
 		{
-			if (IsPlayerInDanger(local, dangerType) && !PlayerHasResUber(dangerType, local))
+			if (IsPlayerInDanger(pLocal, dangerType) && !PlayerHasResUber(dangerType, pLocal))
 			{
 				m_GoalResType = dangerType;
 

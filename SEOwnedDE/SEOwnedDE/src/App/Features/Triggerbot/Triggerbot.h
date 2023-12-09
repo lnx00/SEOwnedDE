@@ -5,7 +5,7 @@
 class CTriggerbot
 {
 public:
-	void Run(CUserCmd *pCmd);
+	void Run(CUserCmd* pCmd);
 };
 
 MAKE_SINGLETON_SCOPED(CTriggerbot, Triggerbot, F);

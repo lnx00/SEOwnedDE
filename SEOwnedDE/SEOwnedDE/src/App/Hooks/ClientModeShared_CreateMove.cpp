@@ -8,7 +8,7 @@
 #include "../Features/NetworkFix/NetworkFix.h"
 #include "../Features/RapidFire/RapidFire.h"
 #include "../Features/Triggerbot/Triggerbot.h"
-#include "../Features/AutoVaccinator/AutoVaccinator.h"
+#include "../Features/Triggerbot/AutoVaccinator/AutoVaccinator.h"
 #include "../Features/SeedPred/SeedPred.h"
 #include "../Features/StickyJump/StickyJump.h"
 #include "../Features/Crits/Crits.h"
@@ -117,7 +117,7 @@ MAKE_HOOK(
 	}
 	F::EnginePrediction->End();
 
-	F::AutoVaccinator->Run(pCmd);
+	//F::AutoVaccinator->Run(pCmd);
 	F::SeedPred->AdjustAngles(pCmd);
 	F::StickyJump->Run(pCmd);
 

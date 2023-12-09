@@ -5,13 +5,14 @@
 #include "AutoAirblast/AutoAirblast.h"
 #include "AutoBackstab/AutoBackstab.h"
 #include "AutoDetonate/AutoDetonate.h"
+#include "AutoVaccinator/AutoVaccinator.h"
 
-void CTriggerbot::Run(CUserCmd *pCmd)
+void CTriggerbot::Run(CUserCmd* pCmd)
 {
 	if (!CFG::Triggerbot_Active || (CFG::Triggerbot_Key && !H::Input->IsDown(CFG::Triggerbot_Key)))
 		return;
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal || pLocal->deadflag()
 		|| pLocal->InCond(TF_COND_HALLOWEEN_GHOST_MODE)
@@ -19,7 +20,7 @@ void CTriggerbot::Run(CUserCmd *pCmd)
 		|| pLocal->InCond(TF_COND_HALLOWEEN_KART))
 		return;
 
-	auto pWeapon = H::Entities->GetWeapon();
+	const auto pWeapon = H::Entities->GetWeapon();
 
 	if (!pWeapon)
 		return;
@@ -27,4 +28,5 @@ void CTriggerbot::Run(CUserCmd *pCmd)
 	F::AutoAirblast->Run(pLocal, pWeapon, pCmd);
 	F::AutoBackstab->Run(pLocal, pWeapon, pCmd);
 	F::AutoDetonate->Run(pLocal, pWeapon, pCmd);
+	F::AutoVaccinator->Run(pLocal, pWeapon, pCmd);
 }

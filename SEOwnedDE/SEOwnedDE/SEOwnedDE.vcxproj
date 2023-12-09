@@ -108,7 +108,7 @@
     <ClCompile Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.cpp" />
     <ClCompile Include="src\App\Features\Crits\Crits.cpp" />
     <ClCompile Include="src\SDK\Helpers\AimUtils\AimUtils.cpp" />
-    <ClCompile Include="src\App\Features\AutoVaccinator\AutoVaccinator.cpp" />
+    <ClCompile Include="src\App\Features\Triggerbot\AutoVaccinator\AutoVaccinator.cpp" />
     <ClCompile Include="src\App\Features\Chat\Chat.cpp" />
     <ClCompile Include="src\App\Features\EnginePrediction\EnginePrediction.cpp" />
     <ClCompile Include="src\App\Features\ESP\ESP.cpp" />
@@ -233,7 +233,7 @@
     <ClInclude Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.h" />
     <ClInclude Include="src\App\Features\Crits\Crits.h" />
     <ClInclude Include="src\SDK\Helpers\AimUtils\AimUtils.h" />
-    <ClInclude Include="src\App\Features\AutoVaccinator\AutoVaccinator.h" />
+    <ClInclude Include="src\App\Features\Triggerbot\AutoVaccinator\AutoVaccinator.h" />
     <ClInclude Include="src\App\Features\CFG.h" />
     <ClInclude Include="src\App\Features\EnginePrediction\EnginePrediction.h" />
     <ClInclude Include="src\App\Features\ESP\ESP.h" />
