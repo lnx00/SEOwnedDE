@@ -2,10 +2,7 @@
 
 #include "../CFG.h"
 
-int sim_res_type{ MEDIGUN_NUM_RESISTS };
-int goal_res_type{ MEDIGUN_BULLET_RESIST };
-bool changing_res{ false };
-bool pop{ false };
+constexpr float HEALTH_LIMIT = 0.85f;
 
 medigun_resist_types_t WeaponIDToResType(int weaponID)
 {
@@ -87,30 +84,26 @@ bool IsPlayerInDanger(C_TFPlayer* player, medigun_resist_types_t& dangerType)
 
 	//I::DebugOverlay->ClearAllOverlays();
 
+	// Check for dangerous players
 	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ENEMIES))
 	{
 		if (!pEntity)
-		{
 			continue;
-		}
 
 		const auto enemy{ pEntity->As<C_TFPlayer>() };
 		if (!enemy || enemy->deadflag())
-		{
 			continue;
-		}
 
+		// Is it a sniper?
 		if (enemy->m_iClass() != TF_CLASS_SNIPER)
-		{
 			continue;
-		}
 
+		// Sniper rifle?
 		const auto weapon{ enemy->m_hActiveWeapon().Get()->As<C_TFWeaponBase>() };
 		if (!weapon || weapon->GetSlot() != WEAPON_SLOT_PRIMARY || weapon->GetWeaponID() == TF_WEAPON_COMPOUND_BOW)
-		{
 			continue;
-		}
 
+		// In-Scope?
 		bool zoomed{ enemy->InCond(TF_COND_ZOOMED) };
 		if (weapon->GetWeaponID() == TF_WEAPON_SNIPERRIFLE_CLASSIC)
 		{
@@ -118,9 +111,7 @@ bool IsPlayerInDanger(C_TFPlayer* player, medigun_resist_types_t& dangerType)
 		}
 
 		if (!enemy->IsCritBoosted() && !enemy->IsMiniCritBoosted() && !zoomed)
-		{
 			continue;
-		}
 
 		auto mins{ player->m_vecMins() };
 		auto maxs{ player->m_vecMaxs() };
@@ -134,15 +125,11 @@ bool IsPlayerInDanger(C_TFPlayer* player, medigun_resist_types_t& dangerType)
 		maxs.z *= 1.5f;
 
 		Vec3 forward{};
-
 		Math::AngleVectors(enemy->GetEyeAngles(), &forward);
 
+		// Can the sniper shoot us?
 		if (!Math::RayToOBB(enemy->GetShootPos(), forward, player->m_vecOrigin(), mins, maxs, player->RenderableToWorldTransform()))
-		{
-			//I::DebugOverlay->AddSweptBoxOverlay(player->m_vecOrigin(), player->m_vecOrigin(), mins, maxs, {}, 255, 255, 255, 255, 0.1f);
-
 			continue;
-		}
 
 		//I::DebugOverlay->AddSweptBoxOverlay(player->m_vecOrigin(), player->m_vecOrigin(), mins, maxs, {}, 0, 255, 0, 255, 0.1f);
 
@@ -167,31 +154,26 @@ bool IsPlayerInDanger(C_TFPlayer* player, medigun_resist_types_t& dangerType)
 		};
 
 		if (!visibleFromCenter && !visibleFromHead)
-		{
 			continue;
-		}
 
+		// Dangerous sniper!
 		dangerType = MEDIGUN_BULLET_RESIST;
-
 		return true;
 	}
 
 	size_t numClosePipebombs{};
 
+	// Check for dangerous projectiles
 	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PROJECTILES_ENEMIES))
 	{
 		if (!pEntity)
-		{
 			continue;
-		}
 
 		const auto visibleFromCenter{ H::AimUtils->TraceEntityAutoDet(pEntity, player->GetCenter(), pEntity->GetCenter()) };
 		const auto visibleFromHead{ H::AimUtils->TraceEntityAutoDet(pEntity, player->m_vecOrigin() + Vec3{ 0.0f, 0.0f, player->m_vecMaxs().z }, pEntity->GetCenter()) };
 
 		if (!visibleFromCenter && !visibleFromHead)
-		{
 			continue;
-		}
 
 		Vec3 vel{};
 		pEntity->EstimateAbsVelocity(vel);
@@ -203,31 +185,25 @@ bool IsPlayerInDanger(C_TFPlayer* player, medigun_resist_types_t& dangerType)
 		case ETFClassIds::CTFProjectile_Arrow:
 			{
 				if (vel.IsZero() || entOrigin.DistTo(player->GetCenter()) > 150.0f)
-				{
 					continue;
-				}
 
+				// Dangerous arrows
 				dangerType = MEDIGUN_BULLET_RESIST;
-
 				return true;
 			}
 
 		case ETFClassIds::CTFProjectile_HealingBolt:
 			{
 				if (vel.IsZero() || entOrigin.DistTo(player->GetCenter()) > 150.0f)
-				{
 					continue;
-				}
 
 				const auto arrow{ pEntity->As<C_TFProjectile_Arrow>() };
-				if (arrow->m_bCritical() || percentHealth < 0.85f)
-				{
-					dangerType = MEDIGUN_BULLET_RESIST;
+				if (!arrow->m_bCritical() && percentHealth >= HEALTH_LIMIT)
+					continue;
 
-					return true;
-				}
-
-				break;
+				// Dangerous medigun bolt
+				dangerType = MEDIGUN_BULLET_RESIST;
+				return true;
 			}
 
 		case ETFClassIds::CTFProjectile_Rocket:
@@ -235,92 +211,75 @@ bool IsPlayerInDanger(C_TFPlayer* player, medigun_resist_types_t& dangerType)
 		case ETFClassIds::CTFProjectile_EnergyBall:
 			{
 				if (entOrigin.DistTo(player->GetCenter()) > 250.0f)
-				{
 					continue;
-				}
 
 				const auto rocket{ pEntity->As<C_TFProjectile_Rocket>() };
-				if (rocket->m_bCritical() || percentHealth < 1.0f)
-				{
-					dangerType = MEDIGUN_BLAST_RESIST;
-					return true;
-				}
+				if (!rocket->m_bCritical() && percentHealth >= 1.0f)
+					continue;
 
-				break;
+				// Dangerous rocket
+				dangerType = MEDIGUN_BLAST_RESIST;
+				return true;
 			}
 
 		case ETFClassIds::CTFGrenadePipebombProjectile:
 			{
 				if (entOrigin.DistTo(player->GetCenter()) > 250.0f)
-				{
 					continue;
-				}
 
 				const auto bomb{ pEntity->As<C_TFGrenadePipebombProjectile>() };
 				if (bomb->m_iType() == TF_GL_MODE_REMOTE_DETONATE_PRACTICE)
+					continue;
+
+				if (!bomb->m_bCritical() && percentHealth >= 1.0f && entOrigin.DistTo(player->GetCenter()) >= 100.0f)
 				{
+					numClosePipebombs++;
 					continue;
 				}
 
-				if (bomb->m_bCritical() || percentHealth < 1.0f || entOrigin.DistTo(player->GetCenter()) < 100.0f)
-				{
-					dangerType = MEDIGUN_BLAST_RESIST;
-
-					return true;
-				}
-
-				numClosePipebombs++;
-
-				break;
+				// Dangerous pipebomb
+				dangerType = MEDIGUN_BLAST_RESIST;
+				return true;
 			}
 
 		case ETFClassIds::CTFProjectile_Flare:
 			{
 				if (entOrigin.DistTo(player->GetCenter()) > 150.0f)
-				{
 					continue;
-				}
 
 				const auto flare{ pEntity->As<C_TFProjectile_Flare>() };
-				if (flare->m_bCritical() || player->InCond(TF_COND_BURNING) || player->InCond(TF_COND_BURNING_PYRO))
-				{
-					dangerType = MEDIGUN_FIRE_RESIST;
-					return true;
-				}
+				if (!flare->m_bCritical() && !player->InCond(TF_COND_BURNING) && !player->InCond(TF_COND_BURNING_PYRO))
+					continue;
 
-				break;
+				// Dangerous flare
+				dangerType = MEDIGUN_FIRE_RESIST;
+				return true;
 			}
 
 		case ETFClassIds::CTFProjectile_BallOfFire:
 			{
 				if (entOrigin.DistTo(player->GetCenter()) > 150.0f)
-				{
 					continue;
-				}
 
-				if (player->InCond(TF_COND_BURNING) || player->InCond(TF_COND_BURNING_PYRO))
-				{
-					dangerType = MEDIGUN_FIRE_RESIST;
-					return true;
-				}
+				if (!player->InCond(TF_COND_BURNING) && !player->InCond(TF_COND_BURNING_PYRO))
+					continue;
 
-				break;
+				// Dangerous fireball
+				dangerType = MEDIGUN_FIRE_RESIST;
+				return true;
 			}
 
 		case ETFClassIds::CTFProjectile_EnergyRing:
 			{
 				if (entOrigin.DistTo(player->GetCenter()) > 150.0f)
-				{
 					continue;
-				}
 
-				if (percentHealth < 0.85f)
-				{
-					dangerType = MEDIGUN_BULLET_RESIST;
-					return true;
-				}
+				if (percentHealth >= HEALTH_LIMIT)
+					continue;
 
-				break;
+				// Dangerous energy ball
+				dangerType = MEDIGUN_BULLET_RESIST;
+				return true;
 			}
 
 		default: {}
@@ -330,35 +289,30 @@ bool IsPlayerInDanger(C_TFPlayer* player, medigun_resist_types_t& dangerType)
 	if (numClosePipebombs > 0)
 	{
 		dangerType = MEDIGUN_BLAST_RESIST;
+
+		if (numClosePipebombs > 1)
+		{
+			return true;
+		}
 	}
 
-	if (numClosePipebombs > 1)
-	{
-		return true;
-	}
-
+	// Check for dangerous sentry guns
 	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::BUILDINGS_ENEMIES))
 	{
 		if (!pEntity || pEntity->GetClassId() != ETFClassIds::CObjectSentrygun)
-		{
 			continue;
-		}
 
 		C_ObjectSentrygun* sentrygun{ pEntity->As<C_ObjectSentrygun>() };
 		if (!sentrygun)
-		{
 			continue;
-		}
 
-		if (sentrygun->m_hAutoAimTarget() == player || sentrygun->m_hEnemy() == player)
-		{
-			dangerType = MEDIGUN_BULLET_RESIST;
+		if (sentrygun->m_hAutoAimTarget() != player && sentrygun->m_hEnemy() != player)
+			continue;
 
-			if (percentHealth < 0.85f)
-			{
-				return true;
-			}
-		}
+		dangerType = MEDIGUN_BULLET_RESIST;
+
+		if (percentHealth < HEALTH_LIMIT)
+			return true;
 	}
 
 	return false;
@@ -366,96 +320,91 @@ bool IsPlayerInDanger(C_TFPlayer* player, medigun_resist_types_t& dangerType)
 
 bool PlayerHasResUber(medigun_resist_types_t res, C_TFPlayer* player)
 {
-	if (res == MEDIGUN_BULLET_RESIST)
+	switch (res)
 	{
+	case MEDIGUN_BULLET_RESIST:
 		return player->InCond(TF_COND_MEDIGUN_UBER_BULLET_RESIST);
-	}
 
-	if (res == MEDIGUN_BLAST_RESIST)
-	{
+	case MEDIGUN_BLAST_RESIST:
 		return player->InCond(TF_COND_MEDIGUN_UBER_BLAST_RESIST);
-	}
 
-	if (res == MEDIGUN_FIRE_RESIST)
-	{
+	case MEDIGUN_FIRE_RESIST:
 		return player->InCond(TF_COND_MEDIGUN_UBER_FIRE_RESIST);
-	}
 
-	return false;
+	default:
+		return false;
+	}
+}
+
+void CAutoVaccinator::Reset()
+{
+	m_SimResType = MEDIGUN_NUM_RESISTS;
+	m_GoalResType = MEDIGUN_NUM_RESISTS;
+	m_IsChangingRes = false;
+	m_ShouldPop = false;
 }
 
 void CAutoVaccinator::Run(CUserCmd* cmd)
 {
 	if (!CFG::AutoVaccinator_Active || !G::bCanPrimaryAttack)
 	{
-		sim_res_type = MEDIGUN_NUM_RESISTS;
-		goal_res_type = MEDIGUN_NUM_RESISTS;
-		changing_res = false;
-		pop = false;
-
+		Reset();
 		return;
 	}
 
+	// Valid player?
 	const auto local{ H::Entities->GetLocal() };
 	if (!local || local->deadflag())
 	{
-		sim_res_type = MEDIGUN_NUM_RESISTS;
-		goal_res_type = MEDIGUN_NUM_RESISTS;
-		changing_res = false;
-		pop = false;
-
+		Reset();
 		return;
 	}
 
+	// Valid weapon?
 	const auto weapon{ H::Entities->GetWeapon() };
 	if (!weapon || weapon->GetWeaponID() != TF_WEAPON_MEDIGUN)
 	{
-		sim_res_type = MEDIGUN_NUM_RESISTS;
-		goal_res_type = MEDIGUN_NUM_RESISTS;
-		changing_res = false;
-		pop = false;
-
+		Reset();
 		return;
 	}
 
+	// Valid medigun?
 	const auto medigun{ weapon->As<C_WeaponMedigun>() };
 	if (!medigun || medigun->GetChargeType() < 3)
 	{
-		sim_res_type = MEDIGUN_NUM_RESISTS;
-		goal_res_type = MEDIGUN_NUM_RESISTS;
-		changing_res = false;
-		pop = false;
-
+		Reset();
 		return;
 	}
 
+	// Update resistant type
 	const auto curResType{ medigun->GetResistType() };
-	if (sim_res_type == MEDIGUN_NUM_RESISTS)
+	if (m_SimResType == MEDIGUN_NUM_RESISTS)
 	{
-		sim_res_type = curResType;
+		m_SimResType = curResType;
 	}
 
-	if (sim_res_type != goal_res_type && goal_res_type != MEDIGUN_NUM_RESISTS)
+	// Switch resistance
+	if (m_SimResType != m_GoalResType && m_GoalResType != MEDIGUN_NUM_RESISTS)
 	{
-		changing_res = true;
+		m_IsChangingRes = true;
 
 		if (!(G::nOldButtons & IN_RELOAD))
 		{
 			cmd->buttons |= IN_RELOAD;
 
-			sim_res_type++;
+			m_SimResType++;
 
-			if (sim_res_type > 2)
+			if (m_SimResType > 2)
 			{
-				sim_res_type = 0;
+				m_SimResType = 0;
 			}
 		}
 
 		return;
 	}
-	changing_res = false;
+	m_IsChangingRes = false;
 
-	goal_res_type = MEDIGUN_NUM_RESISTS;
+	m_GoalResType = MEDIGUN_NUM_RESISTS;
 
 	if (cmd->buttons & IN_RELOAD)
 	{
@@ -464,41 +413,43 @@ void CAutoVaccinator::Run(CUserCmd* cmd)
 
 	/*if ((cmd->buttons & IN_RELOAD) && !(G::nOldButtons & IN_RELOAD) && G::bCanPrimaryAttack)
 		{
-			sim_res_type++;
+			m_SimResType++;
 
-			if (sim_res_type > 2)
+			if (m_SimResType > 2)
 			{
-				sim_res_type = 0;
+				m_SimResType = 0;
 			}
 
-			goal_res_type = sim_res_type;
+			m_GoalResType = m_SimResType;
 		}*/
 
-	if (pop)
+	// Pop vaccinator
+	if (m_ShouldPop)
 	{
-		pop = false;
+		m_ShouldPop = false;
 
 		cmd->buttons |= IN_ATTACK2;
 
 		return;
 	}
 
-	if (!changing_res && !pop)
+	// Update danger status
+	if (!m_IsChangingRes && !m_ShouldPop)
 	{
 		const auto healTarget{ medigun->m_hHealingTarget().Get()->As<C_TFPlayer>() };
 		medigun_resist_types_t dangerType{ MEDIGUN_NUM_RESISTS };
 
 		if (IsPlayerInDanger(healTarget, dangerType) && !PlayerHasResUber(dangerType, healTarget))
 		{
-			goal_res_type = dangerType;
+			m_GoalResType = dangerType;
 
 			if (medigun->m_flChargeLevel() >= 0.25f)
 			{
-				pop = true;
+				m_ShouldPop = true;
 
 				if (CFG::AutoVaccinator_Pop == 1 && !healTarget->IsPlayerOnSteamFriendsList())
 				{
-					pop = false;
+					m_ShouldPop = false;
 				}
 			}
 		}
@@ -506,18 +457,18 @@ void CAutoVaccinator::Run(CUserCmd* cmd)
 		{
 			if (IsPlayerInDanger(local, dangerType) && !PlayerHasResUber(dangerType, local))
 			{
-				goal_res_type = dangerType;
+				m_GoalResType = dangerType;
 
 				if (medigun->m_flChargeLevel() >= 0.25f)
 				{
-					pop = true;
+					m_ShouldPop = true;
 				}
 			}
 		}
 
 		if (dangerType != MEDIGUN_NUM_RESISTS)
 		{
-			goal_res_type = dangerType;
+			m_GoalResType = dangerType;
 		}
 	}
 }
@@ -525,63 +476,43 @@ void CAutoVaccinator::Run(CUserCmd* cmd)
 void CAutoVaccinator::ProcessPlayerHurt(IGameEvent* event)
 {
 	if (!CFG::AutoVaccinator_Active)
-	{
 		return;
-	}
 
-	if (changing_res || pop)
-	{
+	if (m_IsChangingRes || m_ShouldPop)
 		return;
-	}
 
 	const auto pLocal{ H::Entities->GetLocal() };
 	if (!pLocal || pLocal->deadflag())
-	{
 		return;
-	}
 
 	const auto weapon{ H::Entities->GetWeapon() };
 	if (!weapon || weapon->GetWeaponID() != TF_WEAPON_MEDIGUN)
-	{
 		return;
-	}
 
 	const auto medigun{ weapon->As<C_WeaponMedigun>() };
 	if (!medigun || medigun->GetChargeType() < 3)
-	{
 		return;
-	}
 
 	const auto victim{ GET_ENT_FROM_USER_ID(event->GetInt("userid")) };
 	const auto attacker{ GET_ENT_FROM_USER_ID(event->GetInt("attacker")) };
 
 	if (!victim || victim == attacker)
-	{
 		return;
-	}
 
 	const auto health{ event->GetInt("health") };
 	if (health <= 0)
-	{
 		return;
-	}
 
 	const auto weaponID{ event->GetInt("weaponid") };
 	if (!weaponID)
-	{
 		return;
-	}
 
 	if (victim != pLocal && victim != medigun->m_hHealingTarget())
-	{
 		return;
-	}
 
 	const auto victimEnt{ victim->As<C_TFPlayer>() };
 	if (!victimEnt)
-	{
 		return;
-	}
 
 	const auto percentHealth{
 		Math::RemapValClamped
@@ -590,23 +521,23 @@ void CAutoVaccinator::ProcessPlayerHurt(IGameEvent* event)
 		)
 	};
 
-	goal_res_type = WeaponIDToResType(weaponID);
+	m_GoalResType = WeaponIDToResType(weaponID);
 
 	if (medigun->m_flChargeLevel() >= 0.25f)
 	{
-		if (goal_res_type == MEDIGUN_BULLET_RESIST && !PlayerHasResUber(MEDIGUN_BULLET_RESIST, victimEnt))
+		if (m_GoalResType == MEDIGUN_BULLET_RESIST && !PlayerHasResUber(MEDIGUN_BULLET_RESIST, victimEnt))
 		{
-			if (event->GetBool("crit") || event->GetBool("minicrit") || percentHealth < 0.85f)
+			if (event->GetBool("crit") || event->GetBool("minicrit") || percentHealth < HEALTH_LIMIT)
 			{
-				pop = true;
+				m_ShouldPop = true;
 			}
 		}
 
-		if (!pop && goal_res_type == MEDIGUN_FIRE_RESIST && !PlayerHasResUber(MEDIGUN_FIRE_RESIST, victimEnt))
+		if (!m_ShouldPop && m_GoalResType == MEDIGUN_FIRE_RESIST && !PlayerHasResUber(MEDIGUN_FIRE_RESIST, victimEnt))
 		{
-			if (event->GetBool("crit") || event->GetBool("minicrit") || percentHealth < 0.85f)
+			if (event->GetBool("crit") || event->GetBool("minicrit") || percentHealth < HEALTH_LIMIT)
 			{
-				pop = true;
+				m_ShouldPop = true;
 			}
 		}
 	}
@@ -614,28 +545,22 @@ void CAutoVaccinator::ProcessPlayerHurt(IGameEvent* event)
 	const auto healTarget{ medigun->m_hHealingTarget().Get() };
 	if (victim == healTarget && CFG::AutoVaccinator_Pop == 1 && !healTarget->As<C_TFPlayer>()->IsPlayerOnSteamFriendsList())
 	{
-		pop = false;
+		m_ShouldPop = false;
 	}
 }
 
 void CAutoVaccinator::PreventReload(CUserCmd* cmd)
 {
-	if (!CFG::AutoVaccinator_Active || changing_res)
-	{
+	if (!CFG::AutoVaccinator_Active || m_IsChangingRes)
 		return;
-	}
 
 	const auto weapon{ H::Entities->GetWeapon() };
 	if (!weapon || weapon->GetWeaponID() != TF_WEAPON_MEDIGUN)
-	{
 		return;
-	}
 
 	const auto medigun{ weapon->As<C_WeaponMedigun>() };
 	if (!medigun || medigun->GetChargeType() < 3)
-	{
 		return;
-	}
 
 	if (cmd->buttons & IN_RELOAD)
 	{

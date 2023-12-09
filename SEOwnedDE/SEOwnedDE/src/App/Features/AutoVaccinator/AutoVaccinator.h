@@ -4,6 +4,13 @@
 
 class CAutoVaccinator
 {
+	int m_SimResType = MEDIGUN_NUM_RESISTS;
+	int m_GoalResType = MEDIGUN_BULLET_RESIST;
+	bool m_IsChangingRes = false;
+	bool m_ShouldPop = false;
+
+	void Reset();
+
 public:
 	void Run(CUserCmd* cmd);
 	void ProcessPlayerHurt(IGameEvent* event);
