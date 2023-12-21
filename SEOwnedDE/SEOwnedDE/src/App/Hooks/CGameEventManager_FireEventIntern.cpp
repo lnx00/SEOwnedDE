@@ -1,7 +1,7 @@
 #include "../../SDK/SDK.h"
 
 #include "../Features/CFG.h"
-#include "../Features/AutoVaccinator/AutoVaccinator.h"
+#include "../Features/Triggerbot/AutoVaccinator/AutoVaccinator.h"
 #include "../Features/Players/Players.h"
 
 void onVoteCast(IGameEvent *event)
