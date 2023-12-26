@@ -18,7 +18,7 @@ class CPlayers
 	};
 
 	std::vector<Player> m_Players;
-	std::string m_LogPath;
+	std::filesystem::path m_LogPath;
 
 public:
 	void Parse();

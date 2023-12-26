@@ -4,16 +4,9 @@ void CPlayers::Parse()
 {
 	if (m_LogPath.empty())
 	{
-		m_LogPath = std::filesystem::current_path().string() + "\\SEOwnedDE\\";
+		m_LogPath = U::Storage->GetWorkFolder() / "players.json";
 
-		if (!std::filesystem::exists(m_LogPath))
-		{
-			std::filesystem::create_directories(m_LogPath);
-		}
-
-		m_LogPath += "players.json";
-
-		if (!std::filesystem::exists(m_LogPath))
+		if (!exists(m_LogPath))
 		{
 			std::ofstream file(m_LogPath, std::ios::app);
 

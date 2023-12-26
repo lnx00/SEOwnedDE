@@ -3,6 +3,7 @@
 #include "Assert/Assert.h"
 #include "Color/Color.h"
 #include "Config/Config.h"
+#include "Storage/Storage.h"
 #include "Hash/Hash.h"
 #include "HookManager/HookManager.h"
 #include "InterfaceManager/InterfaceManager.h"

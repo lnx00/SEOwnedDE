@@ -13,6 +13,7 @@
 
 void CApp::Start()
 {
+	U::Storage->Init("SEOwnedDE");
 	U::SignatureManager->InitializeAllSignatures();
 	U::InterfaceManager->InitializeAllInterfaces();
 
@@ -31,7 +32,7 @@ void CApp::Start()
 
 	F::Players->Parse();
 
-	Config::Load((std::filesystem::current_path().string() + R"(\SEOwnedDE\configs\default.json)").c_str());
+	Config::Load(U::Storage->GetConfigFolder() / "default.json");
 
 	const auto month = []
 	{

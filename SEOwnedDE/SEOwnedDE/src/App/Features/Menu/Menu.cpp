@@ -2372,10 +2372,11 @@ void CMenu::MainWindow()
 	if (MainTab == EMainTabs::CONFIGS)
 	{
 		static std::string strSelected = {};
+		const auto& configFolder = U::Storage->GetConfigFolder();
 
 		int nCount = 0;
 
-		for (const auto &entry : std::filesystem::directory_iterator(m_strConfigPath))
+		for (const auto &entry : std::filesystem::directory_iterator(configFolder))
 		{
 			if (std::string(std::filesystem::path(entry).filename().string()).find(".json") == std::string_view::npos)
 				continue;
@@ -2394,7 +2395,7 @@ void CMenu::MainWindow()
 			{
 				bool bAlreadyExists = [&]() -> bool
 				{
-					for (const auto &entry : std::filesystem::directory_iterator(m_strConfigPath))
+					for (const auto &entry : std::filesystem::directory_iterator(configFolder))
 					{
 						if (std::string(std::filesystem::path(entry).filename().string()).find(".json") == std::string_view::npos)
 							continue;
@@ -2407,7 +2408,10 @@ void CMenu::MainWindow()
 				}();
 
 				if (!bAlreadyExists)
-					Config::Save((m_strConfigPath + "\\" + strInput + ".json").c_str());
+				{
+					std::string newFile = strInput + ".json";
+					Config::Save(configFolder / newFile);
+				}
 			}
 			
 			//can't do this nicely after getting rid of std::any..
@@ -2441,7 +2445,7 @@ void CMenu::MainWindow()
 				{
 					m_nCursorY += CFG::Menu_Spacing_Y;
 
-					for (const auto &entry : std::filesystem::directory_iterator(m_strConfigPath))
+					for (const auto &entry : std::filesystem::directory_iterator(configFolder))
 					{
 						if (std::string(std::filesystem::path(entry).filename().string()).find(".json") == std::string_view::npos)
 							continue;
@@ -2466,8 +2470,8 @@ void CMenu::MainWindow()
 				int anchor_y = m_nCursorY;
 
 				if (Button("Load")) {
-					std::string full = (m_strConfigPath + "\\" + strSelected + ".json");
-					Config::Load(full.c_str());
+					std::string fileName = strSelected + ".json";
+					Config::Load(configFolder / fileName);
 					strSelected = {};
 				}
 
@@ -2475,14 +2479,14 @@ void CMenu::MainWindow()
 				m_nCursorY = anchor_y;
 
 				if (Button("Update")) {
-					std::string full = (m_strConfigPath + "\\" + strSelected + ".json");
-					Config::Save(full.c_str());
+					std::string fileName = strSelected + ".json";
+					Config::Save(configFolder / fileName);
 					strSelected = {};
 				}
 
 				if (Button("Delete")) {
-					std::string full = (m_strConfigPath + "\\" + strSelected + ".json");
-					std::filesystem::remove(full.c_str());
+					std::string fileName = strSelected + ".json";
+					std::filesystem::remove(configFolder / fileName);
 					strSelected = {};
 				}
 
@@ -2641,12 +2645,12 @@ void CMenu::Run()
 
 CMenu::CMenu()
 {
-	m_strConfigPath = std::filesystem::current_path().string() + "\\SEOwnedDE\\configs";
+	/*m_strConfigPath = std::filesystem::current_path().string() + "\\SEOwnedDE\\configs";
 	
 	if (!std::filesystem::exists(m_strConfigPath))
 	{
 		std::filesystem::create_directories(m_strConfigPath);
-	}
+	}*/
 }
 
 

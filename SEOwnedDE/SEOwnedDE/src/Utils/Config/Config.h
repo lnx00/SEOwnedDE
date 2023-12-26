@@ -5,6 +5,7 @@
 #include <typeinfo>
 #include <fstream>
 #include <iomanip>
+#include <filesystem>
 
 namespace Config
 {
@@ -18,7 +19,7 @@ namespace Config
 
 	inline std::vector<ConfigVarInitializer> vars{};
 
-	static void Save(const char *path)
+	static void Save(const std::filesystem::path& path)
 	{
 		std::ofstream output_file(path);
 
@@ -69,7 +70,7 @@ namespace Config
 		output_file.close();
 	}
 
-	static void Load(const char *path)
+	static void Load(const std::filesystem::path& path)
 	{
 		std::ifstream input_file(path);
 

@@ -97,7 +97,6 @@
     <ClCompile Include="src\App\Features\Triggerbot\AutoBackstab\AutoBackstab.cpp" />
     <ClCompile Include="src\App\Features\Triggerbot\AutoAirblast\AutoAirblast.cpp" />
     <ClCompile Include="src\App\Features\TeamWellBeing\TeamWellBeing.cpp" />
-    <ClCompile Include="src\App\Features\AutoVaccinator\AutoVaccinator.cpp" />
     <ClCompile Include="src\App\Hooks\CEconItemSchema_GetItemDefinition.cpp" />
     <ClCompile Include="src\App\Hooks\CViewRender_PerformScreenOverlay.cpp" />
     <ClCompile Include="src\App\Hooks\C_BaseEntity_ResetLatched.cpp" />
@@ -123,6 +122,8 @@
     <ClCompile Include="include\MinHook\hde\hde64.c" />
     <ClCompile Include="include\MinHook\hook.c" />
     <ClCompile Include="include\MinHook\trampoline.c" />
+    <ClCompile Include="src\App\Features\Triggerbot\AutoVaccinator\AutoVaccinator.cpp" />
+    <ClCompile Include="src\Utils\Storage\Storage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App\Features\Aimbot\AimbotHitscan\AimbotHitscan.h" />
@@ -289,7 +290,6 @@
     <ClInclude Include="src\App\Features\Triggerbot\AutoBackstab\AutoBackstab.h" />
     <ClInclude Include="src\App\Features\Triggerbot\AutoAirblast\AutoAirblast.h" />
     <ClInclude Include="src\App\Features\TeamWellBeing\TeamWellBeing.h" />
-    <ClInclude Include="src\App\Features\AutoVaccinator\AutoVaccinator.h" />
     <ClInclude Include="src\App\Features\Players\Players.h" />
     <ClInclude Include="src\SDK\TF2\vphysics.h" />
     <ClInclude Include="src\App\Features\ProjectileSim\ProjectileSim.h" />
@@ -307,5 +307,7 @@
     <ClInclude Include="include\MinHook\hde\table64.h" />
     <ClInclude Include="include\MinHook\MinHook.h" />
     <ClInclude Include="include\MinHook\trampoline.h" />
+    <ClInclude Include="src\App\Features\Triggerbot\AutoVaccinator\AutoVaccinator.h" />
+    <ClInclude Include="src\Utils\Storage\Storage.h" />
   </ItemGroup>
 </Project>

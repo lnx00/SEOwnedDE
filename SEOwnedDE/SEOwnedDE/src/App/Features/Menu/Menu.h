@@ -15,7 +15,7 @@ private:
 	bool m_bClickConsumed = false;
 	std::map<void *, bool> m_mapStates = {};
 
-	std::string m_strConfigPath = {};
+	//std::string m_strConfigPath = {};
 
 	std::unique_ptr<Color_t[]> m_pGradient = nullptr;
 	unsigned int m_nColorPickerTextureId = 0;
