@@ -15,6 +15,7 @@ class CAimbotProjectile
 	};
 
 	std::vector<Target_t> m_vecTargets = {};
+	std::vector<Vec3> m_TargetPath = {};
 
 	struct ProjectileInfo_t
 	{

@@ -4,7 +4,7 @@
 #include "../../MovementSimulation/MovementSimulation.h"
 #include "../../ProjectileSim/ProjectileSim.h"
 
-static std::vector<Vec3> vecPositions = {};
+//static std::vector<Vec3> vecPositions = {};
 static int nLastAimedPos = 0; //0 feet 1 body 2 head
 static bool bMP = false;
 constexpr int GAUGE_OFFSET{ 0x1B40 }; // TODO: ???
@@ -51,55 +51,53 @@ void DrawProjPath(const CUserCmd* pCmd, float time)
 	}
 }
 
-void DrawMovePath()
+void DrawMovePath(const std::vector<Vec3>& vPath)
 {
 	// Line
 	if (CFG::Visuals_Draw_Movement_Path_Style == 1)
 	{
-		for (size_t n = 1; n < vecPositions.size(); n++)
+		for (size_t n = 1; n < vPath.size(); n++)
 		{
-			I::DebugOverlay->AddLineOverlay(vecPositions[n], vecPositions[n - 1], 255, 255, 255, false, 10.0f);
+			I::DebugOverlay->AddLineOverlay(vPath[n], vPath[n - 1], 255, 255, 255, false, 10.0f);
 		}
 	}
 
 	// Dashed
 	if (CFG::Visuals_Draw_Movement_Path_Style == 2)
 	{
-		for (size_t n = 1; n < vecPositions.size(); n++)
+		for (size_t n = 1; n < vPath.size(); n++)
 		{
 			if (n % 2 == 0)
 			{
 				continue;
 			}
 
-			I::DebugOverlay->AddLineOverlay(vecPositions[n], vecPositions[n - 1], 255, 255, 255, false, 10.0f);
+			I::DebugOverlay->AddLineOverlay(vPath[n], vPath[n - 1], 255, 255, 255, false, 10.0f);
 		}
 	}
 
 	// Alternative line
 	if (CFG::Visuals_Draw_Movement_Path_Style == 3)
 	{
-		for (size_t n = 1; n < vecPositions.size(); n++)
+		for (size_t n = 1; n < vPath.size(); n++)
 		{
 			if (n != 1)
 			{
 				Vec3 right{};
 
-				Math::AngleVectors(Math::CalcAngle(vecPositions[n], vecPositions[n - 1]), nullptr, &right, nullptr);
+				Math::AngleVectors(Math::CalcAngle(vPath[n], vPath[n - 1]), nullptr, &right, nullptr);
 
-				const Vec3 start{ vecPositions[n - 1] };
-				const Vec3 endL{ vecPositions[n - 1] + (right * 5.0f) };
-				const Vec3 endR{ vecPositions[n - 1] - (right * 5.0f) };
+				const Vec3& start{ vPath[n - 1] };
+				const Vec3 endL{ vPath[n - 1] + (right * 5.0f) };
+				const Vec3 endR{ vPath[n - 1] - (right * 5.0f) };
 
 				I::DebugOverlay->AddLineOverlay(start, endL, 255, 255, 255, false, 10.0f);
 				I::DebugOverlay->AddLineOverlay(start, endR, 255, 255, 255, false, 10.0f);
 			}
 
-			I::DebugOverlay->AddLineOverlay(vecPositions[n], vecPositions[n - 1], 255, 255, 255, false, 10.0f);
+			I::DebugOverlay->AddLineOverlay(vPath[n], vPath[n - 1], 255, 255, 255, false, 10.0f);
 		}
 	}
-
-	vecPositions.clear();
 }
 
 Vec3 GetOffsetShootPos(C_TFPlayer* local, C_TFWeaponBase* weapon, const CUserCmd* pCmd)
@@ -686,7 +684,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon,
 		H::AimUtils->GetProjectileFireSetup(pCmd->viewangles, vOffset, &vLocalPos);
 	}
 
-	vecPositions.clear();
+	m_TargetPath.clear();
 
 	if (target.m_pEntity->GetClassId() == ETFClassIds::CTFPlayer)
 	{
@@ -700,7 +698,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon,
 
 		for (int nTick = 0; nTick < TIME_TO_TICKS(CFG::Aimbot_Projectile_Max_Simulation_Time); nTick++)
 		{
-			vecPositions.push_back(F::MovementSimulation->GetOrigin());
+			m_TargetPath.push_back(F::MovementSimulation->GetOrigin());
 
 			F::MovementSimulation->RunTick(TICKS_TO_TIME(nTick));
 
@@ -1009,8 +1007,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon,
 		}
 	}
 
-	vecPositions.clear();
-
+	m_TargetPath.clear();
 	return false;
 }
 
@@ -1359,12 +1356,13 @@ void CAimbotProjectile::Run(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeaponBase* 
 
 			Aim(pCmd, pLocal, pWeapon, target.m_vAngleTo);
 
-			if (bIsFiring && !vecPositions.empty() && vecPositions.size() > 1)
+			if (bIsFiring && m_TargetPath.size() > 1)
 			{
 				I::DebugOverlay->ClearAllOverlays();
 
 				//drawProjPath(pCmd, Target.m_flTimeToTarget);
-				DrawMovePath();
+				DrawMovePath(m_TargetPath);
+				m_TargetPath.clear();
 			}
 		}
 	}
