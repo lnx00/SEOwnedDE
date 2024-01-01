@@ -16,6 +16,7 @@ class CAimbotProjectile
 
 	std::vector<Target_t> m_vecTargets = {};
 	std::vector<Vec3> m_TargetPath = {};
+	int m_LastAimPos = 0; // 0 = feet, 1 = body, 2 = head
 
 	struct ProjectileInfo_t
 	{

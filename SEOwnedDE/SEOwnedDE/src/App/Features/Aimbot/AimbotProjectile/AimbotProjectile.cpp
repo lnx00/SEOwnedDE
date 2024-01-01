@@ -5,7 +5,7 @@
 #include "../../ProjectileSim/ProjectileSim.h"
 
 //static std::vector<Vec3> vecPositions = {};
-static int nLastAimedPos = 0; //0 feet 1 body 2 head
+//static int nLastAimedPos = 0; //0 feet 1 body 2 head
 static bool bMP = false;
 constexpr int GAUGE_OFFSET{ 0x1B40 }; // TODO: ???
 
@@ -423,7 +423,7 @@ void CAimbotProjectile::OffsetPlayerPosition(C_TFWeaponBase* pWeapon, Vec3& vPos
 		case 0:
 		{
 			vPos.z += (flMaxZ * 0.2f);
-			nLastAimedPos = 0;
+			m_LastAimPos = 0;
 			break;
 		}
 
@@ -431,7 +431,7 @@ void CAimbotProjectile::OffsetPlayerPosition(C_TFWeaponBase* pWeapon, Vec3& vPos
 		case 1:
 		{
 			vPos.z += (flMaxZ * 0.5f);
-			nLastAimedPos = 1;
+			m_LastAimPos = 1;
 			break;
 		}
 
@@ -446,7 +446,7 @@ void CAimbotProjectile::OffsetPlayerPosition(C_TFWeaponBase* pWeapon, Vec3& vPos
 			}
 
 			vPos.z += (flMaxZ * 0.85f);
-			nLastAimedPos = 2;
+			m_LastAimPos = 2;
 			break;
 		}
 
@@ -463,7 +463,7 @@ void CAimbotProjectile::OffsetPlayerPosition(C_TFWeaponBase* pWeapon, Vec3& vPos
 				}
 
 				vPos.z += (flMaxZ * 0.92f);
-				nLastAimedPos = 2;
+				m_LastAimPos = 2;
 			}
 
 			else
@@ -479,13 +479,13 @@ void CAimbotProjectile::OffsetPlayerPosition(C_TFWeaponBase* pWeapon, Vec3& vPos
 						if (bOnGround)
 						{
 							vPos.z += (flMaxZ * 0.2f);
-							nLastAimedPos = 0;
+							m_LastAimPos = 0;
 						}
 
 						else
 						{
 							vPos.z += (flMaxZ * 0.5f);
-							nLastAimedPos = 1;
+							m_LastAimPos = 1;
 						}
 
 						break;
@@ -493,14 +493,14 @@ void CAimbotProjectile::OffsetPlayerPosition(C_TFWeaponBase* pWeapon, Vec3& vPos
 					case TF_WEAPON_PIPEBOMBLAUNCHER:
 					{
 						vPos.z += (flMaxZ * 0.1f);
-						nLastAimedPos = 0;
+						m_LastAimPos = 0;
 						break;
 					}
 
 					default:
 					{
 						vPos.z += (flMaxZ * 0.5f);
-						nLastAimedPos = 1;
+						m_LastAimPos = 1;
 						break;
 					}
 				}
@@ -848,7 +848,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon,
 
 					for (int n = 0; n < 3; n++)
 					{
-						if (n == nLastAimedPos)
+						if (n == m_LastAimPos)
 							continue;
 
 						CFG::Aimbot_Projectile_Aim_Position = n;
