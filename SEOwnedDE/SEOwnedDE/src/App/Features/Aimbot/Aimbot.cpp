@@ -6,7 +6,7 @@
 
 #include "../CFG.h"
 
-void CAimbot::RunMain(CUserCmd *pCmd)
+void CAimbot::RunMain(CUserCmd* pCmd)
 {
 	G::nTargetIndex = -1;
 	G::flAimbotFOV = 0.0f;
@@ -18,8 +18,8 @@ void CAimbot::RunMain(CUserCmd *pCmd)
 	if (Shifting::bRecharging)
 		return;
 
-	auto pLocal = H::Entities->GetLocal();
-	auto pWeapon = H::Entities->GetWeapon();
+	const auto pLocal = H::Entities->GetLocal();
+	const auto pWeapon = H::Entities->GetWeapon();
 
 	if (!pLocal || !pWeapon
 		|| pLocal->deadflag()
@@ -33,17 +33,20 @@ void CAimbot::RunMain(CUserCmd *pCmd)
 
 	switch (H::AimUtils->GetWeaponType(pWeapon))
 	{
-		case EWeaponType::HITSCAN: {
+		case EWeaponType::HITSCAN:
+		{
 			F::AimbotHitscan->Run(pCmd, pLocal, pWeapon);
 			break;
 		}
 
-		case EWeaponType::PROJECTILE: {
+		case EWeaponType::PROJECTILE:
+		{
 			F::AimbotProjectile->Run(pCmd, pLocal, pWeapon);
 			break;
 		}
 
-		case EWeaponType::MELEE: {
+		case EWeaponType::MELEE:
+		{
 			F::AimbotMelee->Run(pCmd, pLocal, pWeapon);
 			break;
 		}
@@ -52,14 +55,14 @@ void CAimbot::RunMain(CUserCmd *pCmd)
 	}
 }
 
-void CAimbot::Run(CUserCmd *pCmd)
+void CAimbot::Run(CUserCmd* pCmd)
 {
 	RunMain(pCmd);
 
 	//same-ish code below to see if we are firing manually
 
-	auto pLocal = H::Entities->GetLocal();
-	auto pWeapon = H::Entities->GetWeapon();
+	const auto pLocal = H::Entities->GetLocal();
+	const auto pWeapon = H::Entities->GetWeapon();
 
 	if (!pLocal || !pWeapon
 		|| pLocal->deadflag()
@@ -67,23 +70,26 @@ void CAimbot::Run(CUserCmd *pCmd)
 		|| pLocal->m_bFeignDeathReady() || pLocal->m_flInvisibility() > 0.0f)
 		return;
 
-	auto nWeaponType = H::AimUtils->GetWeaponType(pWeapon);
+	const auto nWeaponType = H::AimUtils->GetWeaponType(pWeapon);
 
 	if (!G::bFiring)
 	{
 		switch (nWeaponType)
 		{
-			case EWeaponType::HITSCAN: {
+			case EWeaponType::HITSCAN:
+			{
 				G::bFiring = F::AimbotHitscan->IsFiring(pCmd, pWeapon);
 				break;
 			}
 
-			case EWeaponType::PROJECTILE: {
+			case EWeaponType::PROJECTILE:
+			{
 				G::bFiring = F::AimbotProjectile->IsFiring(pCmd, pLocal, pWeapon);
 				break;
 			}
 
-			case EWeaponType::MELEE: {
+			case EWeaponType::MELEE:
+			{
 				G::bFiring = F::AimbotMelee->IsFiring(pCmd, pWeapon);
 				break;
 			}
@@ -92,12 +98,15 @@ void CAimbot::Run(CUserCmd *pCmd)
 		}
 	}
 
+	// Projectile NoSpread
 	if (G::bFiring && nWeaponType == EWeaponType::PROJECTILE && CFG::Aimbot_Projectile_NoSpread)
 	{
 		SDKUtils::SharedRandomInt("SelectWeightedSequence", 0, 0, pCmd->random_seed);
 
 		for (int i = 0; i < 6; ++i)
+		{
 			I::UniformRandomStream->RandomFloat();
+		}
 
 		switch (pWeapon->GetWeaponID())
 		{

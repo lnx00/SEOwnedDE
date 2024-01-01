@@ -4,11 +4,10 @@
 
 class CAimbot
 {
-private:
-	void RunMain(CUserCmd *pCmd);
+	void RunMain(CUserCmd* pCmd);
 
 public:
-	void Run(CUserCmd *pCmd);
+	void Run(CUserCmd* pCmd);
 };
 
 MAKE_SINGLETON_SCOPED(CAimbot, Aimbot, F);
