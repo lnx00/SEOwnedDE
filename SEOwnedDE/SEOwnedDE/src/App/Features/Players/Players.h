@@ -17,7 +17,7 @@ class CPlayers
 		PlayerPriority Info = {};
 	};
 
-	std::vector<Player> m_Players;
+	std::unordered_map<hash::hash_t, PlayerPriority> m_Players;
 	std::filesystem::path m_LogPath;
 
 public:

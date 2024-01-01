@@ -36,14 +36,14 @@ void CPlayers::Parse()
 	nlohmann::json j = nlohmann::json::parse(logFile);
 	for (const auto& item : j.items())
 	{
-		m_Players.emplace_back(
-			HASH_RT(item.key().c_str()),
-			PlayerPriority{
-				j[item.key()]["ignored"].get<bool>(),
-				j[item.key()]["cheater"].get<bool>(),
-				j[item.key()]["retardlegit"].get<bool>()
-			}
-		);
+		const auto key = HASH_RT(item.key().c_str());
+		auto& playerEntry = j[item.key()];
+
+		m_Players[key] = {
+			playerEntry["ignored"].get<bool>(),
+			playerEntry["cheater"].get<bool>(),
+			playerEntry["retardlegit"].get<bool>()
+		};
 	}
 }
 
@@ -60,27 +60,8 @@ void CPlayers::Mark(int entindex, const PlayerPriority& info)
 		return;
 	}
 
-	Player* ptr{};
 	auto steamID = HASH_RT(std::string_view(playerInfo.guid).data());
-
-	for (auto& pl : m_Players)
-	{
-		if (pl.SteamID != steamID)
-		{
-			continue;
-		}
-
-		ptr = &pl;
-		break;
-	}
-
-	if (!ptr)
-	{
-		m_Players.push_back({ steamID, info });
-		ptr = &m_Players.back();
-	}
-
-	ptr->Info = info;
+	m_Players[steamID] = info;
 
 	// Load the current playerlist
 	nlohmann::json j{};
@@ -99,14 +80,12 @@ void CPlayers::Mark(int entindex, const PlayerPriority& info)
 		return;
 	}
 
-	//auto key = std::string(playerInfo.guid);
 	auto& playerEntry = j[playerInfo.guid];
+	playerEntry["ignored"] = info.Ignored;
+	playerEntry["cheater"] = info.Cheater;
+	playerEntry["retardlegit"] = info.RetardLegit;
 
-	playerEntry["ignored"] = ptr->Info.Ignored;
-	playerEntry["cheater"] = ptr->Info.Cheater;
-	playerEntry["retardlegit"] = ptr->Info.RetardLegit;
-
-	if (!ptr->Info.Ignored && !ptr->Info.Cheater && !ptr->Info.RetardLegit)
+	if (!info.Ignored && !info.Cheater && !info.RetardLegit)
 	{
 		j.erase(std::string(playerInfo.guid));
 	}
@@ -128,32 +107,17 @@ bool CPlayers::GetInfo(int entindex, PlayerPriority& out)
 		return false;
 	}
 
-	const auto steamID = HASH_RT(std::string_view(playerInfo.guid).data());
-	for (const auto& pl : m_Players)
-	{
-		if (pl.SteamID != steamID)
-		{
-			continue;
-		}
-
-		out = pl.Info;
-		return true;
-	}
-
-	return false;
+	return GetInfoGUID(playerInfo.guid, out);
 }
 
 bool CPlayers::GetInfoGUID(const std::string& guid, PlayerPriority& out)
 {
 	const auto steamID = HASH_RT(guid.c_str());
-	for (const auto& pl : m_Players)
-	{
-		if (pl.SteamID != steamID)
-		{
-			continue;
-		}
 
-		out = pl.Info;
+	if (auto it = m_Players.find(steamID); it != std::end(m_Players))
+	{
+		const auto& [key, value]{ *it };
+		out = value;
 		return true;
 	}
 
