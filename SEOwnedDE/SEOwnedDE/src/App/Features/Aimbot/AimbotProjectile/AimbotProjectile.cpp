@@ -4,10 +4,7 @@
 #include "../../MovementSimulation/MovementSimulation.h"
 #include "../../ProjectileSim/ProjectileSim.h"
 
-//static std::vector<Vec3> vecPositions = {};
-//static int nLastAimedPos = 0; //0 feet 1 body 2 head
-static bool bMP = false;
-constexpr int GAUGE_OFFSET{ 0x1B40 }; // TODO: ???
+constexpr int GAUGE_OFFSET = 0x1B40; // TODO: ???
 
 void DrawProjPath(const CUserCmd* pCmd, float time)
 {
@@ -855,9 +852,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon,
 
 						Vec3 vTargetMp = F::MovementSimulation->GetOrigin();
 
-						bMP = true;
 						OffsetPlayerPosition(pWeapon, vTargetMp, pPlayer, bDucked, bOnGround);
-						bMP = false;
 
 						CFG::Aimbot_Projectile_Aim_Position = nOld;
 
