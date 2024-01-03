@@ -6,12 +6,12 @@ class CAimbotProjectile
 {
 	struct Target_t
 	{
-		C_BaseEntity* m_pEntity = nullptr;
-		Vec3 m_vPosition = {};
-		Vec3 m_vAngleTo = {};
-		float m_flFOVTo = 0.0f;
-		float m_flDistanceTo = 0.0f;
-		float m_flTimeToTarget = 0.0f;
+		C_BaseEntity* Entity = nullptr;
+		Vec3 Position = {};
+		Vec3 AngleTo = {};
+		float FOVTo = 0.0f;
+		float DistanceTo = 0.0f;
+		float TimeToTarget = 0.0f;
 	};
 
 	std::vector<Target_t> m_vecTargets = {};
@@ -20,10 +20,10 @@ class CAimbotProjectile
 
 	struct ProjectileInfo_t
 	{
-		float m_flSpeed = 0.0f;
-		float m_flGravityMod = 0.0f;
-		bool m_bPipes = false;
-		bool m_bFlamethrower{};
+		float Speed = 0.0f;
+		float GravityMod = 0.0f;
+		bool Pipes = false;
+		bool Flamethrower = false;
 	};
 
 	ProjectileInfo_t m_CurProjInfo = {};
