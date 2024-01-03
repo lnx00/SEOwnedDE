@@ -4,63 +4,62 @@
 
 #include "../../LagRecords/LagRecords.h"
 
-bool IsBehindAndFacingTarget(const Vec3 &owner_center, const Vec3 &owner_viewangles, const Vec3 &target_center, const Vec3 &target_eyeangles)
+bool IsBehindAndFacingTarget(const Vec3& ownerCenter, const Vec3& ownerViewangles, const Vec3& targetCenter, const Vec3& targetEyeAngles)
 {
-	Vec3 to_target{};
-	to_target = target_center - owner_center;
-	to_target.z = 0.0f;
-	to_target.NormalizeInPlace();
+	Vec3 toTarget = targetCenter - ownerCenter;
+	toTarget.z = 0.0f;
+	toTarget.NormalizeInPlace();
 
-	Vec3 owner_forward{};
-	Math::AngleVectors(owner_viewangles, &owner_forward, nullptr, nullptr);
-	owner_forward.z = 0.0f;
-	owner_forward.NormalizeInPlace();
+	Vec3 ownerForward{};
+	Math::AngleVectors(ownerViewangles, &ownerForward, nullptr, nullptr);
+	ownerForward.z = 0.0f;
+	ownerForward.NormalizeInPlace();
 
-	Vec3 target_forward{};
-	Math::AngleVectors(target_eyeangles, &target_forward, nullptr, nullptr);
-	target_forward.z = 0.0f;
-	target_forward.NormalizeInPlace();
+	Vec3 targetForward{};
+	Math::AngleVectors(targetEyeAngles, &targetForward, nullptr, nullptr);
+	targetForward.z = 0.0f;
+	targetForward.NormalizeInPlace();
 
-	return to_target.Dot(target_forward) > (0.0f + 0.03125f)
-		&& to_target.Dot(owner_forward) > (0.5f + 0.03125f)
-		&& target_forward.Dot(owner_forward) > (-0.3f + 0.03125f);
+	return toTarget.Dot(targetForward) > (0.0f + 0.03125f)
+		&& toTarget.Dot(ownerForward) > (0.5f + 0.03125f)
+		&& targetForward.Dot(ownerForward) > (-0.3f + 0.03125f);
 }
 
-bool CanKnifeOneShot(C_TFPlayer *target, bool crit, bool mini_crit)
+bool CanKnifeOneShot(C_TFPlayer* target, bool crit, bool miniCrit)
 {
 	if (!target || target->IsInvulnerable())
 	{
 		return false;
 	}
 
-	auto weapon{ target->m_hActiveWeapon().Get() };
+	const auto pWeapon{ target->m_hActiveWeapon().Get() };
 
-	if (!weapon)
+	if (!pWeapon)
 	{
 		return false;
 	}
 
-	auto dmg_mult{ 1 };
+	int dmgMult = 1;
 
-	if (mini_crit || target->IsMarked())
+	if (miniCrit || target->IsMarked())
 	{
-		dmg_mult = 2;
+		dmgMult = 2;
 	}
 
 	if (crit)
 	{
-		dmg_mult = 3;
+		dmgMult = 3;
 	}
 
-	if (weapon->As<C_TFWeaponBase>()->m_iItemDefinitionIndex() == Heavy_t_FistsofSteel)
+	if (pWeapon->As<C_TFWeaponBase>()->m_iItemDefinitionIndex() == Heavy_t_FistsofSteel)
 	{
-		return target->m_iHealth() <= 80 * dmg_mult;
+		return target->m_iHealth() <= 80 * dmgMult;
 	}
 
-	return target->m_iHealth() <= 40 * dmg_mult;
+	return target->m_iHealth() <= 40 * dmgMult;
 }
 
-void CAutoBackstab::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *pCmd)
+void CAutoBackstab::Run(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, CUserCmd* pCmd)
 {
 	if (!CFG::Triggerbot_AutoBackstab_Active)
 	{
@@ -72,61 +71,61 @@ void CAutoBackstab::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 		return;
 	}
 
-	for (auto ent : H::Entities->GetGroup(EEntGroup::PLAYERS_ENEMIES))
+	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ENEMIES))
 	{
-		if (!ent)
+		if (!pEntity)
 		{
 			continue;
 		}
 
-		auto player{ ent->As<C_TFPlayer>() };
+		const auto pPlayer = pEntity->As<C_TFPlayer>();
 
-		if (!player || player->deadflag() || player->InCond(TF_COND_HALLOWEEN_GHOST_MODE))
+		if (!pPlayer || pPlayer->deadflag() || pPlayer->InCond(TF_COND_HALLOWEEN_GHOST_MODE))
 		{
 			continue;
 		}
 
-		if (CFG::Triggerbot_AutoBackstab_Ignore_Friends && player->IsPlayerOnSteamFriendsList())
+		if (CFG::Triggerbot_AutoBackstab_Ignore_Friends && pPlayer->IsPlayerOnSteamFriendsList())
 		{
 			continue;
 		}
 
-		if (CFG::Triggerbot_AutoBackstab_Ignore_Invisible && player->IsInvisible())
+		if (CFG::Triggerbot_AutoBackstab_Ignore_Invisible && pPlayer->IsInvisible())
 		{
 			continue;
 		}
 
-		if (CFG::Triggerbot_AutoBackstab_Ignore_Invulnerable && player->IsInvulnerable())
+		if (CFG::Triggerbot_AutoBackstab_Ignore_Invulnerable && pPlayer->IsInvulnerable())
 		{
 			continue;
 		}
 
-		auto can_knife{ CanKnifeOneShot(player, pLocal->IsCritBoosted(), pLocal->IsMiniCritBoosted()) };
-
-		if (!CFG::Triggerbot_AutoBackstab_Knife_If_Lethal)
+		// Knife if lethal
+		auto canKnife = false;
+		if (CFG::Triggerbot_AutoBackstab_Knife_If_Lethal)
 		{
-			can_knife = false;
+			canKnife = CanKnifeOneShot(pPlayer, pLocal->IsCritBoosted(), pLocal->IsMiniCritBoosted());
 		}
 
-		auto angle_to{ I::EngineClient->GetViewAngles() };
+		auto angleTo{ I::EngineClient->GetViewAngles() };
 
 		if (CFG::Triggerbot_AutoBacktab_Mode == 1)
 		{
-			angle_to = Math::CalcAngle(pLocal->GetShootPos(), player->GetCenter());
+			angleTo = Math::CalcAngle(pLocal->GetShootPos(), pPlayer->GetCenter());
 		}
 
-		if (can_knife || IsBehindAndFacingTarget(pLocal->GetCenter(), angle_to, player->GetCenter(), player->GetEyeAngles()))
+		if (canKnife || IsBehindAndFacingTarget(pLocal->GetCenter(), angleTo, pPlayer->GetCenter(), pPlayer->GetEyeAngles()))
 		{
 			Vec3 forward{};
-			Math::AngleVectors(angle_to, &forward);
+			Math::AngleVectors(angleTo, &forward);
 
-			auto to{ pLocal->GetShootPos() + (forward * 47.0f) };
+			auto to = pLocal->GetShootPos() + (forward * 47.0f);
 
-			if (H::AimUtils->TraceEntityMelee(player, pLocal->GetShootPos(), to))
+			if (H::AimUtils->TraceEntityMelee(pPlayer, pLocal->GetShootPos(), to))
 			{
 				if (CFG::Triggerbot_AutoBacktab_Mode == 1)
 				{
-					pCmd->viewangles = angle_to;
+					pCmd->viewangles = angleTo;
 
 					if (CFG::Triggerbot_AutoBacktab_Aim_Mode == 1)
 					{
@@ -138,44 +137,45 @@ void CAutoBackstab::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 
 				if (CFG::Misc_Accuracy_Improvements)
 				{
-					pCmd->tick_count = TIME_TO_TICKS(player->m_flSimulationTime() + SDKUtils::GetLerp());
+					pCmd->tick_count = TIME_TO_TICKS(pPlayer->m_flSimulationTime() + SDKUtils::GetLerp());
 				}
 
 				return;
 			}
 		}
 
-		int num_records{};
+		int numRecords = 0;
 
-		if (!F::LagRecords->HasRecords(player, &num_records))
+		if (!F::LagRecords->HasRecords(pPlayer, &numRecords))
 		{
 			continue;
 		}
 
-		for (int n{ 1 }; n < num_records; n++)
+		for (int n = 1; n < numRecords; n++)
 		{
-			auto record{ F::LagRecords->GetRecord(player, n, true) };
+			const auto record = F::LagRecords->GetRecord(pPlayer, n, true);
 
 			if (!record)
 			{
 				continue;
 			}
 
+			// Rage mode
 			if (CFG::Triggerbot_AutoBacktab_Mode == 1)
 			{
-				angle_to = Math::CalcAngle(pLocal->GetShootPos(), record->m_vCenter);
+				angleTo = Math::CalcAngle(pLocal->GetShootPos(), record->m_vCenter);
 			}
 
-			if (can_knife || IsBehindAndFacingTarget(pLocal->GetCenter(), angle_to, record->m_vCenter, player->GetEyeAngles()))
+			if (canKnife || IsBehindAndFacingTarget(pLocal->GetCenter(), angleTo, record->m_vCenter, pPlayer->GetEyeAngles()))
 			{
 				F::LagRecordMatrixHelper->Set(record);
 
 				Vec3 forward{};
-				Math::AngleVectors(angle_to, &forward);
+				Math::AngleVectors(angleTo, &forward);
 
-				auto to{ pLocal->GetShootPos() + (forward * 47.0f) };
+				auto to = pLocal->GetShootPos() + (forward * 47.0f);
 
-				if (!H::AimUtils->TraceEntityMelee(player, pLocal->GetShootPos(), to))
+				if (!H::AimUtils->TraceEntityMelee(pPlayer, pLocal->GetShootPos(), to))
 				{
 					F::LagRecordMatrixHelper->Restore();
 
@@ -186,7 +186,7 @@ void CAutoBackstab::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 
 				if (CFG::Triggerbot_AutoBacktab_Mode == 1)
 				{
-					pCmd->viewangles = angle_to;
+					pCmd->viewangles = angleTo;
 
 					if (CFG::Triggerbot_AutoBacktab_Aim_Mode == 1)
 					{
@@ -200,7 +200,6 @@ void CAutoBackstab::Run(C_TFPlayer *pLocal, C_TFWeaponBase *pWeapon, CUserCmd *p
 				{
 					pCmd->tick_count = TIME_TO_TICKS(record->m_flSimulationTime + SDKUtils::GetLerp());
 				}
-
 				else
 				{
 					pCmd->tick_count = TIME_TO_TICKS(record->m_flSimulationTime + GetClientInterpAmount());
