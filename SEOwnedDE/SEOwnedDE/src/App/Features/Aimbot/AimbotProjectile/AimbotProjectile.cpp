@@ -615,7 +615,7 @@ bool CAimbotProjectile::CanArcReach(const Vec3& vFrom, const Vec3& vTo, const Ve
 	return true;
 }
 
-bool CAimbotProjectile::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, const Vec3& vFrom, const Vec3& vTo, const Target_t& target, float flTargetTime)
+bool CAimbotProjectile::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, const Vec3& vFrom, const Vec3& vTo, const ProjTarget_t& target, float flTargetTime)
 {
 	Vec3 vLocalPos = vFrom;
 
@@ -671,7 +671,7 @@ bool CAimbotProjectile::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, cons
 	return H::AimUtils->TraceProjectile(target.Entity, vLocalPos, vTo);
 }
 
-bool CAimbotProjectile::SolveTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, const CUserCmd* pCmd, Target_t& target)
+bool CAimbotProjectile::SolveTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, const CUserCmd* pCmd, ProjTarget_t& target)
 {
 	Vec3 vLocalPos = pLocal->GetShootPos();
 
@@ -1006,7 +1006,7 @@ bool CAimbotProjectile::SolveTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon,
 	return false;
 }
 
-bool CAimbotProjectile::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, const CUserCmd* pCmd, Target_t& outTarget)
+bool CAimbotProjectile::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, const CUserCmd* pCmd, ProjTarget_t& outTarget)
 {
 	const Vec3 vLocalPos = pLocal->GetShootPos();
 	const Vec3 vLocalAngles = I::EngineClient->GetViewAngles();
@@ -1105,7 +1105,7 @@ bool CAimbotProjectile::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, c
 	if (m_vecTargets.empty())
 		return false;
 
-	std::ranges::sort(m_vecTargets, [&](const Target_t& a, const Target_t& b) -> bool
+	std::ranges::sort(m_vecTargets, [&](const ProjTarget_t& a, const ProjTarget_t& b) -> bool
 	{
 		switch (CFG::Aimbot_Projectile_Sort)
 		{
@@ -1217,7 +1217,7 @@ bool CAimbotProjectile::ShouldFire(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeapo
 	return true;
 }
 
-void CAimbotProjectile::HandleFire(CUserCmd* pCmd, C_TFWeaponBase* pWeapon, C_TFPlayer* pLocal, const Target_t& target)
+void CAimbotProjectile::HandleFire(CUserCmd* pCmd, C_TFWeaponBase* pWeapon, C_TFPlayer* pLocal, const ProjTarget_t& target)
 {
 	const bool bIsBazooka = pWeapon->m_iItemDefinitionIndex() == Soldier_m_TheBeggarsBazooka;
 	if (!bIsBazooka && !pWeapon->HasPrimaryAmmoForShot())
@@ -1322,7 +1322,7 @@ void CAimbotProjectile::Run(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeaponBase* 
 	if (!H::Input->IsDown(CFG::Aimbot_Key))
 		return;
 
-	Target_t target = {};
+	ProjTarget_t target = {};
 	if (GetTarget(pLocal, pWeapon, pCmd, target) && target.Entity)
 	{
 		G::nTargetIndexEarly = target.Entity->entindex();

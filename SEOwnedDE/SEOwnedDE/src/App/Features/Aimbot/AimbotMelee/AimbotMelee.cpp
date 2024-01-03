@@ -2,7 +2,7 @@
 
 #include "../../CFG.h"
 
-bool CAimbotMelee::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target_t& target)
+bool CAimbotMelee::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, MeleeTarget_t& target)
 {
 	if (pLocal->GetShootPos().DistTo(target.Position) > 600.0f)
 		return false;
@@ -86,7 +86,7 @@ bool CAimbotMelee::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target_t&
 	return false;
 }
 
-bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target_t& outTarget)
+bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, MeleeTarget_t& outTarget)
 {
 	const Vec3 vLocalPos = pLocal->GetShootPos();
 	const Vec3 vLocalAngles = I::EngineClient->GetViewAngles();
@@ -148,7 +148,7 @@ bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target
 					if (CFG::Aimbot_Melee_Sort == 0 && flFOVTo > CFG::Aimbot_Melee_FOV)
 						continue;
 
-					m_vecTargets.emplace_back(Target_t{ pPlayer, vPos, vAngleTo, flFOVTo, flDistTo, pRecord->m_flSimulationTime, pRecord });
+					m_vecTargets.emplace_back(MeleeTarget_t{ pPlayer, vPos, vAngleTo, flFOVTo, flDistTo, pRecord->m_flSimulationTime, pRecord });
 				}
 			}
 
@@ -160,7 +160,7 @@ bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target
 			if (CFG::Aimbot_Melee_Sort == 0 && flFOVTo > CFG::Aimbot_Melee_FOV)
 				continue;
 
-			m_vecTargets.emplace_back(Target_t{ pPlayer, vPos, vAngleTo, flFOVTo, flDistTo, pPlayer->m_flSimulationTime() });
+			m_vecTargets.emplace_back(MeleeTarget_t{ pPlayer, vPos, vAngleTo, flFOVTo, flDistTo, pPlayer->m_flSimulationTime() });
 		}
 	}
 
@@ -185,7 +185,7 @@ bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target
 			if (CFG::Aimbot_Melee_Sort == 0 && flFOVTo > CFG::Aimbot_Melee_FOV)
 				continue;
 
-			m_vecTargets.emplace_back(Target_t{ pBuilding, vPos, vAngleTo, flFOVTo, flDistTo });
+			m_vecTargets.emplace_back(MeleeTarget_t{ pBuilding, vPos, vAngleTo, flFOVTo, flDistTo });
 		}
 	}
 
@@ -193,7 +193,7 @@ bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target
 		return false;
 
 	// Sort by target priority (Fov, Distance)
-	std::ranges::sort(m_vecTargets, [&](const Target_t& a, const Target_t& b) -> bool
+	std::ranges::sort(m_vecTargets, [&](const MeleeTarget_t& a, const MeleeTarget_t& b) -> bool
 	{
 		switch (CFG::Aimbot_Melee_Sort)
 		{
@@ -274,7 +274,7 @@ void CAimbotMelee::Aim(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeaponBase* pWeap
 	}
 }
 
-bool CAimbotMelee::ShouldFire(const Target_t& target)
+bool CAimbotMelee::ShouldFire(const MeleeTarget_t& target)
 {
 	return !CFG::Aimbot_AutoShoot ? false : target.MeleeTraceHit;
 }
@@ -312,7 +312,7 @@ void CAimbotMelee::Run(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeaponBase* pWeap
 
 	const bool isFiring = IsFiring(pCmd, pWeapon);
 
-	Target_t target = {};
+	MeleeTarget_t target = {};
 	if (GetTarget(pLocal, pWeapon, target) && target.Entity)
 	{
 		const auto aimKeyDown = H::Input->IsDown(CFG::Aimbot_Key) || CFG::Aimbot_Melee_Always_Active;
