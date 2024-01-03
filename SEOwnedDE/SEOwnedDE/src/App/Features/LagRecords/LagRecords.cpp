@@ -4,12 +4,6 @@
 
 #include "../CFG.h"
 
-void CLagRecords::EraseRecord(C_TFPlayer* pPlayer, int nRecord)
-{
-	auto& v = m_LagRecords[pPlayer];
-	v.erase(v.begin() + nRecord);
-}
-
 bool CLagRecords::IsSimulationTimeValid(float flCurSimTime, float flCmprSimTime)
 {
 	return flCurSimTime - flCmprSimTime < 0.2f;
@@ -112,6 +106,7 @@ void CLagRecords::UpdateRecords()
 		return;
 	}
 
+	// Remove invalid players
 	for (const auto pEntity : H::Entities->GetGroup(CFG::Misc_SetupBones_Optimization ? EEntGroup::PLAYERS_ALL : EEntGroup::PLAYERS_ENEMIES))
 	{
 		if (!pEntity || pEntity == pLocal)
@@ -127,15 +122,19 @@ void CLagRecords::UpdateRecords()
 		}
 	}
 
-	for (const auto& records : m_LagRecords | std::views::values)
+	// Remove invalid records
+	for (auto& records : m_LagRecords | std::views::values)
 	{
-		for (size_t n = 0; n < records.size(); n++)
+		for (auto it = records.begin(); it != records.end(); )
 		{
-			auto& curRecord = records[n];
-
+			const auto& curRecord = *it;
 			if (!curRecord.Player || !IsSimulationTimeValid(curRecord.Player->m_flSimulationTime(), curRecord.SimulationTime))
 			{
-				EraseRecord(curRecord.Player, n);
+				it = records.erase(it);
+			}
+			else
+			{
+				++it;
 			}
 		}
 	}

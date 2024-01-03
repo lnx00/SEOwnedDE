@@ -22,7 +22,6 @@ class CLagRecords
 	std::unordered_map<C_TFPlayer*, std::deque<LagRecord_t>> m_LagRecords = {};
 	bool m_bSettingUpBones = false;
 
-	void EraseRecord(C_TFPlayer* pPlayer, int nRecord);
 	bool IsSimulationTimeValid(float flCurSimTime, float flCmprSimTime);
 
 public:
