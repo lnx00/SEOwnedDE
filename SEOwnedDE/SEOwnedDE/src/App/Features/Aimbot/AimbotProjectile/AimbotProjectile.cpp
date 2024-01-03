@@ -1105,15 +1105,8 @@ bool CAimbotProjectile::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, c
 	if (m_vecTargets.empty())
 		return false;
 
-	std::ranges::sort(m_vecTargets, [&](const ProjTarget_t& a, const ProjTarget_t& b) -> bool
-	{
-		switch (CFG::Aimbot_Projectile_Sort)
-		{
-			case 0: return a.FOVTo < b.FOVTo;
-			case 1: return a.DistanceTo < b.DistanceTo;
-			default: return false;
-		}
-	});
+	// Sort by target priority
+	F::AimbotCommon->Sort(m_vecTargets, CFG::Aimbot_Projectile_Sort);
 
 	const auto maxTargets{ std::min(CFG::Aimbot_Projectile_Max_Processing_Targets, static_cast<int>(m_vecTargets.size())) };
 	auto targetsScanned{ 0 };

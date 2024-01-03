@@ -317,16 +317,8 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Hits
 	if (m_vecTargets.empty())
 		return false;
 
-	// Sort by target priority (Fov, Distance)
-	std::ranges::sort(m_vecTargets, [&](const HitscanTarget_t& a, const HitscanTarget_t& b) -> bool
-	{
-		switch (CFG::Aimbot_Hitscan_Sort)
-		{
-			case 0: return a.FOVTo < b.FOVTo;
-			case 1: return a.DistanceTo < b.DistanceTo;
-			default: return false;
-		}
-	});
+	// Sort by target priority
+	F::AimbotCommon->Sort(m_vecTargets, CFG::Aimbot_Hitscan_Sort);
 
 	// Find and return the first valid target
 	for (auto& target : m_vecTargets)

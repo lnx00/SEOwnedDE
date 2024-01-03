@@ -192,16 +192,8 @@ bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, MeleeT
 	if (m_vecTargets.empty())
 		return false;
 
-	// Sort by target priority (Fov, Distance)
-	std::ranges::sort(m_vecTargets, [&](const MeleeTarget_t& a, const MeleeTarget_t& b) -> bool
-	{
-		switch (CFG::Aimbot_Melee_Sort)
-		{
-			case 0: return a.FOVTo < b.FOVTo;
-			case 1: return a.DistanceTo < b.DistanceTo;
-			default: return false;
-		}
-	});
+	// Sort by target priority
+	F::AimbotCommon->Sort(m_vecTargets, CFG::Aimbot_Melee_Sort);
 
 	const int itEnd = std::min(4, static_cast<int>(m_vecTargets.size()));
 
