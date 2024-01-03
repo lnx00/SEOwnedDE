@@ -52,7 +52,6 @@ int FindCritCmd(const CUserCmd* pCmd, C_TFWeaponBase* pWeapon, bool bCrit)
 	}
 
 	*I::RandomSeed = nBackupRandomSeed;
-
 	return nCritCommand;
 }
 
@@ -63,7 +62,7 @@ void CCrits::Run(CUserCmd* pCmd)
 	if (!pLocal || pLocal->deadflag() || pLocal->IsCritBoosted() || pLocal->IsMiniCritBoosted())
 		return;
 
-	static auto tf_weapon_criticals{ I::CVar->FindVar("tf_weapon_criticals") };
+	static auto tf_weapon_criticals = I::CVar->FindVar("tf_weapon_criticals");
 
 	if (!tf_weapon_criticals->GetInt())
 	{
@@ -75,9 +74,10 @@ void CCrits::Run(CUserCmd* pCmd)
 	if (!pWeapon || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE || !IsFiring(pCmd, pWeapon))
 		return;
 
+	// Melee crits
 	if (pWeapon->GetSlot() == 2)
 	{
-		static auto tf_weapon_criticals_melee{ I::CVar->FindVar("tf_weapon_criticals_melee") };
+		static auto tf_weapon_criticals_melee = I::CVar->FindVar("tf_weapon_criticals_melee");
 
 		if (!tf_weapon_criticals_melee->GetInt())
 		{
@@ -86,11 +86,12 @@ void CCrits::Run(CUserCmd* pCmd)
 
 		if (H::Input->IsDown(CFG::Exploits_Crits_Force_Crit_Key_Melee))
 		{
-			bool wantCrit{ true };
+			bool wantCrit = true;
 
+			// Check if the aim target should be critted
 			if (G::nTargetIndex)
 			{
-				const auto ent{ I::ClientEntityList->GetClientEntity(G::nTargetIndex) };
+				const auto ent = I::ClientEntityList->GetClientEntity(G::nTargetIndex);
 
 				if (ent && ent->GetClassId() == ETFClassIds::CTFPlayer && ent->As<C_TFPlayer>()->m_iTeamNum() == pLocal->m_iTeamNum())
 				{
@@ -102,7 +103,6 @@ void CCrits::Run(CUserCmd* pCmd)
 			{
 				pCmd->command_number = FindCritCmd(pCmd, pWeapon, true);
 			}
-
 			else
 			{
 				if (CFG::Exploits_Crits_Skip_Random_Crits)
@@ -111,7 +111,6 @@ void CCrits::Run(CUserCmd* pCmd)
 				}
 			}
 		}
-
 		else
 		{
 			if (CFG::Exploits_Crits_Skip_Random_Crits)
@@ -121,13 +120,13 @@ void CCrits::Run(CUserCmd* pCmd)
 		}
 	}
 
+	// Hitscan crits
 	else
 	{
 		if (H::Input->IsDown(CFG::Exploits_Crits_Force_Crit_Key))
 		{
 			pCmd->command_number = FindCritCmd(pCmd, pWeapon, true);
 		}
-
 		else
 		{
 			if (CFG::Exploits_Crits_Skip_Random_Crits)
