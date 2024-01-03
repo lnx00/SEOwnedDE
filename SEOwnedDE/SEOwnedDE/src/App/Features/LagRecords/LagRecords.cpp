@@ -32,15 +32,9 @@ void CLagRecords::AddRecord(C_TFPlayer* pPlayer)
 
 	if (setup_bones_optimization)
 	{
-		for (auto n{ 0 }; n < 32; n++)
+		auto attach = pPlayer->FirstMoveChild();
+		while (attach)
 		{
-			auto attach{ pPlayer->FirstMoveChild() };
-
-			if (!attach)
-			{
-				break;
-			}
-
 			if (attach->ShouldDraw())
 			{
 				attach->InvalidateBoneCache();
