@@ -1,16 +1,11 @@
 #pragma once
-
+#include "../AimbotCommon/AimbotCommon.h"
 #include "../../LagRecords/LagRecords.h"
 
 class CAimbotMelee
 {
-	struct Target_t
+	struct Target_t : AimTarget_t
 	{
-		C_BaseEntity* Entity = nullptr;
-		Vec3 Position = {};
-		Vec3 AngleTo = {};
-		float FOVTo = 0.0f;
-		float DistanceTo = 0.0f;
 		float SimulationTime = -1.0f;
 		const LagRecord_t* LagRecord = nullptr;
 		bool MeleeTraceHit = false;

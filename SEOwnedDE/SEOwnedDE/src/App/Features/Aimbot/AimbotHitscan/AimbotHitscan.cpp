@@ -238,7 +238,9 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Targ
 					if (CFG::Aimbot_Hitscan_Sort == 0 && flFOVTo > CFG::Aimbot_Hitscan_FOV)
 						continue;
 
-					m_vecTargets.emplace_back(pPlayer, vPos, vAngleTo, flFOVTo, flDistTo, nAimHitbox, pRecord->m_flSimulationTime, pRecord);
+					m_vecTargets.emplace_back(AimTarget_t {
+						pPlayer, vPos, vAngleTo, flFOVTo, flDistTo
+					}, nAimHitbox, pRecord->m_flSimulationTime, pRecord);
 				}
 			}
 
@@ -256,7 +258,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Targ
 			if (CFG::Aimbot_Hitscan_Sort == 0 && flFOVTo > CFG::Aimbot_Hitscan_FOV)
 				continue;
 
-			m_vecTargets.emplace_back(pPlayer, vPos, vAngleTo, flFOVTo, flDistTo, nAimHitbox, pPlayer->m_flSimulationTime());
+			m_vecTargets.emplace_back(AimTarget_t { pPlayer, vPos, vAngleTo, flFOVTo, flDistTo}, nAimHitbox, pPlayer->m_flSimulationTime());
 		}
 	}
 
@@ -280,7 +282,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Targ
 			if (CFG::Aimbot_Hitscan_Sort == 0 && flFOVTo > CFG::Aimbot_Hitscan_FOV)
 				continue;
 
-			m_vecTargets.emplace_back(pBuilding, vPos, vAngleTo, flFOVTo, flDistTo);
+			m_vecTargets.emplace_back(AimTarget_t { pBuilding, vPos, vAngleTo, flFOVTo, flDistTo });
 		}
 	}
 
@@ -308,7 +310,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Targ
 			if (CFG::Aimbot_Hitscan_Sort == 0 && flFOVTo > CFG::Aimbot_Hitscan_FOV)
 				continue;
 
-			m_vecTargets.emplace_back(pipe, vPos, vAngleTo, flFOVTo, flDistTo);
+			m_vecTargets.emplace_back(AimTarget_t {pipe, vPos, vAngleTo, flFOVTo, flDistTo});
 		}
 	}
 

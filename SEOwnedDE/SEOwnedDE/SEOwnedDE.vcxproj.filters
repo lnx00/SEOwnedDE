@@ -309,5 +309,6 @@
     <ClInclude Include="include\MinHook\trampoline.h" />
     <ClInclude Include="src\App\Features\Triggerbot\AutoVaccinator\AutoVaccinator.h" />
     <ClInclude Include="src\Utils\Storage\Storage.h" />
+    <ClInclude Include="src\App\Features\Aimbot\AimbotCommon\AimbotCommon.h" />
   </ItemGroup>
 </Project>

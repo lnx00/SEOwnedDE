@@ -1,16 +1,10 @@
 #pragma once
-
-#include "../../../../SDK/SDK.h"
+#include "../AimbotCommon/AimbotCommon.h"
 
 class CAimbotProjectile
 {
-	struct Target_t
+	struct Target_t : AimTarget_t
 	{
-		C_BaseEntity* Entity = nullptr;
-		Vec3 Position = {};
-		Vec3 AngleTo = {};
-		float FOVTo = 0.0f;
-		float DistanceTo = 0.0f;
 		float TimeToTarget = 0.0f;
 	};
 

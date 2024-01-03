@@ -229,6 +229,7 @@
     <ClInclude Include="include\nlohmann\json_fwd.hpp" />
     <ClInclude Include="src\App\App.h" />
     <ClInclude Include="src\App\Features\Aimbot\Aimbot.h" />
+    <ClInclude Include="src\App\Features\Aimbot\AimbotCommon\AimbotCommon.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotHitscan\AimbotHitscan.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotMelee\AimbotMelee.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.h" />

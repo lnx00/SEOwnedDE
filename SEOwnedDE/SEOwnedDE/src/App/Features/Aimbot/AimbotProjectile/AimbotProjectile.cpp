@@ -1061,7 +1061,7 @@ bool CAimbotProjectile::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, c
 			if (CFG::Aimbot_Projectile_Sort == 0 && flFOVTo > CFG::Aimbot_Projectile_FOV)
 				continue;
 
-			m_vecTargets.emplace_back(pPlayer, vPos, vAngleTo, flFOVTo, flDistTo);
+			m_vecTargets.emplace_back(AimTarget_t { pPlayer, vPos, vAngleTo, flFOVTo, flDistTo });
 		}
 	}
 
@@ -1098,7 +1098,7 @@ bool CAimbotProjectile::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, c
 			if (CFG::Aimbot_Projectile_Sort == 0 && flFOVTo > CFG::Aimbot_Projectile_FOV)
 				continue;
 
-			m_vecTargets.emplace_back(pBuilding, vPos, vAngleTo, flFOVTo, flDistTo);
+			m_vecTargets.emplace_back(AimTarget_t { pBuilding, vPos, vAngleTo, flFOVTo, flDistTo });
 		}
 	}
 
