@@ -4,7 +4,7 @@
 
 bool CAimbotMelee::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target_t& target)
 {
-	if (pLocal->GetShootPos().DistTo(target.m_vPosition) > 600.0f)
+	if (pLocal->GetShootPos().DistTo(target.Position) > 600.0f)
 		return false;
 
 	auto checkPos = [&](const Vec3& vLocalPos) -> bool
@@ -12,14 +12,14 @@ bool CAimbotMelee::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target_t&
 		const auto vToSee = [&]()
 		{
 			auto vForward = Vec3();
-			Math::AngleVectors(target.m_vAngleTo, &vForward);
+			Math::AngleVectors(target.AngleTo, &vForward);
 			return vLocalPos + (vForward * pWeapon->GetSwingRange());
 		}();
 
-		if (target.m_pLagRecord)
-			F::LagRecordMatrixHelper->Set(target.m_pLagRecord);
+		if (target.LagRecord)
+			F::LagRecordMatrixHelper->Set(target.LagRecord);
 
-		const bool bCanSee = H::AimUtils->TraceEntityMelee(target.m_pEntity, vLocalPos, vToSee);
+		const bool bCanSee = H::AimUtils->TraceEntityMelee(target.Entity, vLocalPos, vToSee);
 
 		if (CFG::Aimbot_Melee_Aim_Type == 2 || CFG::Aimbot_Melee_Aim_Type == 3)
 		{
@@ -30,14 +30,14 @@ bool CAimbotMelee::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target_t&
 				return vLocalPos + (vForward * pWeapon->GetSwingRange());
 			}();
 
-			target.m_bMeleeTraceHit = H::AimUtils->TraceEntityMelee(target.m_pEntity, vLocalPos, vToHit);
+			target.MeleeTraceHit = H::AimUtils->TraceEntityMelee(target.Entity, vLocalPos, vToHit);
 		}
 		else
 		{
-			target.m_bMeleeTraceHit = bCanSee;
+			target.MeleeTraceHit = bCanSee;
 		}
 
-		if (target.m_pLagRecord)
+		if (target.LagRecord)
 		{
 			F::LagRecordMatrixHelper->Restore();
 		}
@@ -71,11 +71,11 @@ bool CAimbotMelee::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target_t&
 	{
 		Vec3 vLocalPos = pLocal->GetShootPos();
 
-		if (target.m_pEntity->GetClassId() == ETFClassIds::CTFPlayer)
-			extrapolate(vLocalPos, pLocal->m_vecVelocity() + (target.m_pEntity->As<C_TFPlayer>()->m_vecVelocity() * -1.0f), flTime, bDoGravity);
+		if (target.Entity->GetClassId() == ETFClassIds::CTFPlayer)
+			extrapolate(vLocalPos, pLocal->m_vecVelocity() + (target.Entity->As<C_TFPlayer>()->m_vecVelocity() * -1.0f), flTime, bDoGravity);
 
-		else if (target.m_pLagRecord)
-			extrapolate(vLocalPos, pLocal->m_vecVelocity() + (target.m_pLagRecord->m_vVelocity * -1.0f), flTime, bDoGravity);
+		else if (target.LagRecord)
+			extrapolate(vLocalPos, pLocal->m_vecVelocity() + (target.LagRecord->m_vVelocity * -1.0f), flTime, bDoGravity);
 
 		else extrapolate(vLocalPos, pLocal->m_vecVelocity(), flTime, bDoGravity);
 
@@ -197,8 +197,8 @@ bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Target
 	{
 		switch (CFG::Aimbot_Melee_Sort)
 		{
-			case 0: return a.m_flFOVTo < b.m_flFOVTo;
-			case 1: return a.m_flDistanceTo < b.m_flDistanceTo;
+			case 0: return a.FOVTo < b.FOVTo;
+			case 1: return a.DistanceTo < b.DistanceTo;
 			default: return false;
 		}
 	});
@@ -276,7 +276,7 @@ void CAimbotMelee::Aim(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeaponBase* pWeap
 
 bool CAimbotMelee::ShouldFire(const Target_t& target)
 {
-	return !CFG::Aimbot_AutoShoot ? false : target.m_bMeleeTraceHit;
+	return !CFG::Aimbot_AutoShoot ? false : target.MeleeTraceHit;
 }
 
 void CAimbotMelee::HandleFire(CUserCmd* pCmd, C_TFWeaponBase* pWeapon)
@@ -313,12 +313,12 @@ void CAimbotMelee::Run(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeaponBase* pWeap
 	const bool isFiring = IsFiring(pCmd, pWeapon);
 
 	Target_t target = {};
-	if (GetTarget(pLocal, pWeapon, target) && target.m_pEntity)
+	if (GetTarget(pLocal, pWeapon, target) && target.Entity)
 	{
 		const auto aimKeyDown = H::Input->IsDown(CFG::Aimbot_Key) || CFG::Aimbot_Melee_Always_Active;
 		if (aimKeyDown || isFiring)
 		{
-			G::nTargetIndex = target.m_pEntity->entindex();
+			G::nTargetIndex = target.Entity->entindex();
 
 			// Auto shoot
 			if (aimKeyDown)
@@ -337,21 +337,21 @@ void CAimbotMelee::Run(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeaponBase* pWeap
 			{
 				if (aimKeyDown)
 				{
-					Aim(pCmd, pLocal, pWeapon, target.m_vAngleTo);
+					Aim(pCmd, pLocal, pWeapon, target.AngleTo);
 				}
 
 				if (CFG::Misc_Accuracy_Improvements)
 				{
-					if (bIsFiring && target.m_pEntity->GetClassId() == ETFClassIds::CTFPlayer)
+					if (bIsFiring && target.Entity->GetClassId() == ETFClassIds::CTFPlayer)
 					{
-						pCmd->tick_count = TIME_TO_TICKS(target.m_flSimulationTime + SDKUtils::GetLerp());
+						pCmd->tick_count = TIME_TO_TICKS(target.SimulationTime + SDKUtils::GetLerp());
 					}
 				}
 				else
 				{
-					if (bIsFiring && target.m_pLagRecord)
+					if (bIsFiring && target.LagRecord)
 					{
-						pCmd->tick_count = TIME_TO_TICKS(target.m_flSimulationTime + GetClientInterpAmount());
+						pCmd->tick_count = TIME_TO_TICKS(target.SimulationTime + GetClientInterpAmount());
 					}
 				}
 			}
@@ -359,7 +359,7 @@ void CAimbotMelee::Run(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeaponBase* pWeap
 			// Walk to target
 			if (CFG::Aimbot_Melee_Walk_To_Target && (pLocal->m_fFlags() & FL_ONGROUND))
 			{
-				SDKUtils::WalkTo(pCmd, pLocal->m_vecOrigin(), target.m_vPosition, 1.f);
+				SDKUtils::WalkTo(pCmd, pLocal->m_vecOrigin(), target.Position, 1.f);
 			}
 		}
 	}

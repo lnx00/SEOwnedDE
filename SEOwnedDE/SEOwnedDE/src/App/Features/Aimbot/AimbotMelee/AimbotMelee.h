@@ -6,14 +6,14 @@ class CAimbotMelee
 {
 	struct Target_t
 	{
-		C_BaseEntity* m_pEntity = nullptr;
-		Vec3 m_vPosition = {};
-		Vec3 m_vAngleTo = {};
-		float m_flFOVTo = 0.0f;
-		float m_flDistanceTo = 0.0f;
-		float m_flSimulationTime = -1.0f;
-		const LagRecord_t* m_pLagRecord = nullptr;
-		bool m_bMeleeTraceHit = false;
+		C_BaseEntity* Entity = nullptr;
+		Vec3 Position = {};
+		Vec3 AngleTo = {};
+		float FOVTo = 0.0f;
+		float DistanceTo = 0.0f;
+		float SimulationTime = -1.0f;
+		const LagRecord_t* LagRecord = nullptr;
+		bool MeleeTraceHit = false;
 	};
 
 	std::vector<Target_t> m_vecTargets = {};
