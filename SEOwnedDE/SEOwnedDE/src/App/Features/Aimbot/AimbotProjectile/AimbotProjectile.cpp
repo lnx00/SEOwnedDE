@@ -1217,7 +1217,7 @@ bool CAimbotProjectile::ShouldFire(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeapo
 	return true;
 }
 
-void CAimbotProjectile::HandleFire(CUserCmd* pCmd, C_TFWeaponBase* pWeapon, C_TFPlayer* pLocal, const Target_t& Target)
+void CAimbotProjectile::HandleFire(CUserCmd* pCmd, C_TFWeaponBase* pWeapon, C_TFPlayer* pLocal, const Target_t& target)
 {
 	const bool bIsBazooka = pWeapon->m_iItemDefinitionIndex() == Soldier_m_TheBeggarsBazooka;
 	if (!bIsBazooka && !pWeapon->HasPrimaryAmmoForShot())
@@ -1243,7 +1243,7 @@ void CAimbotProjectile::HandleFire(CUserCmd* pCmd, C_TFWeaponBase* pWeapon, C_TF
 			if (I::GlobalVars->curtime > flDetonateTime)
 				flCharge = 1.0f;
 
-			if (flCharge < Target.m_flTimeToTarget * 0.8f)
+			if (flCharge < target.m_flTimeToTarget * 0.8f)
 				pCmd->buttons &= ~IN_ATTACK;
 
 			else pCmd->buttons |= IN_ATTACK;
