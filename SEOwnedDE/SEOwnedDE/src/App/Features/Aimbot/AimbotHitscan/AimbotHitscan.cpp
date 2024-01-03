@@ -230,7 +230,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Hits
 					if (!pRecord || !F::LagRecords->DiffersFromCurrent(pRecord))
 						continue;
 
-					Vec3 vPos = SDKUtils::GetHitboxPosFromMatrix(pPlayer, nAimHitbox, const_cast<matrix3x4_t*>(pRecord->m_BoneMatrix));
+					Vec3 vPos = SDKUtils::GetHitboxPosFromMatrix(pPlayer, nAimHitbox, const_cast<matrix3x4_t*>(pRecord->BoneMatrix));
 					Vec3 vAngleTo = Math::CalcAngle(vLocalPos, vPos);
 					const float flFOVTo = CFG::Aimbot_Hitscan_Sort == 0 ? Math::CalcFov(vLocalAngles, vAngleTo) : 0.0f;
 					const float flDistTo = vLocalPos.DistTo(vPos);
@@ -240,7 +240,7 @@ bool CAimbotHitscan::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, Hits
 
 					m_vecTargets.emplace_back(AimTarget_t {
 						pPlayer, vPos, vAngleTo, flFOVTo, flDistTo
-					}, nAimHitbox, pRecord->m_flSimulationTime, pRecord);
+					}, nAimHitbox, pRecord->SimulationTime, pRecord);
 				}
 			}
 
@@ -608,12 +608,12 @@ bool CAimbotHitscan::ShouldFire(const CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWe
 					}
 
 					Vec3 vMins = {}, vMaxs = {}, vCenter = {};
-					SDKUtils::GetHitboxInfoFromMatrix(pPlayer, nHitHitbox, const_cast<matrix3x4_t*>(target.LagRecord->m_BoneMatrix), &vCenter, &vMins, &vMaxs);
+					SDKUtils::GetHitboxInfoFromMatrix(pPlayer, nHitHitbox, const_cast<matrix3x4_t*>(target.LagRecord->BoneMatrix), &vCenter, &vMins, &vMaxs);
 
 					vMins *= 0.5f;
 					vMaxs *= 0.5f;
 
-					if (!Math::RayToOBB(vTraceStart, vForward, vCenter, vMins, vMaxs, *target.LagRecord->m_BoneMatrix))
+					if (!Math::RayToOBB(vTraceStart, vForward, vCenter, vMins, vMaxs, *target.LagRecord->BoneMatrix))
 					{
 						F::LagRecordMatrixHelper->Restore();
 						return false;

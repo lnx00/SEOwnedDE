@@ -75,7 +75,7 @@ bool CAimbotMelee::CanSee(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, MeleeTarg
 			extrapolate(vLocalPos, pLocal->m_vecVelocity() + (target.Entity->As<C_TFPlayer>()->m_vecVelocity() * -1.0f), flTime, bDoGravity);
 
 		else if (target.LagRecord)
-			extrapolate(vLocalPos, pLocal->m_vecVelocity() + (target.LagRecord->m_vVelocity * -1.0f), flTime, bDoGravity);
+			extrapolate(vLocalPos, pLocal->m_vecVelocity() + (target.LagRecord->Velocity * -1.0f), flTime, bDoGravity);
 
 		else extrapolate(vLocalPos, pLocal->m_vecVelocity(), flTime, bDoGravity);
 
@@ -140,7 +140,7 @@ bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, MeleeT
 					if (!pRecord || !F::LagRecords->DiffersFromCurrent(pRecord))
 						continue;
 
-					Vec3 vPos = SDKUtils::GetHitboxPosFromMatrix(pPlayer, HITBOX_BODY, const_cast<matrix3x4_t*>(pRecord->m_BoneMatrix));
+					Vec3 vPos = SDKUtils::GetHitboxPosFromMatrix(pPlayer, HITBOX_BODY, const_cast<matrix3x4_t*>(pRecord->BoneMatrix));
 					Vec3 vAngleTo = Math::CalcAngle(vLocalPos, vPos);
 					const float flFOVTo = CFG::Aimbot_Melee_Sort == 0 ? Math::CalcFov(vLocalAngles, vAngleTo) : 0.0f;
 					const float flDistTo = vLocalPos.DistTo(vPos);
@@ -148,7 +148,7 @@ bool CAimbotMelee::GetTarget(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, MeleeT
 					if (CFG::Aimbot_Melee_Sort == 0 && flFOVTo > CFG::Aimbot_Melee_FOV)
 						continue;
 
-					m_vecTargets.emplace_back(MeleeTarget_t{ pPlayer, vPos, vAngleTo, flFOVTo, flDistTo, pRecord->m_flSimulationTime, pRecord });
+					m_vecTargets.emplace_back(MeleeTarget_t{ pPlayer, vPos, vAngleTo, flFOVTo, flDistTo, pRecord->SimulationTime, pRecord });
 				}
 			}
 

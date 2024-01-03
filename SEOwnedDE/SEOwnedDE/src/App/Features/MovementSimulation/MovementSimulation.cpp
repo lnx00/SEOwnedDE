@@ -175,11 +175,11 @@ void CMovementSimulation::SetupMoveData(C_TFPlayer* pPlayer, CMoveData* pMoveDat
 
 		if (pRecord0 && pRecord1 && pRecord2 && pRecord3 && pRecord4)
 		{
-			const float flYaw0 = Math::VelocityToAngles(pRecord0->m_vVelocity).y;
-			const float flYaw1 = Math::VelocityToAngles(pRecord1->m_vVelocity).y;
-			const float flYaw2 = Math::VelocityToAngles(pRecord2->m_vVelocity).y;
-			const float flYaw3 = Math::VelocityToAngles(pRecord3->m_vVelocity).y;
-			const float flYaw4 = Math::VelocityToAngles(pRecord4->m_vVelocity).y;
+			const float flYaw0 = Math::VelocityToAngles(pRecord0->Velocity).y;
+			const float flYaw1 = Math::VelocityToAngles(pRecord1->Velocity).y;
+			const float flYaw2 = Math::VelocityToAngles(pRecord2->Velocity).y;
+			const float flYaw3 = Math::VelocityToAngles(pRecord3->Velocity).y;
+			const float flYaw4 = Math::VelocityToAngles(pRecord4->Velocity).y;
 
 			const auto inc{flYaw4 > flYaw3 && flYaw3 > flYaw2 && flYaw2 > flYaw1 && flYaw1 > flYaw0};
 			const auto dec{flYaw4 < flYaw3 && flYaw3 < flYaw2 && flYaw2 < flYaw1 && flYaw1 < flYaw0};
@@ -210,10 +210,10 @@ void CMovementSimulation::SetupMoveData(C_TFPlayer* pPlayer, CMoveData* pMoveDat
 
 		if (rec0 && rec1 && rec2 && rec3 /*&& rec4*/)
 		{
-			const float yaw0{Math::VelocityToAngles(rec0->m_vVelocity).y};
-			const float yaw1{Math::VelocityToAngles(rec1->m_vVelocity).y};
-			const float yaw2{Math::VelocityToAngles(rec2->m_vVelocity).y};
-			const float yaw3{Math::VelocityToAngles(rec3->m_vVelocity).y};
+			const float yaw0{Math::VelocityToAngles(rec0->Velocity).y};
+			const float yaw1{Math::VelocityToAngles(rec1->Velocity).y};
+			const float yaw2{Math::VelocityToAngles(rec2->Velocity).y};
+			const float yaw3{Math::VelocityToAngles(rec3->Velocity).y};
 			//float yaw4{Math::VelocityToAngles(rec4->m_vVelocity).y};
 
 			const bool inc{/*yaw4 > yaw3 &&*/ yaw3 > yaw2 && yaw2 > yaw1 && yaw1 > yaw0};

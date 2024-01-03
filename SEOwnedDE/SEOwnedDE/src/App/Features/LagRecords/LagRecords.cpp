@@ -4,9 +4,9 @@
 
 #include "../CFG.h"
 
-void CLagRecords::EraseRecord(C_TFPlayer *pPlayer, int nRecord)
+void CLagRecords::EraseRecord(C_TFPlayer* pPlayer, int nRecord)
 {
-	auto &v = m_LagRecords[pPlayer];
+	auto& v = m_LagRecords[pPlayer];
 	v.erase(v.begin() + nRecord);
 }
 
@@ -15,7 +15,7 @@ bool CLagRecords::IsSimulationTimeValid(float flCurSimTime, float flCmprSimTime)
 	return flCurSimTime - flCmprSimTime < 0.2f;
 }
 
-void CLagRecords::AddRecord(C_TFPlayer *pPlayer)
+void CLagRecords::AddRecord(C_TFPlayer* pPlayer)
 {
 	LagRecord_t newRecord = {};
 
@@ -28,7 +28,7 @@ void CLagRecords::AddRecord(C_TFPlayer *pPlayer)
 		pPlayer->InvalidateBoneCache();
 	}
 
-	const auto result = pPlayer->SetupBones(newRecord.m_BoneMatrix, 128, BONE_USED_BY_ANYTHING, I::GlobalVars->curtime);
+	const auto result = pPlayer->SetupBones(newRecord.BoneMatrix, 128, BONE_USED_BY_ANYTHING, I::GlobalVars->curtime);
 
 	if (setup_bones_optimization)
 	{
@@ -56,23 +56,23 @@ void CLagRecords::AddRecord(C_TFPlayer *pPlayer)
 	if (!result)
 		return;
 
-	newRecord.m_pPlayer = pPlayer;
-	newRecord.m_flSimulationTime = pPlayer->m_flSimulationTime();
-	newRecord.m_vAbsOrigin = pPlayer->GetAbsOrigin();
-	newRecord.m_vVecOrigin = pPlayer->m_vecOrigin();
-	newRecord.m_vAbsAngles = pPlayer->GetAbsAngles();
-	newRecord.m_vEyeAngles = pPlayer->GetEyeAngles();
-	newRecord.m_vVelocity = pPlayer->m_vecVelocity();
-	newRecord.m_vCenter = pPlayer->GetCenter();
-	newRecord.m_nFlags = pPlayer->m_fFlags();
+	newRecord.Player = pPlayer;
+	newRecord.SimulationTime = pPlayer->m_flSimulationTime();
+	newRecord.AbsOrigin = pPlayer->GetAbsOrigin();
+	newRecord.VecOrigin = pPlayer->m_vecOrigin();
+	newRecord.AbsAngles = pPlayer->GetAbsAngles();
+	newRecord.EyeAngles = pPlayer->GetEyeAngles();
+	newRecord.Velocity = pPlayer->m_vecVelocity();
+	newRecord.Center = pPlayer->GetCenter();
+	newRecord.Flags = pPlayer->m_fFlags();
 
 	if (const auto pAnimState = pPlayer->GetAnimState())
-		newRecord.m_flFeetYaw = pAnimState->m_flCurrentFeetYaw;
+		newRecord.FeetYaw = pAnimState->m_flCurrentFeetYaw;
 
 	m_LagRecords[pPlayer].emplace_front(newRecord);
 }
 
-const LagRecord_t *CLagRecords::GetRecord(C_TFPlayer *pPlayer, int nRecord, bool bSafe)
+const LagRecord_t* CLagRecords::GetRecord(C_TFPlayer* pPlayer, int nRecord, bool bSafe)
 {
 	if (!bSafe)
 	{
@@ -86,7 +86,7 @@ const LagRecord_t *CLagRecords::GetRecord(C_TFPlayer *pPlayer, int nRecord, bool
 	return &m_LagRecords[pPlayer][nRecord];
 }
 
-bool CLagRecords::HasRecords(C_TFPlayer *pPlayer, int *pTotalRecords)
+bool CLagRecords::HasRecords(C_TFPlayer* pPlayer, int* pTotalRecords)
 {
 	if (m_LagRecords.contains(pPlayer))
 	{
@@ -132,52 +132,52 @@ void CLagRecords::UpdateRecords()
 			m_LagRecords[pPlayer].clear();
 		}
 	}
-	
+
 	for (const auto& records : m_LagRecords | std::views::values)
 	{
 		for (size_t n = 0; n < records.size(); n++)
 		{
 			auto& curRecord = records[n];
 
-			if (!curRecord.m_pPlayer || !IsSimulationTimeValid(curRecord.m_pPlayer->m_flSimulationTime(), curRecord.m_flSimulationTime))
+			if (!curRecord.Player || !IsSimulationTimeValid(curRecord.Player->m_flSimulationTime(), curRecord.SimulationTime))
 			{
-				EraseRecord(curRecord.m_pPlayer, n);
+				EraseRecord(curRecord.Player, n);
 			}
 		}
 	}
 }
 
-bool CLagRecords::DiffersFromCurrent(const LagRecord_t *pRecord)
+bool CLagRecords::DiffersFromCurrent(const LagRecord_t* pRecord)
 {
-	const auto pPlayer = pRecord->m_pPlayer;
+	const auto pPlayer = pRecord->Player;
 
 	if (!pPlayer)
 		return false;
 
-	if (static_cast<int>((pPlayer->m_vecOrigin() - pRecord->m_vAbsOrigin).Length()) != 0)
+	if (static_cast<int>((pPlayer->m_vecOrigin() - pRecord->AbsOrigin).Length()) != 0)
 		return true;
 
-	if (static_cast<int>((pPlayer->GetEyeAngles() - pRecord->m_vEyeAngles).Length()) != 0)
+	if (static_cast<int>((pPlayer->GetEyeAngles() - pRecord->EyeAngles).Length()) != 0)
 		return true;
 
-	if (pPlayer->m_fFlags() != pRecord->m_nFlags)
+	if (pPlayer->m_fFlags() != pRecord->Flags)
 		return true;
 
 	if (const auto pAnimState = pPlayer->GetAnimState())
 	{
-		if (fabsf(pAnimState->m_flCurrentFeetYaw - pRecord->m_flFeetYaw) > 0.0f)
+		if (fabsf(pAnimState->m_flCurrentFeetYaw - pRecord->FeetYaw) > 0.0f)
 			return true;
 	}
 
 	return false;
 }
 
-void CLagRecordMatrixHelper::Set(const LagRecord_t *pRecord)
+void CLagRecordMatrixHelper::Set(const LagRecord_t* pRecord)
 {
 	if (!pRecord)
 		return;
 
-	const auto pPlayer = pRecord->m_pPlayer;
+	const auto pPlayer = pRecord->Player;
 
 	if (!pPlayer || pPlayer->deadflag())
 		return;
@@ -192,10 +192,10 @@ void CLagRecordMatrixHelper::Set(const LagRecord_t *pRecord)
 	m_vAbsAngles = pPlayer->GetAbsAngles();
 	memcpy(m_BoneMatrix, pCachedBoneData->Base(), sizeof(matrix3x4_t) * pCachedBoneData->Count());
 
-	memcpy(pCachedBoneData->Base(), pRecord->m_BoneMatrix, sizeof(matrix3x4_t) * pCachedBoneData->Count());
+	memcpy(pCachedBoneData->Base(), pRecord->BoneMatrix, sizeof(matrix3x4_t) * pCachedBoneData->Count());
 
-	pPlayer->SetAbsOrigin(pRecord->m_vAbsOrigin);
-	pPlayer->SetAbsAngles(pRecord->m_vAbsAngles);
+	pPlayer->SetAbsOrigin(pRecord->AbsOrigin);
+	pPlayer->SetAbsAngles(pRecord->AbsAngles);
 
 	m_bSuccessfullyStored = true;
 }

@@ -346,7 +346,7 @@ void CMaterials::RunLagRecords()
 			{
 				const auto pRecord = F::LagRecords->GetRecord(pPlayer, n, true);
 
-				if (!pRecord || !F::VisualUtils->IsOnScreenNoEntity(pLocal, pRecord->m_vAbsOrigin) || !F::LagRecords->DiffersFromCurrent(pRecord))
+				if (!pRecord || !F::VisualUtils->IsOnScreenNoEntity(pLocal, pRecord->AbsOrigin) || !F::LagRecords->DiffersFromCurrent(pRecord))
 					continue;
 
 				I::RenderView->SetBlend(Math::RemapValClamped(static_cast<float>(n), 1.0f, static_cast<float>(nRecords), 0.1f, 0.001f));
@@ -365,7 +365,7 @@ void CMaterials::RunLagRecords()
 		{
 			const auto pRecord = F::LagRecords->GetRecord(pPlayer, nRecords - 1, true);
 
-			if (!pRecord || !F::VisualUtils->IsOnScreenNoEntity(pLocal, pRecord->m_vAbsOrigin) || !F::LagRecords->DiffersFromCurrent(pRecord))
+			if (!pRecord || !F::VisualUtils->IsOnScreenNoEntity(pLocal, pRecord->AbsOrigin) || !F::LagRecords->DiffersFromCurrent(pRecord))
 				continue;
 
 			I::RenderView->SetBlend(1.0f);

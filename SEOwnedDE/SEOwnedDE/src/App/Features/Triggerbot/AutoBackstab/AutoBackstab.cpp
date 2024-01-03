@@ -163,10 +163,10 @@ void CAutoBackstab::Run(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, CUserCmd* p
 			// Rage mode
 			if (CFG::Triggerbot_AutoBacktab_Mode == 1)
 			{
-				angleTo = Math::CalcAngle(pLocal->GetShootPos(), record->m_vCenter);
+				angleTo = Math::CalcAngle(pLocal->GetShootPos(), record->Center);
 			}
 
-			if (canKnife || IsBehindAndFacingTarget(pLocal->GetCenter(), angleTo, record->m_vCenter, pPlayer->GetEyeAngles()))
+			if (canKnife || IsBehindAndFacingTarget(pLocal->GetCenter(), angleTo, record->Center, pPlayer->GetEyeAngles()))
 			{
 				F::LagRecordMatrixHelper->Set(record);
 
@@ -198,11 +198,11 @@ void CAutoBackstab::Run(C_TFPlayer* pLocal, C_TFWeaponBase* pWeapon, CUserCmd* p
 
 				if (CFG::Misc_Accuracy_Improvements)
 				{
-					pCmd->tick_count = TIME_TO_TICKS(record->m_flSimulationTime + SDKUtils::GetLerp());
+					pCmd->tick_count = TIME_TO_TICKS(record->SimulationTime + SDKUtils::GetLerp());
 				}
 				else
 				{
-					pCmd->tick_count = TIME_TO_TICKS(record->m_flSimulationTime + GetClientInterpAmount());
+					pCmd->tick_count = TIME_TO_TICKS(record->SimulationTime + GetClientInterpAmount());
 				}
 
 				return;
