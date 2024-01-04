@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	C_TFDroppedWeapon_OnDataChanged, Signatures::C_TFDroppedWeapon_OnDataChanged.Get(),
-	void, __fastcall, void *ecx, void *edx, DataUpdateType_t updateType)
+	void, __fastcall, void* ecx, void* edx, DataUpdateType_t updateType)
 {
 	if (CFG::Visuals_Disable_Dropped_Weapons)
 		return;
@@ -14,7 +14,7 @@ MAKE_HOOK(
 
 MAKE_HOOK(
 	C_TFDroppedWeapon_ClientThink, Signatures::C_TFDroppedWeapon_ClientThink.Get(),
-	void, __fastcall, void *ecx, void *edx)
+	void, __fastcall, void* ecx, void* edx)
 {
 	if (CFG::Visuals_Disable_Dropped_Weapons)
 		return;
@@ -24,7 +24,7 @@ MAKE_HOOK(
 
 MAKE_HOOK(
 	C_TFDroppedWeapon_OnInternalDrawModel, Signatures::C_TFDroppedWeapon_OnInternalDrawModel.Get(),
-	bool, __fastcall, void *ecx, void *edx, void *pInfo)
+	bool, __fastcall, void* ecx, void* edx, void* pInfo)
 {
 	if (CFG::Visuals_Disable_Dropped_Weapons)
 		return false;

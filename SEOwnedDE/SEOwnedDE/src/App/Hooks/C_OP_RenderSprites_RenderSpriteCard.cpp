@@ -2,11 +2,11 @@
 
 #include "../Features/CFG.h"
 
-typedef union
+union fltx4
 {
 	float m128_f32[4];
 	uint32_t m128_u32[4];
-} fltx4;
+};
 
 struct SpriteRenderInfo_t
 {
@@ -33,38 +33,33 @@ struct SpriteRenderInfo_t
 
 MAKE_HOOK(
 	C_OP_RenderSprites_RenderSpriteCard, Memory::RelToAbs(Signatures::C_OP_RenderSprites_RenderSpriteCard.Get()),
-	void, __fastcall, void *ecx, void *edx, void *meshBuilder, void *pCtx, SpriteRenderInfo_t &info, int hParticle, void *pSortList, void *pCamera)
+	void, __fastcall, void* ecx, void* edx, void* meshBuilder, void* pCtx, SpriteRenderInfo_t& info, int hParticle, void* pSortList, void* pCamera)
 {
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
 	{
-		CALL_ORIGINAL(ecx, edx, meshBuilder, pCtx, info, hParticle, pSortList, pCamera);
-
+		CALL_ORIGINAL(ecx, edx, meshBuilder, pCtx, info, hParticle, pSortList, pCamera);;
 		return;
 	}
 
-	if (auto mode{ CFG::Visuals_Particles_Mode })
+	if (const auto mode = CFG::Visuals_Particles_Mode)
 	{
-		Color_t color{};
+		Color_t color = {};
 
-		if (mode == 1)
+		switch (mode)
 		{
-			color = CFG::Color_Particles;
-		}
-
-		else if (mode == 2)
-		{
-			auto rainbow = [&]()
+			// Custom color
+			case 1:
 			{
-				float rate{ CFG::Visuals_Particles_Rainbow_Rate };
+				color = CFG::Color_Particles;
+				break;
+			}
 
-				int r{ std::lround(std::cos(I::GlobalVars->realtime * rate + 0.0f) * 127.5f + 127.5f) };
-				int g{ std::lround(std::cos(I::GlobalVars->realtime * rate + 2.0f) * 127.5f + 127.5f) };
-				int b{ std::lround(std::cos(I::GlobalVars->realtime * rate + 4.0f) * 127.5f + 127.5f) };
-
-				return Color_t{ static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b), static_cast<unsigned char>(255) };
-			};
-
-			color = rainbow();
+			// Rainbow
+			case 2:
+			{
+				color = ColorUtils::Rainbow(I::GlobalVars->realtime, CFG::Visuals_Particles_Rainbow_Rate);
+				break;
+			}
 		}
 
 		info.m_pRGB[((hParticle / 4) * info.m_nRGBStride) + 0].m128_f32[hParticle & 0x3] = ColorUtils::ToFloat(color.r);

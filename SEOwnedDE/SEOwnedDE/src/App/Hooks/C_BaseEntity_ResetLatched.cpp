@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	C_BaseEntity_ResetLatched, Signatures::C_BaseEntity_ResetLatched.Get(),
-	void, __fastcall, void *ecx, void *edx)
+	void, __fastcall, void* ecx, void* edx)
 {
 	if (CFG::Misc_Pred_Error_Jitter_Fix)
 	{

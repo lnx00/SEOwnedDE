@@ -11,7 +11,9 @@ MAKE_HOOK(
 		static auto cl_extrapolate = I::CVar->FindVar("cl_extrapolate");
 
 		if (cl_extrapolate && cl_extrapolate->GetInt())
+		{
 			cl_extrapolate->SetValue(0);
+		}
 	}
 
 	CALL_ORIGINAL();
