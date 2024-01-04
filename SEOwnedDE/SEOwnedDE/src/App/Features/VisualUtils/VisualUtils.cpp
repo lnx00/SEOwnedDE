@@ -38,6 +38,12 @@ bool CVisualUtils::IsEntityOwnedBy(C_BaseEntity* pEntity, C_BaseEntity* pWho)
 	return false;
 }
 
+Color_t CVisualUtils::GetAlphaColor(Color_t base, float alpha)
+{
+	base.a = alpha * 255.f;
+	return base;
+}
+
 Color_t CVisualUtils::GetEntityColor(C_TFPlayer* pLocal, C_BaseEntity* pEntity)
 {
 	if (!pLocal || !pEntity)

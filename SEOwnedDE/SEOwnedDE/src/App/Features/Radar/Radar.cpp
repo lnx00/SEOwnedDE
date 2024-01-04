@@ -180,26 +180,9 @@ void CRadar::Run()
 
 	const int nRadarSize = CFG::Radar_Size;
 
-	const auto crossColor = []() -> Color_t
-	{
-		Color_t outColor = CFG::Menu_Accent_Secondary;
-		outColor.a = static_cast<byte>(CFG::Radar_Cross_Alpha * 255.0f);
-		return outColor;
-	}();
-
-	const auto outlineColor = []() -> Color_t
-	{
-		Color_t outColor = CFG::Menu_Accent_Secondary;
-		outColor.a = static_cast<byte>(CFG::Radar_Outline_Alpha * 255.0f);
-		return outColor;
-	}();
-
-	const auto backgroundColor = []() -> Color_t
-	{
-		Color_t outColor = CFG::Menu_Background;
-		outColor.a = static_cast<byte>(CFG::Radar_Background_Alpha * 255.0f);
-		return outColor;
-	}();
+	const auto crossColor = F::VisualUtils->GetAlphaColor(CFG::Menu_Accent_Secondary, CFG::Radar_Cross_Alpha);
+	const auto outlineColor = F::VisualUtils->GetAlphaColor(CFG::Menu_Accent_Secondary, CFG::Radar_Outline_Alpha);
+	const auto bgColor = F::VisualUtils->GetAlphaColor(CFG::Menu_Background, CFG::Radar_Background_Alpha);
 
 	if (F::Menu->IsOpen())
 		Drag();
@@ -212,7 +195,7 @@ void CRadar::Run()
 			const int nRadarX = CFG::Radar_Pos_X;
 			const int nRadarY = CFG::Radar_Pos_Y;
 
-			H::Draw->Rect(nRadarX, nRadarY, nRadarSize, nRadarSize, backgroundColor);
+			H::Draw->Rect(nRadarX, nRadarY, nRadarSize, nRadarSize, bgColor);
 			H::Draw->OutlinedRect(nRadarX, nRadarY, nRadarSize, nRadarSize, outlineColor);
 
 			H::Draw->Line(
@@ -240,7 +223,7 @@ void CRadar::Run()
 			int nRadarX = CFG::Radar_Pos_X + nRadarSize / 2;
 			int nRadarY = CFG::Radar_Pos_Y + nRadarSize / 2;
 
-			H::Draw->FilledCircle(nRadarX, nRadarY, nRadarSize / 2, 100, backgroundColor);
+			H::Draw->FilledCircle(nRadarX, nRadarY, nRadarSize / 2, 100, bgColor);
 			H::Draw->OutlinedCircle(nRadarX, nRadarY, nRadarSize / 2, 100, outlineColor);
 
 			nRadarX = CFG::Radar_Pos_X;
