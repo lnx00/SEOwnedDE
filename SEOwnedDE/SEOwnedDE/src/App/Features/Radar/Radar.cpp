@@ -6,9 +6,9 @@
 
 void CRadar::Drag()
 {
-	int nMouseX = H::Input->GetMouseX();
-	int nMouseY = H::Input->GetMouseY();
-	int nRadarSize = CFG::Radar_Size;
+	const int nMouseX = H::Input->GetMouseX();
+	const int nMouseY = H::Input->GetMouseY();
+	const int nRadarSize = CFG::Radar_Size;
 
 	bool bHovered = false;
 	static bool bDragging = false;
@@ -23,12 +23,13 @@ void CRadar::Drag()
 	{
 		case 0:
 		{
-			int nRadarX = CFG::Radar_Pos_X;
-			int nRadarY = CFG::Radar_Pos_Y;
+			const int nRadarX = CFG::Radar_Pos_X;
+			const int nRadarY = CFG::Radar_Pos_Y;
 
 			bHovered = nMouseX > nRadarX && nMouseX < nRadarX + nRadarSize && nMouseY > nRadarY && nMouseY < nRadarY + nRadarSize;
 
-			if (bHovered && H::Input->IsPressed(VK_LBUTTON)) {
+			if (bHovered && H::Input->IsPressed(VK_LBUTTON))
+			{
 				nDeltaX = nMouseX - nRadarX;
 				nDeltaY = nMouseY - nRadarY;
 				bDragging = true;
@@ -39,15 +40,16 @@ void CRadar::Drag()
 
 		case 1:
 		{
-			int nRadarX = CFG::Radar_Pos_X + nRadarSize / 2;
-			int nRadarY = CFG::Radar_Pos_Y + nRadarSize / 2;
+			const int nRadarX = CFG::Radar_Pos_X + nRadarSize / 2;
+			const int nRadarY = CFG::Radar_Pos_Y + nRadarSize / 2;
 
-			Vec2 vRadar = Vec2(static_cast<float>(nRadarX), static_cast<float>(nRadarY));
-			Vec2 vMouse = Vec2(static_cast<float>(nMouseX), static_cast<float>(nMouseY));
+			const auto vRadar = Vec2(static_cast<float>(nRadarX), static_cast<float>(nRadarY));
+			const auto vMouse = Vec2(static_cast<float>(nMouseX), static_cast<float>(nMouseY));
 
 			bHovered = static_cast<int>(vRadar.DistTo(vMouse)) < (CFG::Radar_Size / 2);
 
-			if (bHovered && H::Input->IsPressed(VK_LBUTTON)) {
+			if (bHovered && H::Input->IsPressed(VK_LBUTTON))
+			{
 				nDeltaX = nMouseX - CFG::Radar_Pos_X;
 				nDeltaY = nMouseY - CFG::Radar_Pos_Y;
 				bDragging = true;
@@ -62,32 +64,34 @@ void CRadar::Drag()
 	if (!H::Input->IsPressed(VK_LBUTTON) && !H::Input->IsHeld(VK_LBUTTON))
 		bDragging = false;
 
-	if (bDragging) {
+	if (bDragging)
+	{
 		CFG::Radar_Pos_X = nMouseX - nDeltaX;
 		CFG::Radar_Pos_Y = nMouseY - nDeltaY;
 	}
 }
 
-bool CRadar::GetDrawPosition(int &x, int &y, const Vec3 &vWorld)
+bool CRadar::GetDrawPosition(int& x, int& y, const Vec3& vWorld)
 {
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return false;
 
-	int nRadarX = CFG::Radar_Pos_X + (CFG::Radar_Size / 2);
-	int nRadarY = CFG::Radar_Pos_Y + (CFG::Radar_Size / 2);
+	const int nRadarX = CFG::Radar_Pos_X + (CFG::Radar_Size / 2);
+	const int nRadarY = CFG::Radar_Pos_Y + (CFG::Radar_Size / 2);
 
-	float flYaw = I::EngineClient->GetViewAngles().y * (static_cast<float>(PI) / 180.0f);
-	float flRadius = CFG::Radar_Radius;
-	float flCos = cosf(flYaw);
-	float flSin = sinf(flYaw);
+	const float flYaw = I::EngineClient->GetViewAngles().y * (static_cast<float>(PI) / 180.0f);
+	const float flRadius = CFG::Radar_Radius;
+	const float flCos = std::cosf(flYaw);
+	const float flSin = std::sinf(flYaw);
 
-	Vec3 vDelta = vWorld - pLocal->GetCenter();
+	const Vec3 vDelta = vWorld - pLocal->GetCenter();
 	Vec2 vPos = { (vDelta.y * (-flCos) + vDelta.x * flSin), (vDelta.x * (-flCos) - vDelta.y * flSin) };
 
 	switch (CFG::Radar_Style)
 	{
+		// Rectangle
 		case 0:
 		{
 			if (fabsf(vPos.x) > flRadius || fabsf(vPos.y) > flRadius)
@@ -129,12 +133,13 @@ bool CRadar::GetDrawPosition(int &x, int &y, const Vec3 &vWorld)
 			break;
 		}
 
+		// Circle
 		case 1:
 		{
-			int nPosX = nRadarX + static_cast<int>(vPos.x / flRadius * static_cast<float>(CFG::Radar_Size / 2));
-			int nPosY = nRadarY + static_cast<int>(vPos.y / flRadius * static_cast<float>(CFG::Radar_Size / 2));
+			const int nPosX = nRadarX + static_cast<int>(vPos.x / flRadius * static_cast<float>(CFG::Radar_Size / 2));
+			const int nPosY = nRadarY + static_cast<int>(vPos.y / flRadius * static_cast<float>(CFG::Radar_Size / 2));
 
-			Vec2 vRadar = { static_cast<float>(nRadarX), static_cast<float>(nRadarY) };
+			const Vec2 vRadar = { static_cast<float>(nRadarX), static_cast<float>(nRadarY) };
 			Vec2 vPoint = { static_cast<float>(nPosX), static_cast<float>(nPosY) };
 
 			Vec2 vDelta = vPoint - vRadar;
@@ -173,24 +178,27 @@ void CRadar::Run()
 		return;
 	}
 
-	int nRadarSize = CFG::Radar_Size;
+	const int nRadarSize = CFG::Radar_Size;
 
-	auto CrossColor = []() -> Color_t {
-		Color_t Out = CFG::Menu_Accent_Secondary;
-		Out.a = static_cast<byte>(CFG::Radar_Cross_Alpha * 255.0f);
-		return Out;
+	const auto crossColor = []() -> Color_t
+	{
+		Color_t outColor = CFG::Menu_Accent_Secondary;
+		outColor.a = static_cast<byte>(CFG::Radar_Cross_Alpha * 255.0f);
+		return outColor;
 	}();
 
-	auto OutlineColor = []() -> Color_t {
-		Color_t Out = CFG::Menu_Accent_Secondary;
-		Out.a = static_cast<byte>(CFG::Radar_Outline_Alpha * 255.0f);
-		return Out;
+	const auto outlineColor = []() -> Color_t
+	{
+		Color_t outColor = CFG::Menu_Accent_Secondary;
+		outColor.a = static_cast<byte>(CFG::Radar_Outline_Alpha * 255.0f);
+		return outColor;
 	}();
 
-	auto BackgroundColor = []() -> Color_t {
-		Color_t Out = CFG::Menu_Background;
-		Out.a = static_cast<byte>(CFG::Radar_Background_Alpha * 255.0f);
-		return Out;
+	const auto backgroundColor = []() -> Color_t
+	{
+		Color_t outColor = CFG::Menu_Background;
+		outColor.a = static_cast<byte>(CFG::Radar_Background_Alpha * 255.0f);
+		return outColor;
 	}();
 
 	if (F::Menu->IsOpen())
@@ -198,20 +206,21 @@ void CRadar::Run()
 
 	switch (CFG::Radar_Style)
 	{
+		// Rectangle
 		case 0:
 		{
-			int nRadarX = CFG::Radar_Pos_X;
-			int nRadarY = CFG::Radar_Pos_Y;
+			const int nRadarX = CFG::Radar_Pos_X;
+			const int nRadarY = CFG::Radar_Pos_Y;
 
-			H::Draw->Rect(nRadarX, nRadarY, nRadarSize, nRadarSize, BackgroundColor);
-			H::Draw->OutlinedRect(nRadarX, nRadarY, nRadarSize, nRadarSize, OutlineColor);
+			H::Draw->Rect(nRadarX, nRadarY, nRadarSize, nRadarSize, backgroundColor);
+			H::Draw->OutlinedRect(nRadarX, nRadarY, nRadarSize, nRadarSize, outlineColor);
 
 			H::Draw->Line(
 				nRadarX + (nRadarSize / 8),
 				nRadarY + (nRadarSize / 2),
 				nRadarX + (nRadarSize - ((nRadarSize / 8))),
 				nRadarY + (nRadarSize / 2),
-				CrossColor
+				crossColor
 			);
 
 			H::Draw->Line(
@@ -219,19 +228,20 @@ void CRadar::Run()
 				nRadarY + (nRadarSize / 8),
 				nRadarX + (nRadarSize / 2),
 				nRadarY + (nRadarSize - ((nRadarSize / 8))),
-				CrossColor
+				crossColor
 			);
 
 			break;
 		}
 
+		// Circle
 		case 1:
 		{
 			int nRadarX = CFG::Radar_Pos_X + nRadarSize / 2;
 			int nRadarY = CFG::Radar_Pos_Y + nRadarSize / 2;
 
-			H::Draw->FilledCircle(nRadarX, nRadarY, nRadarSize / 2, 100, BackgroundColor);
-			H::Draw->OutlinedCircle(nRadarX, nRadarY, nRadarSize / 2, 100, OutlineColor);
+			H::Draw->FilledCircle(nRadarX, nRadarY, nRadarSize / 2, 100, backgroundColor);
+			H::Draw->OutlinedCircle(nRadarX, nRadarY, nRadarSize / 2, 100, outlineColor);
 
 			nRadarX = CFG::Radar_Pos_X;
 			nRadarY = CFG::Radar_Pos_Y;
@@ -241,7 +251,7 @@ void CRadar::Run()
 				nRadarY + (nRadarSize / 2),
 				nRadarX + (nRadarSize - ((nRadarSize / 8))),
 				nRadarY + (nRadarSize / 2),
-				CrossColor
+				crossColor
 			);
 
 			H::Draw->Line(
@@ -249,7 +259,7 @@ void CRadar::Run()
 				nRadarY + (nRadarSize / 8),
 				nRadarX + (nRadarSize / 2),
 				nRadarY + (nRadarSize - ((nRadarSize / 8))),
-				CrossColor
+				crossColor
 			);
 
 			break;
@@ -258,18 +268,19 @@ void CRadar::Run()
 		default: return;
 	}
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return;
 
-	int nIconSize = CFG::Radar_Icon_Size;
+	const int nIconSize = CFG::Radar_Icon_Size;
 
+	// Draw world objects
 	if (CFG::Radar_World_Active)
 	{
 		if (!CFG::Radar_World_Ignore_HealthPacks)
 		{
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::HEALTHPACKS))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::HEALTHPACKS))
 			{
 				if (!pEntity)
 					continue;
@@ -285,7 +296,7 @@ void CRadar::Run()
 
 		if (!CFG::Radar_World_Ignore_AmmoPacks)
 		{
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::AMMOPACKS))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::AMMOPACKS))
 			{
 				if (!pEntity)
 					continue;
@@ -301,7 +312,7 @@ void CRadar::Run()
 
 		if (!CFG::Radar_World_Ignore_Halloween_Gift)
 		{
-			float s = Math::RemapValClamped
+			const float s = Math::RemapValClamped
 			(
 				static_cast<float>(nIconSize),
 				18.0f,
@@ -310,7 +321,7 @@ void CRadar::Run()
 				1.0f
 			);
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::HALLOWEEN_GIFT))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::HALLOWEEN_GIFT))
 			{
 				if (!pEntity || !pEntity->ShouldDraw())
 					continue;
@@ -325,19 +336,20 @@ void CRadar::Run()
 		}
 	}
 
+	// Draw buildings
 	if (CFG::Radar_Buildings_Active)
 	{
-		for (auto pEntity : H::Entities->GetGroup(EEntGroup::BUILDINGS_ALL))
+		for (const auto pEntity : H::Entities->GetGroup(EEntGroup::BUILDINGS_ALL))
 		{
 			if (!pEntity)
 				continue;
 
-			auto pBuilding = pEntity->As<C_BaseObject>();
+			const auto pBuilding = pEntity->As<C_BaseObject>();
 
 			if (pBuilding->m_bPlacing())
 				continue;
 
-			bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pBuilding, pLocal);
+			const bool bIsLocal = F::VisualUtils->IsEntityOwnedBy(pBuilding, pLocal);
 
 			if (CFG::Radar_Buildings_Ignore_Local && bIsLocal)
 				continue;
@@ -352,14 +364,17 @@ void CRadar::Run()
 							continue;
 					}
 
-					else continue;
+					else
+					{
+						continue;
+					}
 				}
 
 				if (CFG::Radar_Buildings_Ignore_Enemies && pBuilding->m_iTeamNum() != pLocal->m_iTeamNum())
 					continue;
 			}
 
-			auto nTexture = F::VisualUtils->GetBuildingTextureId(pBuilding);
+			const auto nTexture = F::VisualUtils->GetBuildingTextureId(pBuilding);
 
 			if (!nTexture)
 				continue;
@@ -369,29 +384,30 @@ void CRadar::Run()
 			if (!GetDrawPosition(x, y, pBuilding->GetCenter()))
 				continue;
 
-			Color_t Color = F::VisualUtils->GetEntityColor(pLocal, pBuilding);
-			Color.a = 100;
+			Color_t entColor = F::VisualUtils->GetEntityColor(pLocal, pBuilding);
+			entColor.a = 100;
 
-			H::Draw->FilledCircle(x, y, (nIconSize + 8) / 2, 20, Color);
+			H::Draw->FilledCircle(x, y, (nIconSize + 8) / 2, 20, entColor);
 			H::Draw->Texture(x, y, nIconSize, nIconSize, nTexture, POS_CENTERXY);
 			//H::Draw->OutlinedCircle(x, y, (nIconSize + 8) / 2, 20, CFG::Color_ESP_Outline);
 		}
 	}
 
+	// Draw players
 	if (CFG::Radar_Players_Active)
 	{
-		for (auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
+		for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
 		{
 			if (!pEntity)
 				continue;
 
-			auto pPlayer = pEntity->As<C_TFPlayer>();
+			const auto pPlayer = pEntity->As<C_TFPlayer>();
 
 			if (pPlayer->deadflag())
 				continue;
 
-			bool bIsLocal = pPlayer == pLocal;
-			bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
+			const bool bIsLocal = pPlayer == pLocal;
+			const bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
 
 			if (CFG::Radar_Players_Ignore_Local && bIsLocal)
 				continue;
@@ -411,7 +427,10 @@ void CRadar::Run()
 								continue;
 						}
 
-						else continue;
+						else
+						{
+							continue;
+						}
 					}
 
 					if (CFG::Radar_Players_Ignore_Enemies && pPlayer->m_iTeamNum() != pLocal->m_iTeamNum())
@@ -427,20 +446,19 @@ void CRadar::Run()
 			if (!GetDrawPosition(x, y, pPlayer->GetCenter()))
 				continue;
 
-			Color_t Color = F::VisualUtils->GetEntityColor(pLocal, pPlayer);
-			Color.a = 100;
+			Color_t entColor = F::VisualUtils->GetEntityColor(pLocal, pPlayer);
+			entColor.a = 100;
 
-			H::Draw->FilledCircle(x, y, (nIconSize + 4) / 2, 20, Color);
+			H::Draw->FilledCircle(x, y, (nIconSize + 4) / 2, 20, entColor);
 			H::Draw->Texture(x, y, nIconSize, nIconSize, F::VisualUtils->GetClassIcon(pPlayer->m_iClass()), POS_CENTERXY);
 			//H::Draw->OutlinedCircle(x, y, (nIconSize + 4) / 2, 20, CFG::Color_ESP_Outline);
 		}
 	}
 
-	//do money last
-
+	// Draw MvM money
 	if (CFG::Radar_World_Active && !CFG::Radar_World_Ignore_MVM_Money)
 	{
-		for (auto pEntity : H::Entities->GetGroup(EEntGroup::MVM_MONEY))
+		for (const auto pEntity : H::Entities->GetGroup(EEntGroup::MVM_MONEY))
 		{
 			if (!pEntity || !pEntity->ShouldDraw())
 				continue;
