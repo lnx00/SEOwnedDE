@@ -2,6 +2,7 @@
 
 #include "../CFG.h"
 #include "../Menu/Menu.h"
+#include "../VisualUtils/VisualUtils.h"
 
 #define LIST_WIDTH CFG::Visuals_SpectatorList_Width
 
@@ -91,19 +92,8 @@ void CSpectatorList::Run()
 	if (F::Menu->IsOpen())
 		Drag();
 
-	const auto outlineColor = []() -> Color_t
-	{
-		Color_t out = CFG::Menu_Accent_Secondary;
-		out.a = static_cast<byte>(CFG::Visuals_SpectatorList_Outline_Alpha * 255.0f);
-		return out;
-	}();
-
-	const auto backgroundColor = []() -> Color_t
-	{
-		Color_t out = CFG::Menu_Background;
-		out.a = static_cast<byte>(CFG::Visuals_SpectatorList_Background_Alpha * 255.0f);
-		return out;
-	}();
+	const auto outlineColor = F::VisualUtils->GetAlphaColor(CFG::Menu_Accent_Secondary, CFG::Visuals_SpectatorList_Outline_Alpha);
+	const auto bgColor = F::VisualUtils->GetAlphaColor(CFG::Menu_Background, CFG::Visuals_SpectatorList_Background_Alpha);
 
 	// Background
 	H::Draw->Rect(
@@ -111,7 +101,7 @@ void CSpectatorList::Run()
 		CFG::Visuals_SpectatorList_Pos_Y,
 		LIST_WIDTH,
 		CFG::Menu_Drag_Bar_Height,
-		backgroundColor
+		bgColor
 	);
 
 	// Title
@@ -147,7 +137,7 @@ void CSpectatorList::Run()
 			CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1,
 			LIST_WIDTH,
 			CFG::Menu_Drag_Bar_Height + 1,
-			backgroundColor
+			bgColor
 		);
 
 		const int nModeX = CFG::Visuals_SpectatorList_Pos_X;

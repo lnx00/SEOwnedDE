@@ -40,7 +40,7 @@ bool CVisualUtils::IsEntityOwnedBy(C_BaseEntity* pEntity, C_BaseEntity* pWho)
 
 Color_t CVisualUtils::GetAlphaColor(Color_t base, float alpha)
 {
-	base.a = alpha * 255.f;
+	base.a = static_cast<byte>(alpha * 255.f);
 	return base;
 }
 

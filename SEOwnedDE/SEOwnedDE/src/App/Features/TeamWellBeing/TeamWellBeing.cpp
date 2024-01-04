@@ -70,19 +70,8 @@ void CTeamWellBeing::Run()
 		}
 	}
 
-	const auto outlineColor = []() -> Color_t
-	{
-		const Color_t out = CFG::Menu_Accent_Secondary;
-		//Out.a = static_cast<byte>(CFG::Visuals_TeamWellBeing_Outline_Alpha * 255.0f);
-		return out;
-	}();
-
-	const auto backgroundColor = []() -> Color_t
-	{
-		Color_t out = CFG::Menu_Background;
-		out.a = static_cast<byte>(CFG::Visuals_TeamWellBeing_Background_Alpha * 255.0f);
-		return out;
-	}();
+	const auto& outlineColor = CFG::Menu_Accent_Secondary;
+	const auto bgColor = F::VisualUtils->GetAlphaColor(CFG::Menu_Background, CFG::Visuals_TeamWellBeing_Background_Alpha);
 
 	// Background
 	H::Draw->Rect(
@@ -90,7 +79,7 @@ void CTeamWellBeing::Run()
 		CFG::Visuals_TeamWellBeing_Pos_Y,
 		CFG::Visuals_TeamWellBeing_Width,
 		CFG::Menu_Drag_Bar_Height,
-		backgroundColor
+		bgColor
 	);
 
 	// Title
@@ -159,7 +148,7 @@ void CTeamWellBeing::Run()
 			drawY,
 			CFG::Visuals_TeamWellBeing_Width,
 			CFG::Menu_Drag_Bar_Height + 1,
-			backgroundColor
+			bgColor
 		);
 
 		H::Draw->StartClipping
