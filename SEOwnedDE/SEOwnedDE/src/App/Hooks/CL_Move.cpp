@@ -7,7 +7,7 @@ MAKE_HOOK(
 	CL_Move, Signatures::CL_Move.Get(),
 	void, __cdecl, float accumulated_extra_samples, bool bFinalTick)
 {
-	auto CallOriginal = [&](bool bFinal)
+	auto callOriginal = [&](bool bFinal)
 	{
 		if (CFG::Misc_Ping_Reducer)
 		{
@@ -22,12 +22,10 @@ MAKE_HOOK(
 		Shifting::bRapidFireWantShift = false;
 		Shifting::bShifting = true;
 
-		int nTicks = CFG::Exploits_RapidFire_Ticks;
-
+		const int nTicks = CFG::Exploits_RapidFire_Ticks;
 		for (int n = 0; n < nTicks; n++)
 		{
-			CallOriginal(n == nTicks - 1);
-
+			callOriginal(n == nTicks - 1);
 			Shifting::nAvailableTicks--;
 		}
 
@@ -36,7 +34,7 @@ MAKE_HOOK(
 		return;
 	}
 
-	if (auto pLocal = H::Entities->GetLocal())
+	if (const auto pLocal = H::Entities->GetLocal())
 	{
 		if (!pLocal->deadflag() && !Shifting::bRecharging && !Shifting::bShifting && !Shifting::bShiftingWarp && !Shifting::bRapidFireWantShift)
 		{
@@ -51,7 +49,7 @@ MAKE_HOOK(
 					{
 						for (int n = 0; n < 2; n++)
 						{
-							CallOriginal(n == 1);
+							callOriginal(n == 1);
 						}
 
 						Shifting::nAvailableTicks--;
@@ -59,12 +57,11 @@ MAKE_HOOK(
 
 					if (CFG::Exploits_Warp_Mode == 1)
 					{
-						int nTicks = Shifting::nAvailableTicks;
+						const int nTicks = Shifting::nAvailableTicks;
 
 						for (int n = 0; n < nTicks; n++)
 						{
-							CallOriginal(n == nTicks - 1);
-
+							callOriginal(n == nTicks - 1);
 							Shifting::nAvailableTicks--;
 						}
 					}
@@ -78,5 +75,5 @@ MAKE_HOOK(
 		}
 	}
 
-	CallOriginal(bFinalTick);
+	callOriginal(bFinalTick);
 }
