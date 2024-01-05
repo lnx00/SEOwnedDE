@@ -5,7 +5,6 @@
 #include "../Features/Aimbot/Aimbot.h"
 #include "../Features/EnginePrediction/EnginePrediction.h"
 #include "../Features/Misc/Misc.h"
-#include "../Features/NetworkFix/NetworkFix.h"
 #include "../Features/RapidFire/RapidFire.h"
 #include "../Features/Triggerbot/Triggerbot.h"
 #include "../Features/Triggerbot/AutoVaccinator/AutoVaccinator.h"
@@ -15,7 +14,7 @@
 
 MAKE_HOOK(
 	ClientModeShared_CreateMove, Memory::GetVFunc(I::ClientModeShared, 21),
-	bool, __fastcall, void *ecx, void *edx, float flInputSampleTime, CUserCmd *pCmd)
+	bool, __fastcall, CClientModeShared* ecx, void* edx, float flInputSampleTime, CUserCmd* pCmd)
 {
 	G::bSilentAngles = false;
 	G::bPSilentAngles = false;
@@ -53,8 +52,9 @@ MAKE_HOOK(
 		return CALL_ORIGINAL(ecx, edx, flInputSampleTime, pCmd);
 	}
 
-	uintptr_t _bp; __asm mov _bp, ebp;
-	bool *pSendPacket = (bool *)(***(uintptr_t ***)_bp - 0x1);
+	uintptr_t _bp;
+	__asm mov _bp, ebp;
+	auto pSendPacket = reinterpret_cast<bool*>(***reinterpret_cast<uintptr_t***>(_bp) - 0x1);
 
 	Vec3 vOldAngles = pCmd->viewangles;
 	float flOldSide = pCmd->sidemove;
@@ -75,7 +75,8 @@ MAKE_HOOK(
 	{
 		static bool bOldCanFire = G::bCanPrimaryAttack;
 
-		if (G::bCanPrimaryAttack != bOldCanFire) {
+		if (G::bCanPrimaryAttack != bOldCanFire)
+		{
 			G::nTicksSinceCanFire = 0;
 			bOldCanFire = G::bCanPrimaryAttack;
 		}
@@ -102,7 +103,7 @@ MAKE_HOOK(
 	{
 		if (CFG::Misc_Choke_On_Bhop && CFG::Misc_Bunnyhop)
 		{
-			if (C_TFPlayer *const local{ H::Entities->GetLocal() })
+			if (C_TFPlayer* const local{ H::Entities->GetLocal() })
 			{
 				if ((local->m_fFlags() & FL_ONGROUND) && !(F::EnginePrediction->flags & FL_ONGROUND))
 				{
@@ -117,7 +118,6 @@ MAKE_HOOK(
 	}
 	F::EnginePrediction->End();
 
-	//F::AutoVaccinator->Run(pCmd);
 	F::SeedPred->AdjustAngles(pCmd);
 	F::StickyJump->Run(pCmd);
 
@@ -127,17 +127,22 @@ MAKE_HOOK(
 	{
 		static int nOldTargetIndex = G::nTargetIndexEarly;
 
-		if (G::nTargetIndexEarly != nOldTargetIndex) {
+		if (G::nTargetIndexEarly != nOldTargetIndex)
+		{
 			G::nTicksTargetSame = 0;
 			nOldTargetIndex = G::nTargetIndexEarly;
 		}
 
-		else G::nTicksTargetSame++;
+		else
+		{
+			G::nTicksTargetSame++;
+		}
 
 		if (G::nTargetIndexEarly <= 1)
 			G::nTicksTargetSame = 0;
 	}
 
+	/* Taunt Slide */
 	if (CFG::Misc_Taunt_Slide)
 	{
 		if (auto pLocal = H::Entities->GetLocal())
@@ -161,7 +166,10 @@ MAKE_HOOK(
 					pCmd->viewangles.y = flYaw;
 				}
 
-				else flYaw = pCmd->viewangles.y;
+				else
+				{
+					flYaw = pCmd->viewangles.y;
+				}
 
 				if (CFG::Misc_Taunt_Slide_Control)
 					pCmd->viewangles.x = (pCmd->buttons & IN_BACK) ? 91.0f : (pCmd->buttons & IN_FORWARD) ? 0.0f : 90.0f;
@@ -171,6 +179,7 @@ MAKE_HOOK(
 		}
 	}
 
+	/* Warp */
 	if (CFG::Exploits_Warp_Exploit && CFG::Exploits_Warp_Mode == 1 && Shifting::bShiftingWarp)
 	{
 		if (auto pLocal = H::Entities->GetLocal())
@@ -207,7 +216,8 @@ MAKE_HOOK(
 	{
 		static bool bWasSet = false;
 
-		if (G::bPSilentAngles) {
+		if (G::bPSilentAngles)
+		{
 			*pSendPacket = false;
 			bWasSet = true;
 		}
@@ -225,8 +235,11 @@ MAKE_HOOK(
 		}
 	}
 
+	// Don't choke too much
 	if (I::ClientState->chokedcommands > 22)
+	{
 		*pSendPacket = true;
+	}
 
 	F::RapidFire->Run(pCmd, pSendPacket);
 
