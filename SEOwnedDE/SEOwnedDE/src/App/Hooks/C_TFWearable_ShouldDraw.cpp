@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	C_TFWearable_ShouldDraw, Signatures::C_TFWearable_ShouldDraw.Get(),
-	bool, __fastcall, void *ecx, void *edx)
+	bool, __fastcall, void* ecx, void* edx)
 {
 	if (CFG::Visuals_Disable_Wearables)
 		return false;
@@ -14,7 +14,7 @@ MAKE_HOOK(
 
 MAKE_HOOK(
 	C_TFWearable_InternalDrawModel, Signatures::C_TFWearable_InternalDrawModel.Get(),
-	int, __fastcall, void *ecx, void *edx, int flags)
+	int, __fastcall, void* ecx, void* edx, int flags)
 {
 	if (CFG::Visuals_Disable_Wearables)
 		return 0;

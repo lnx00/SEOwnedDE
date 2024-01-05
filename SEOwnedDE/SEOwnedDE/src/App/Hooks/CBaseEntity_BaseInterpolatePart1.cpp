@@ -4,18 +4,18 @@
 
 MAKE_HOOK(
 	CBaseEntity_BaseInterpolatePart1, Memory::RelToAbs(Signatures::CBaseEntity_BaseInterpolatePart1.Get()),
-	int, __fastcall, void *ecx, void *edx, float &currentTime, Vector &oldOrigin, QAngle &oldAngles, Vector &oldVel, int &bNoMoreChanges)
+	int, __fastcall, void* ecx, void* edx, float& currentTime, Vector& oldOrigin, QAngle& oldAngles, Vector& oldVel, int& bNoMoreChanges)
 {
-	auto ShouldDisableInterp = [&]()
+	auto shouldDisableInterp = [&]
 	{
 		if (!CFG::Misc_Accuracy_Improvements)
 		{
-			auto pLocal = H::Entities->GetLocal();
+			const auto pLocal = H::Entities->GetLocal();
 
 			if (!pLocal)
 				return false;
 
-			auto pEntity = reinterpret_cast<C_BaseEntity *>(ecx);
+			const auto pEntity = static_cast<C_BaseEntity*>(ecx);
 
 			if (!pEntity)
 				return false;
@@ -26,16 +26,16 @@ MAKE_HOOK(
 			return false;
 		}
 
-		auto pLocal = H::Entities->GetLocal();
+		const auto pLocal = H::Entities->GetLocal();
 
 		if (!pLocal)
 			return false;
 
-		auto pEntity = reinterpret_cast<C_BaseEntity *>(ecx);
+		const auto pEntity = static_cast<C_BaseEntity*>(ecx);
 
 		if (!pEntity)
 			return false;
-		
+
 		if (pEntity == pLocal)
 			return Shifting::bRecharging;
 
@@ -48,10 +48,9 @@ MAKE_HOOK(
 		return false;
 	};
 
-	if (ShouldDisableInterp())
+	if (shouldDisableInterp())
 	{
 		bNoMoreChanges = 1;
-
 		return 0;
 	}
 

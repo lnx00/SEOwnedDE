@@ -8,8 +8,8 @@ MAKE_HOOK(
 	Signatures::CBaseHudChatLine_InsertAndColorizeText.Get(),
 	void,
 	__fastcall,
-	void *ecx, void *edx,
-	wchar_t *buf, int clientIndex)
+	void* ecx, void* edx,
+	wchar_t* buf, int clientIndex)
 {
 	if (CFG::Visuals_Chat_Name_Tags && ecx)
 	{
@@ -23,7 +23,7 @@ MAKE_HOOK(
 
 		else
 		{
-			if (C_TFPlayer *pl{ I::ClientEntityList->GetClientEntity(clientIndex)->As<C_TFPlayer>() })
+			if (C_TFPlayer* pl{ I::ClientEntityList->GetClientEntity(clientIndex)->As<C_TFPlayer>() })
 			{
 				if (pl->IsPlayerOnSteamFriendsList())
 				{
@@ -32,7 +32,6 @@ MAKE_HOOK(
 			}
 
 			PlayerPriority pi{};
-
 			if (F::Players->GetInfo(clientIndex, pi))
 			{
 				if (pi.Ignored)
@@ -54,13 +53,13 @@ MAKE_HOOK(
 
 		if (!prefix.empty())
 		{
-			const int name_start{ *reinterpret_cast<int *>(reinterpret_cast<uintptr_t>(ecx) + 0x290) };
-			const int name_length{ *reinterpret_cast<int *>(reinterpret_cast<uintptr_t>(ecx) + 0x264) };
+			const int nameStart = *reinterpret_cast<int*>(reinterpret_cast<uintptr_t>(ecx) + 0x290);
+			const int nameLength = *reinterpret_cast<int*>(reinterpret_cast<uintptr_t>(ecx) + 0x264);
 
-			str.insert(name_start + name_length, L"\x1");
+			str.insert(nameStart + nameLength, L"\x1");
 			str.insert(0, prefix);
 
-			CALL_ORIGINAL(ecx, edx, const_cast<wchar_t *>(str.c_str()), clientIndex);
+			CALL_ORIGINAL(ecx, edx, const_cast<wchar_t*>(str.c_str()), clientIndex);
 
 			return;
 		}

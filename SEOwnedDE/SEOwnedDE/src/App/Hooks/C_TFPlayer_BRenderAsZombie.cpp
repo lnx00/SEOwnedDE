@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	C_TFPlayer_BRenderAsZombie, Signatures::C_TFPlayer_BRenderAsZombie.Get(),
-	bool, __fastcall, void *ecx, void *edx, bool bWeaponsCheck)
+	bool, __fastcall, C_TFPlayer* ecx, void* edx, bool bWeaponsCheck)
 {
 	if (CFG::Visuals_Ragdolls_Active && CFG::Visuals_Ragdolls_No_Gib)
 	{
