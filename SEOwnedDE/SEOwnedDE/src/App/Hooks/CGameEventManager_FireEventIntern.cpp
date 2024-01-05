@@ -4,7 +4,7 @@
 #include "../Features/Triggerbot/AutoVaccinator/AutoVaccinator.h"
 #include "../Features/Players/Players.h"
 
-void onVoteCast(IGameEvent *event)
+void OnVoteCast(IGameEvent* event)
 {
 	if (!CFG::Visuals_Chat_Teammate_Votes && !CFG::Visuals_Chat_Enemy_Votes)
 		return;
@@ -12,7 +12,7 @@ void onVoteCast(IGameEvent *event)
 	if (event->GetInt("team") == -1)
 		return;
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return;
@@ -24,7 +24,6 @@ void onVoteCast(IGameEvent *event)
 		return;
 
 	player_info_t pi{};
-
 	if (!I::EngineClient->GetPlayerInfo(event->GetInt("entityid"), &pi))
 		return;
 
@@ -41,18 +40,18 @@ void onVoteCast(IGameEvent *event)
 
 MAKE_HOOK(
 	CGameEventManager_FireEventIntern, Signatures::CGameEventManager_FireEventIntern.Get(),
-	bool, __fastcall, void *ecx, void *edx, IGameEvent *event, bool bServerOnly, bool bClientOnly)
+	bool, __fastcall, void* ecx, void* edx, IGameEvent* event, bool bServerOnly, bool bClientOnly)
 {
 	if (event)
 	{
-		static const auto vote_cast{ HASH_CT("vote_cast") };
-		static const auto player_hurt{ HASH_CT("player_hurt") };
-		static const auto revive_player_notify{ HASH_CT("revive_player_notify") };
-		static const auto player_connect_client{ HASH_CT("player_connect_client") };
+		static constexpr auto vote_cast{ HASH_CT("vote_cast") };
+		static constexpr auto player_hurt{ HASH_CT("player_hurt") };
+		static constexpr auto revive_player_notify{ HASH_CT("revive_player_notify") };
+		static constexpr auto player_connect_client{ HASH_CT("player_connect_client") };
 
 		if (HASH_RT(event->GetName()) == vote_cast)
 		{
-			onVoteCast(event);
+			OnVoteCast(event);
 		}
 
 		if (HASH_RT(event->GetName()) == player_hurt)
@@ -66,7 +65,7 @@ MAKE_HOOK(
 
 			if (F::Players->GetInfoGUID(event->GetString("networkid"), pi))
 			{
-				const char *const name{ event->GetString("name") };
+				const char* const name{ event->GetString("name") };
 
 				if (pi.Ignored)
 				{
@@ -85,14 +84,13 @@ MAKE_HOOK(
 			}
 		}
 
-		if (auto local{ H::Entities->GetLocal() })
+		if (const auto pLocal = H::Entities->GetLocal())
 		{
 			if (CFG::Misc_MVM_Instant_Revive && HASH_RT(event->GetName()) == revive_player_notify)
 			{
-				if (event->GetInt("entindex") == local->entindex())
+				if (event->GetInt("entindex") == pLocal->entindex())
 				{
-					auto *kv{ new KeyValues("MVM_Revive_Response") };
-
+					auto* kv = new KeyValues("MVM_Revive_Response");
 					kv->SetInt("accepted", 1);
 
 					I::EngineClient->ServerCmdKeyValues(kv);

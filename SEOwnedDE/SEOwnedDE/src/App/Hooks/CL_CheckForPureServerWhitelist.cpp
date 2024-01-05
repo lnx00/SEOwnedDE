@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	CL_CheckForPureServerWhitelist, Signatures::CL_CheckForPureServerWhitelist.Get(),
-	void, __cdecl, void **pFilesToReload)
+	void, __cdecl, void** pFilesToReload)
 {
 	if (CFG::Misc_Pure_Bypass)
 		return;

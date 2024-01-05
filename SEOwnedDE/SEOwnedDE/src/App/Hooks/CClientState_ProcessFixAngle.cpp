@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	CClientState_ProcessFixAngle, Signatures::CClientState_ProcessFixAngle.Get(),
-	bool, __fastcall, void *ecx, void *edx, void *msg)
+	bool, __fastcall, CClientState* ecx, void* edx, void* msg)
 {
 	if (CFG::Misc_Prevent_Server_Angle_Change)
 	{
