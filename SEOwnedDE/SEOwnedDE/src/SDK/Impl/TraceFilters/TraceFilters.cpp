@@ -60,11 +60,6 @@ bool CTraceFilterHitscan::ShouldHitEntity(IHandleEntity *pServerEntity, int cont
 	return true;
 }
 
-TraceType_t CTraceFilterHitscan::GetTraceType() const
-{
-	return TRACE_EVERYTHING;
-}
-
 bool CTraceFilterWorldCustom::ShouldHitEntity(IHandleEntity *pServerEntity, int contentsMask)
 {
 	if (auto pEntity = static_cast<IClientEntity *>(pServerEntity)->As<C_BaseEntity>())
@@ -90,7 +85,32 @@ bool CTraceFilterWorldCustom::ShouldHitEntity(IHandleEntity *pServerEntity, int 
 	return false;
 }
 
-TraceType_t CTraceFilterWorldCustom::GetTraceType() const
+bool CTraceFilterArc::ShouldHitEntity(IHandleEntity* pServerEntity, int contentsMask)
 {
-	return TRACE_EVERYTHING;
+	if (const auto pEntity = static_cast<IClientEntity*>(pServerEntity)->As<C_BaseEntity>())
+	{
+		switch (pEntity->GetClassId())
+		{
+			case ETFClassIds::CTFPlayer:
+			case ETFClassIds::CObjectSentrygun:
+			case ETFClassIds::CObjectDispenser:
+			case ETFClassIds::CObjectTeleporter:
+			case ETFClassIds::CObjectCartDispenser:
+			case ETFClassIds::CBaseDoor:
+			case ETFClassIds::CPhysicsProp:
+			case ETFClassIds::CDynamicProp:
+			case ETFClassIds::CBaseEntity:
+			case ETFClassIds::CFuncTrackTrain:
+			{
+				return true;
+			}
+
+			default:
+			{
+				return false;
+			}
+		}
+	}
+
+	return false;
 }

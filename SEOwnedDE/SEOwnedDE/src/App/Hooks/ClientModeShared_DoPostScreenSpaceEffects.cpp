@@ -126,45 +126,6 @@ void ProjectileArc()
 		return;
 	}
 
-	class CTraceFilterArc : public CTraceFilter
-	{
-	public:
-		bool ShouldHitEntity(IHandleEntity* pServerEntity, int contentsMask) override
-		{
-			if (const auto pEntity = static_cast<IClientEntity*>(pServerEntity)->As<C_BaseEntity>())
-			{
-				switch (pEntity->GetClassId())
-				{
-					case ETFClassIds::CTFPlayer:
-					case ETFClassIds::CObjectSentrygun:
-					case ETFClassIds::CObjectDispenser:
-					case ETFClassIds::CObjectTeleporter:
-					case ETFClassIds::CObjectCartDispenser:
-					case ETFClassIds::CBaseDoor:
-					case ETFClassIds::CPhysicsProp:
-					case ETFClassIds::CDynamicProp:
-					case ETFClassIds::CBaseEntity:
-					case ETFClassIds::CFuncTrackTrain:
-					{
-						return true;
-					}
-
-					default:
-					{
-						return false;
-					}
-				}
-			}
-
-			return false;
-		}
-
-		TraceType_t GetTraceType() const override
-		{
-			return TRACE_EVERYTHING;
-		}
-	};
-
 	if (!CFG::Visuals_Draw_Projectile_Arc || !G::CHudTFCrosshair_ShouldDraw_Result)
 	{
 		return;
