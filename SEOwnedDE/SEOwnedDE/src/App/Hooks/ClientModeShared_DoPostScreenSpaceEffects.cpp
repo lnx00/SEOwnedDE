@@ -5,21 +5,21 @@
 #include "../Features/ProjectileSim//ProjectileSim.h"
 #include "../Features/SpyCamera/SpyCamera.h"
 
-void RenderLine(const Vector &v1, const Vector &v2, Color_t c, bool bZBuffer)
+void RenderLine(const Vector& v1, const Vector& v2, Color_t c, bool bZBuffer)
 {
-	reinterpret_cast<void(__cdecl *)(const Vector &, const Vector &, Color_t, bool)>
+	reinterpret_cast<void(__cdecl *)(const Vector&, const Vector&, Color_t, bool)>
 		(Signatures::RenderLine.Get())(v1, v2, c, bZBuffer);
 }
 
-void RenderBox(const Vector &origin, const QAngle &angles, const Vector &mins, const Vector &maxs, Color_t c, bool bZBuffer, bool bInsideOut = false)
+void RenderBox(const Vector& origin, const QAngle& angles, const Vector& mins, const Vector& maxs, Color_t c, bool bZBuffer, bool bInsideOut = false)
 {
-	reinterpret_cast<void(__cdecl *)(const Vector &, const QAngle &, const Vector &, const Vector &, Color_t c, bool, bool)>
+	reinterpret_cast<void(__cdecl *)(const Vector&, const QAngle&, const Vector&, const Vector&, Color_t c, bool, bool)>
 		(Memory::RelToAbs(Signatures::RenderBox.Get()))(origin, angles, mins, maxs, c, bZBuffer, bInsideOut);
 }
 
-void RenderWireframeBox(const Vector &vOrigin, const QAngle &angles, const Vector &vMins, const Vector &vMaxs, Color_t c, bool bZBuffer)
+void RenderWireframeBox(const Vector& vOrigin, const QAngle& angles, const Vector& vMins, const Vector& vMaxs, Color_t c, bool bZBuffer)
 {
-	reinterpret_cast<void(__cdecl *)(const Vector &, const QAngle &, const Vector &, const Vector &, Color_t c, bool)>
+	reinterpret_cast<void(__cdecl *)(const Vector&, const QAngle&, const Vector&, const Vector&, Color_t c, bool)>
 		(Signatures::RenderWireframeBox.Get())(vOrigin, angles, vMins, vMaxs, c, bZBuffer);
 }
 
@@ -30,7 +30,7 @@ void SniperLines()
 		return;
 	}
 
-	auto GetMaxViewOffsetZ = [&](C_TFPlayer *pPlayer)
+	auto getMaxViewOffsetZ = [](C_TFPlayer* pPlayer)
 	{
 		if (pPlayer->m_fFlags() & FL_DUCKING)
 			return 45.0f;
@@ -54,36 +54,36 @@ void SniperLines()
 		|| I::EngineVGui->IsGameUIVisible() || SDKUtils::BInEndOfMatch() || F::SpyCamera->IsRendering())
 		return;
 
-	auto pLocal = H::Entities->GetLocal();
+	const auto pLocal = H::Entities->GetLocal();
 
 	if (!pLocal)
 		return;
 
-	for (auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
+	for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
 	{
 		if (!pEntity)
 			continue;
 
-		auto pPlayer = pEntity->As<C_TFPlayer>();
+		const auto pPlayer = pEntity->As<C_TFPlayer>();
 
 		if (!pPlayer || pPlayer == pLocal || pPlayer->deadflag() || pPlayer->m_iClass() != TF_CLASS_SNIPER)
 			continue;
 
-		auto weapon{ pPlayer->m_hActiveWeapon().Get() };
+		const auto pWeapon = pPlayer->m_hActiveWeapon().Get();
 
-		if (!weapon)
+		if (!pWeapon)
 		{
 			continue;
 		}
 
-		bool classic_charging{ weapon->As<C_TFWeaponBase>()->m_iItemDefinitionIndex() == Sniper_m_TheClassic && weapon->As<C_TFSniperRifleClassic>()->m_bCharging() };
+		const bool classicCharging = pWeapon->As<C_TFWeaponBase>()->m_iItemDefinitionIndex() == Sniper_m_TheClassic && pWeapon->As<C_TFSniperRifleClassic>()->m_bCharging();
 
-		if (!pPlayer->InCond(TF_COND_ZOOMED) && !classic_charging)
+		if (!pPlayer->InCond(TF_COND_ZOOMED) && !classicCharging)
 		{
 			continue;
 		}
 
-		bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
+		const bool bIsFriend = pPlayer->IsPlayerOnSteamFriendsList();
 
 		if (CFG::ESP_Players_Ignore_Friends && bIsFriend)
 			continue;
@@ -100,21 +100,21 @@ void SniperLines()
 		Vec3 vForward = {};
 		Math::AngleVectors(pPlayer->GetEyeAngles(), &vForward);
 
-		Vec3 vStart = pPlayer->m_vecOrigin() + Vec3(0.0f, 0.0f, GetMaxViewOffsetZ(pPlayer));
+		Vec3 vStart = pPlayer->m_vecOrigin() + Vec3(0.0f, 0.0f, getMaxViewOffsetZ(pPlayer));
 		Vec3 vEnd = vStart + (vForward * 8192.0f);
 
-		CTraceFilterWorldCustom Filter = {};
-		trace_t Trace = {};
+		CTraceFilterWorldCustom traceFilter = {};
+		trace_t trace = {};
 
-		H::AimUtils->Trace(vStart, vEnd, MASK_SOLID, &Filter, &Trace);
+		H::AimUtils->Trace(vStart, vEnd, MASK_SOLID, &traceFilter, &trace);
 
-		vEnd = Trace.endpos;
+		vEnd = trace.endpos;
 
 		RenderLine(vStart, vEnd, F::VisualUtils->GetEntityColor(pLocal, pPlayer), true);
 	}
 }
 
-void projectileArc()
+void ProjectileArc()
 {
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
 	{
@@ -129,9 +129,9 @@ void projectileArc()
 	class CTraceFilterArc : public CTraceFilter
 	{
 	public:
-		virtual bool ShouldHitEntity(IHandleEntity *pServerEntity, int contentsMask)
+		bool ShouldHitEntity(IHandleEntity* pServerEntity, int contentsMask) override
 		{
-			if (auto pEntity = static_cast<IClientEntity *>(pServerEntity)->As<C_BaseEntity>())
+			if (const auto pEntity = static_cast<IClientEntity*>(pServerEntity)->As<C_BaseEntity>())
 			{
 				switch (pEntity->GetClassId())
 				{
@@ -159,7 +159,7 @@ void projectileArc()
 			return false;
 		}
 
-		virtual TraceType_t GetTraceType() const
+		TraceType_t GetTraceType() const override
 		{
 			return TRACE_EVERYTHING;
 		}
@@ -170,34 +170,33 @@ void projectileArc()
 		return;
 	}
 
-	auto local{ H::Entities->GetLocal() };
+	const auto pLocal = H::Entities->GetLocal();
 
-	if (!local)
+	if (!pLocal)
 	{
 		return;
 	}
 
-	auto weapon{ H::Entities->GetWeapon() };
+	const auto pWeapon = H::Entities->GetWeapon();
 
-	if (!weapon)
+	if (!pWeapon)
 	{
 		return;
 	}
 
 	ProjectileInfo info{};
+	const auto backupOrigin = pLocal->m_vecOrigin();
 
-	auto backup_origin{ local->m_vecOrigin() };
+	pLocal->m_vecOrigin() = pLocal->GetAbsOrigin();
 
-	local->m_vecOrigin() = local->GetAbsOrigin();
-
-	if (!F::ProjectileSim->GetInfo(local, weapon, I::EngineClient->GetViewAngles(), info))
+	if (!F::ProjectileSim->GetInfo(pLocal, pWeapon, I::EngineClient->GetViewAngles(), info))
 	{
-		local->m_vecOrigin() = backup_origin;
+		pLocal->m_vecOrigin() = backupOrigin;
 
 		return;
 	}
 
-	local->m_vecOrigin() = backup_origin;
+	pLocal->m_vecOrigin() = backupOrigin;
 
 	if (!F::ProjectileSim->Init(info))
 	{
@@ -205,20 +204,19 @@ void projectileArc()
 	}
 
 	CTraceFilterArc filter{};
-
-	auto max_time{ 5.0f };
+	auto maxTime = 5.0f;
 
 	if (info.m_type == TF_PROJECTILE_PIPEBOMB)
 	{
-		max_time = weapon->m_iItemDefinitionIndex() == Demoman_m_TheIronBomber ? 1.54f : 2.2f;
+		maxTime = pWeapon->m_iItemDefinitionIndex() == Demoman_m_TheIronBomber ? 1.54f : 2.2f;
 	}
 
 	if (info.m_type == TF_PROJECTILE_CANNONBALL)
 	{
-		max_time = 1.0f;
+		maxTime = 1.0f;
 	}
 
-	for (auto n{ 0 }; n < TIME_TO_TICKS(max_time); n++)
+	for (auto n{ 0 }; n < TIME_TO_TICKS(maxTime); n++)
 	{
 		auto pre{ F::ProjectileSim->GetOrigin() };
 
@@ -255,12 +253,12 @@ void projectileArc()
 
 MAKE_HOOK(
 	ClientModeShared_DoPostScreenSpaceEffects, Memory::GetVFunc(I::ClientModeShared, 39),
-	bool, __fastcall, void *ecx, void *edx, const CViewSetup *pSetup)
+	bool, __fastcall, CClientModeShared* ecx, void* edx, const CViewSetup* pSetup)
 {
-	auto original{ CALL_ORIGINAL(ecx, edx, pSetup) };
+	const auto original = CALL_ORIGINAL(ecx, edx, pSetup);
 
 	SniperLines();
-	projectileArc();
+	ProjectileArc();
 
 	return original;
 }
