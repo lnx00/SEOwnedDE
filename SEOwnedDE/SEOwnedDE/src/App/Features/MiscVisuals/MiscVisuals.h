@@ -12,6 +12,9 @@ public:
 
 	void SniperLines();
 	void ProjectileArc();
+
+	void CustomFOV(CViewSetup* pSetup);
+	void Thirdperson(CViewSetup* pSetup);
 };
 
 MAKE_SINGLETON_SCOPED(CMiscVisuals, MiscVisuals, F);

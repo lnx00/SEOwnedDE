@@ -349,3 +349,80 @@ void CMiscVisuals::ProjectileArc()
 		RenderUtils::RenderLine(pre, post, clr, false);
 	}
 }
+
+void CMiscVisuals::CustomFOV(CViewSetup* pSetup)
+{
+	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
+	{
+		return;
+	}
+
+	const auto pLocal = H::Entities->GetLocal();
+
+	if (!pLocal)
+		return;
+
+	if (CFG::Visuals_Removals_Mode == 1 && pLocal->m_iObserverMode() == OBS_MODE_IN_EYE)
+		return;
+
+	if (!CFG::Visuals_Remove_Zoom && pLocal->IsZoomed())
+		return;
+
+	if (!pLocal->deadflag())
+		pLocal->m_iFOV() = static_cast<int>(CFG::Visuals_FOV_Override);
+
+	pSetup->fov = CFG::Visuals_FOV_Override;
+}
+
+void CMiscVisuals::Thirdperson(CViewSetup* pSetup)
+{
+	const auto pLocal = H::Entities->GetLocal();
+
+	if (!pLocal || pLocal->deadflag())
+		return;
+
+	if (!I::MatSystemSurface->IsCursorVisible() && !I::EngineVGui->IsGameUIVisible() && !SDKUtils::BInEndOfMatch() && !G::bStartedFakeTaunt)
+	{
+		if (H::Input->IsPressed(CFG::Visuals_Thirdperson_Key))
+			CFG::Visuals_Thirdperson_Active = !CFG::Visuals_Thirdperson_Active;
+	}
+
+	const bool bShouldDoTP = CFG::Visuals_Thirdperson_Active
+		|| pLocal->InCond(TF_COND_TAUNTING)
+		|| pLocal->InCond(TF_COND_HALLOWEEN_KART)
+		|| pLocal->InCond(TF_COND_HALLOWEEN_THRILLER)
+		|| pLocal->InCond(TF_COND_HALLOWEEN_GHOST_MODE)
+		|| G::bStartedFakeTaunt;
+
+	if (bShouldDoTP)
+	{
+		I::Input->CAM_ToThirdPerson();
+	}
+
+	else
+	{
+		I::Input->CAM_ToFirstPerson();
+	}
+
+	pLocal->ThirdPersonSwitch();
+
+	if (bShouldDoTP)
+	{
+		Vec3 vForward = {}, vRight = {}, vUp = {};
+		Math::AngleVectors(pSetup->angles, &vForward, &vRight, &vUp);
+
+		const Vec3 vOffset = (vForward * CFG::Visuals_Thirdperson_Offset_Forward)
+			- (vRight * CFG::Visuals_Thirdperson_Offset_Right)
+			- (vUp * CFG::Visuals_Thirdperson_Offset_Up);
+
+		const Vec3 vDesiredOrigin = pSetup->origin - vOffset;
+
+		Ray_t ray = {};
+		ray.Init(pSetup->origin, vDesiredOrigin, { -10.0f, -10.0f, -10.0f }, { 10.0f, 10.0f, 10.0f });
+		CTraceFilterWorldCustom traceFilter = {};
+		trace_t trace = {};
+		I::EngineTrace->TraceRay(ray, MASK_SOLID, &traceFilter, &trace);
+
+		pSetup->origin -= vOffset * trace.fraction;
+	}
+}
