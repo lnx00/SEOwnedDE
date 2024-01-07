@@ -74,11 +74,6 @@ void CPaint::Initialize()
 
 void CPaint::Run()
 {
-	auto RenderLine = [&](const Vector& v1, const Vector& v2, Color_t c, bool bZBuffer)
-	{
-		reinterpret_cast<void(__cdecl *)(const Vector&, const Vector&, Color_t, bool)>(Signatures::RenderLine.Get())(v1, v2, c, bZBuffer);
-	};
-
 	auto Rainbow = [&](int nTick)
 	{
 		constexpr float rate = 3.0f;
@@ -207,7 +202,7 @@ void CPaint::Run()
 						}
 					}
 
-					RenderLine(v[n].Position, v[n - 1].Position, Rainbow(n), false);
+					RenderUtils::RenderLine(v[n].Position, v[n - 1].Position, Rainbow(n), false);
 				}
 
 				bDrewSomething = true;
