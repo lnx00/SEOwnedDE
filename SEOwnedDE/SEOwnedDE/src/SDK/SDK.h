@@ -44,8 +44,8 @@
 
 #define PRINT(...) I::CVar->ConsoleColorPrintf({ 20, 220, 55, 255 }, __VA_ARGS__)
 
-MAKE_INTERFACE_SIGNATURE(int, RandomSeed, "client.dll", "C7 05 ? ? ? ? ? ? ? ? 5D C3 8B 40 34", 2, 1);
-MAKE_INTERFACE_NULL(void, TFGameMovement);
+MAKE_INTERFACE_SIGNATURE(int, RandomSeed, "client.dll", "C7 05 ? ? ? ? ? ? ? ? 5D C3 8B 40 34", 0x2, 1);
+MAKE_INTERFACE_SIGNATURE(void, TFGameMovement, "client.dll", "B9 ? ? ? ? E8 ? ? ? ? 68 ? ? ? ? C7 05 ? ? ? ? ? ? ? ? C7 05 ? ? ? ? ? ? ? ? C6 05 ? ? ? ? ? E8", 0x1, 1);
 
 class IViewRender
 {
