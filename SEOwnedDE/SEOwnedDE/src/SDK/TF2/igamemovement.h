@@ -37,13 +37,18 @@ class IGameMovement
 {
 public:
 	virtual ~IGameMovement(void) {}
+
 	virtual void ProcessMovement(C_BasePlayer *pPlayer, CMoveData *pMove) = 0;
 	virtual void StartTrackPredictionErrors(C_BasePlayer *pPlayer) = 0;
 	virtual void FinishTrackPredictionErrors(C_BasePlayer *pPlayer) = 0;
 	virtual void DiffPrint(char const *fmt, ...) = 0;
+
 	virtual Vector GetPlayerMins(bool ducked) const = 0;
 	virtual Vector GetPlayerMaxs(bool ducked) const = 0;
 	virtual Vector GetPlayerViewOffset(bool ducked) const = 0;
 };
 
 MAKE_INTERFACE_VERSION(IGameMovement, GameMovement, "client.dll", "GameMovement001");
+
+class CGameMovement : public IGameMovement {};
+class CTFGameMovement : public CGameMovement {};

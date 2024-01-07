@@ -352,10 +352,7 @@ void CMovementSimulation::RunTick(float flTimeToTarget)
 
 	m_bRunning = true;
 
-	//call CTFGameMovement::ProcessMovement
-	using FnProcessMovement = void(__thiscall *)(void*, C_BasePlayer*, CMoveData*);
-	static auto pProcessMovement = reinterpret_cast<FnProcessMovement>(Signatures::CTFGameMovement_ProcessMovement.Get());
-	pProcessMovement(I::TFGameMovement, m_pPlayer, &m_MoveData);
+	I::TFGameMovement->ProcessMovement(m_pPlayer, &m_MoveData);
 
 	m_bRunning = false;
 }
