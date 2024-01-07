@@ -9,15 +9,14 @@ MAKE_HOOK(
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
 	{
 		CALL_ORIGINAL(ecx, edx);
-
 		return;
 	}
 
 	if (CFG::Visuals_Remove_Fog)
 	{
-		if (auto pRenderContext = I::MaterialSystem->GetRenderContext())
+		if (const auto pRenderContext = I::MaterialSystem->GetRenderContext())
 		{
-			const float clr[]{ 0.0f, 0.0f, 0.0f };
+			constexpr float clr[]{ 0.0f, 0.0f, 0.0f };
 
 			pRenderContext->FogMode(MATERIAL_FOG_LINEAR);
 			pRenderContext->FogColor3fv(clr);

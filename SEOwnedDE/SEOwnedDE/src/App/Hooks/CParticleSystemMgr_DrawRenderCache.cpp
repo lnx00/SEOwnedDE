@@ -3,24 +3,24 @@
 #include "../Features/Materials/Materials.h"
 #include "../Features/Outlines/Outlines.h"
 
-auto drawing_world{ false };
+bool isDrawingWorld = false;
 
 MAKE_HOOK(
 	CBaseWorldView_DrawExecute, Signatures::CBaseWorldView_DrawExecute.Get(),
-	void, __fastcall, void *ecx, void *edx, float waterHeight, view_id_t viewID, float waterZAdjust)
+	void, __fastcall, void* ecx, void* edx, float waterHeight, view_id_t viewID, float waterZAdjust)
 {
-	drawing_world = true;
+	isDrawingWorld = true;
 	CALL_ORIGINAL(ecx, edx, waterHeight, viewID, waterZAdjust);
-	drawing_world = false;
+	isDrawingWorld = false;
 }
 
 MAKE_HOOK(
 	CParticleSystemMgr_DrawRenderCache, Signatures::CParticleSystemMgr_DrawRenderCache.Get(),
-	void, __fastcall, void *ecx, void *edx, bool bShadowDepth)
+	void, __fastcall, void* ecx, void* edx, bool bShadowDepth)
 {
-	if (drawing_world)
+	if (isDrawingWorld)
 	{
-		if (auto rc{ I::MaterialSystem->GetRenderContext() })
+		if (const auto rc = I::MaterialSystem->GetRenderContext())
 		{
 			rc->ClearBuffers(false, false, true);
 		}
