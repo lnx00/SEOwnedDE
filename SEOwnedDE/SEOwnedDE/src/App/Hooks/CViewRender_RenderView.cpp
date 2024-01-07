@@ -5,7 +5,7 @@
 
 MAKE_HOOK(
 	CViewRender_RenderView, Signatures::CViewRender_RenderView.Get(),
-	void, __fastcall, void *ecx, void *edx, const CViewSetup &view, int nClearFlags, int whatToDraw)
+	void, __fastcall, void* ecx, void* edx, const CViewSetup& view, int nClearFlags, int whatToDraw)
 {
 	I::ViewRender = static_cast<IViewRender*>(ecx);
 

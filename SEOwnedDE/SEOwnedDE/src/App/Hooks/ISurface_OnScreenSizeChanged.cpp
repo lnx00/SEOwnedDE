@@ -6,7 +6,7 @@
 
 MAKE_HOOK(
 	ISurface_OnScreenSizeChanged, Memory::GetVFunc(I::MatSystemSurface, 111),
-	void, __fastcall, void *ecx, void *edx, int nOldWidth, int OldHeight)
+	void, __fastcall, ISurface* ecx, void* edx, int nOldWidth, int OldHeight)
 {
 	CALL_ORIGINAL(ecx, edx, nOldWidth, OldHeight);
 

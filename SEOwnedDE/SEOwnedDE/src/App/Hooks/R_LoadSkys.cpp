@@ -13,13 +13,12 @@ MAKE_HOOK(
 		return;
 	}
 
-	auto custom{ CFG::Visuals_Custom_Skybox_Texture_Name };
+	const auto& custom = CFG::Visuals_Custom_Skybox_Texture_Name;
 
 	if (!custom.empty())
 	{
 		static auto sv_skyname{ I::CVar->FindVar("sv_skyname") };
-
-		std::string original{ sv_skyname->GetString() };
+		const std::string original = sv_skyname->GetString();
 
 		sv_skyname->SetValue(custom.c_str());
 

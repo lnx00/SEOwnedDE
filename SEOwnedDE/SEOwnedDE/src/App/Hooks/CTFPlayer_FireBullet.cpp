@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	CTFPlayer_FireBullet, Signatures::CTFPlayer_FireBullet.Get(),
-	void, __fastcall, void *ecx, void *edx, C_TFWeaponBase *pWpn, FireBulletsInfo_t &info, bool bDoEffects, int nDamageType, int nCustomDamageType)
+	void, __fastcall, C_TFPlayer* ecx, void* edx, C_TFWeaponBase* pWpn, FireBulletsInfo_t& info, bool bDoEffects, int nDamageType, int nCustomDamageType)
 {
 	if (auto pLocal = H::Entities->GetLocal())
 	{
@@ -13,7 +13,9 @@ MAKE_HOOK(
 			if (CFG::Visuals_Tracer_Type)
 			{
 				if (nDamageType & DMG_CRITICAL)
+				{
 					nDamageType &= ~DMG_CRITICAL;
+				}
 
 				info.m_iTracerFreq = 1;
 			}

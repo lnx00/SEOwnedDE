@@ -7,7 +7,9 @@ LONG __stdcall Hooks::WINAPI_WndProc::Func(HWND hWnd, UINT uMsg, WPARAM wParam, 
 	if (F::Menu->IsOpen() && H::Input->IsGameFocused())
 	{
 		if (GetAsyncKeyState(VK_SNAPSHOT) & 1) ///if (uMsg == WM_KEYUP && wParam == VK_SNAPSHOT) doesn't work
+		{
 			CallWindowProc(Original, hWnd, uMsg, wParam, lParam);
+		}
 
 		I::InputSystem->ResetInputState();
 

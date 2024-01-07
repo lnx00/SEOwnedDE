@@ -4,17 +4,17 @@
 
 MAKE_HOOK(
 	CTFWeaponBase_GetTracerType, Signatures::CTFWeaponBase_GetTracerType.Get(),
-	const char *, __fastcall, void *ecx, void *edx)
+	const char*, __fastcall, C_TFWeaponBase* ecx, void* edx)
 {
-	if (auto nType = CFG::Visuals_Tracer_Type)
+	if (const auto nType = CFG::Visuals_Tracer_Type)
 	{
-		if (auto pLocal = H::Entities->GetLocal())
+		if (const auto pLocal = H::Entities->GetLocal())
 		{
-			if (auto pWeapon = reinterpret_cast<C_TFWeaponBase *>(ecx))
+			if (const auto pWeapon = ecx)
 			{
 				if (pWeapon->m_hOwner().Get() == pLocal)
 				{
-					auto GetTracerName = [&](int nIndex)
+					auto getTracerName = [&](int nIndex)
 					{
 						switch (nIndex)
 						{
@@ -28,10 +28,10 @@ MAKE_HOOK(
 						}
 					};
 
-					bool bIsTF2DevsHorribleCode = pWeapon->m_iItemDefinitionIndex() == Sniper_m_TheMachina
+					const bool bIsTF2DevsHorribleCode = pWeapon->m_iItemDefinitionIndex() == Sniper_m_TheMachina
 						|| pWeapon->m_iItemDefinitionIndex() == Sniper_m_ShootingStar;
 
-					return GetTracerName((nType > 6) ? SDKUtils::RandomInt(bIsTF2DevsHorribleCode ? 1 : 0, (nType == 8) ? 5 : 6) : nType);
+					return getTracerName((nType > 6) ? SDKUtils::RandomInt(bIsTF2DevsHorribleCode ? 1 : 0, (nType == 8) ? 5 : 6) : nType);
 				}
 			}
 		}

@@ -7,7 +7,7 @@
 
 MAKE_HOOK(
 	CViewRender_DrawViewModels, Signatures::CViewRender_DrawViewModels.Get(),
-	void, __fastcall, void *ecx, void *edx, const CViewSetup &viewRender, bool drawViewmodel)
+	void, __fastcall, void* ecx, void* edx, const CViewSetup& viewRender, bool drawViewmodel)
 {
 	CALL_ORIGINAL(ecx, edx, viewRender, drawViewmodel);
 

@@ -5,16 +5,15 @@
 MAKE_HOOK(
 	IMaterialSystem_FindTexture,
 	Memory::GetVFunc(I::MaterialSystem, 81),
-	ITexture *,
+	ITexture*,
 	__fastcall,
-	void *ecx, void *edx, char const *pTextureName, const char *pTextureGroupName, bool complain, int nAdditionalCreationFlags)
+	void* ecx, void* edx, char const* pTextureName, const char* pTextureGroupName, bool complain, int nAdditionalCreationFlags)
 {
-	ITexture *const result{ CALL_ORIGINAL(ecx, edx, pTextureName, pTextureGroupName, complain, nAdditionalCreationFlags) };
+	ITexture* const result{ CALL_ORIGINAL(ecx, edx, pTextureName, pTextureGroupName, complain, nAdditionalCreationFlags) };
 
 	if (CFG::Visuals_Flat_Textures)
 	{
-		auto replaceWorld = [&]() -> ITexture *
-		{
+		auto replaceWorld = [&]() -> ITexture* {
 			if (!result
 				|| result->IsTranslucent()
 				|| !pTextureName
@@ -41,7 +40,7 @@ MAKE_HOOK(
 			return I::MaterialSystem->CreateTextureFromBits(1, 1, 1, IMAGE_FORMAT_RGBA8888, 4, bits);
 		};
 
-		if (ITexture *const replacement{ replaceWorld() })
+		if (ITexture* const replacement{ replaceWorld() })
 		{
 			return replacement;
 		}

@@ -8,27 +8,26 @@
 
 MAKE_HOOK(
 	IVModelRender_DrawModelExecute, Memory::GetVFunc(I::ModelRender, 19),
-	void, __fastcall, void *ecx, void *edx, const DrawModelState_t &state, ModelRenderInfo_t &pInfo, matrix3x4_t *pCustomBoneToWorld)
+	void, __fastcall, IVModelRender* ecx, void* edx, const DrawModelState_t& state, ModelRenderInfo_t& pInfo, matrix3x4_t* pCustomBoneToWorld)
 {
 	if (!F::SpyCamera->IsRendering())
 	{
-		auto pClientEntity = I::ClientEntityList->GetClientEntity(pInfo.entity_index);
-		
+		const auto pClientEntity = I::ClientEntityList->GetClientEntity(pInfo.entity_index);
+
 		if (pClientEntity)
 		{
 			if (CFG::Visuals_Disable_Dropped_Weapons && pClientEntity->GetClassId() == ETFClassIds::CTFDroppedWeapon)
 				return;
 
-			bool clean_ss{ CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot() };
+			const bool clean_ss = CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot();
 
 			if (CFG::Materials_ViewModel_Active && !clean_ss && pClientEntity->GetClassId() == ETFClassIds::CTFViewModel)
 			{
-				if (auto local{ H::Entities->GetLocal() })
+				if (const auto pLocal = H::Entities->GetLocal())
 				{
-					if (!local->IsUbered() && !local->deadflag())
+					if (!pLocal->IsUbered() && !pLocal->deadflag())
 					{
-						auto GetMaterial = [&](int nIndex) -> IMaterial *
-						{
+						auto getMaterial = [&](int nIndex) -> IMaterial* {
 							switch (nIndex)
 							{
 								case 0: return nullptr;
@@ -41,7 +40,7 @@ MAKE_HOOK(
 							}
 						};
 
-						auto mat{ GetMaterial(CFG::Materials_ViewModel_Hands_Material) };
+						const auto mat = getMaterial(CFG::Materials_ViewModel_Hands_Material);
 
 						if (mat)
 						{
@@ -55,7 +54,7 @@ MAKE_HOOK(
 
 						if (mat)
 						{
-							auto base{ CFG::Color_Hands };
+							const auto& base = CFG::Color_Hands;
 
 							if (mat != F::Materials->m_pGlow)
 							{
@@ -66,15 +65,15 @@ MAKE_HOOK(
 							{
 								if (F::Materials->m_pGlowEnvmapTint && F::Materials->m_pGlowSelfillumTint)
 								{
-									auto sheen{ CFG::Color_Hands_Sheen };
+									const auto& sheen = CFG::Color_Hands_Sheen;
 
 									I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
 
 									F::Materials->m_pGlowSelfillumTint
-										->SetVecValue(ColorUtils::ToFloat(base.r), ColorUtils::ToFloat(base.g), ColorUtils::ToFloat(base.b));
+									            ->SetVecValue(ColorUtils::ToFloat(base.r), ColorUtils::ToFloat(base.g), ColorUtils::ToFloat(base.b));
 
 									F::Materials->m_pGlowEnvmapTint
-										->SetVecValue(ColorUtils::ToFloat(sheen.r), ColorUtils::ToFloat(sheen.g), ColorUtils::ToFloat(sheen.b));
+									            ->SetVecValue(ColorUtils::ToFloat(sheen.r), ColorUtils::ToFloat(sheen.g), ColorUtils::ToFloat(sheen.b));
 								}
 							}
 						}
@@ -105,9 +104,9 @@ MAKE_HOOK(
 			{
 				if (CFG::Visuals_World_Modulation_Mode == 0)
 				{
-					if (auto flNightMode = CFG::Visuals_Night_Mode)
+					if (const auto flNightMode = CFG::Visuals_Night_Mode)
 					{
-						auto col{ static_cast<byte>(Math::RemapValClamped(flNightMode, 0.0f, 100.0f, 255.0f, 50.0f)) };
+						const auto col = static_cast<byte>(Math::RemapValClamped(flNightMode, 0.0f, 100.0f, 255.0f, 50.0f));
 
 						I::RenderView->SetColorModulation({ col, col, col, static_cast<byte>(255) });
 					}
@@ -127,7 +126,7 @@ MAKE_HOOK(
 
 			if (!I::EngineClient->IsTakingScreenshot())
 			{
-				auto pEntity = pClientEntity->As<C_BaseEntity>();
+				const auto pEntity = pClientEntity->As<C_BaseEntity>();
 
 				if (!F::Materials->IsRendering() && !F::Outlines->IsRendering() && (F::Outlines->HasDrawn(pEntity) || F::Materials->HasDrawn(pEntity)))
 					return;
@@ -136,7 +135,7 @@ MAKE_HOOK(
 	}
 
 	if (CFG::Visuals_Simple_Models)
-		*const_cast<int *>(&state.m_lod) = 5;
+		*const_cast<int*>(&state.m_lod) = 5;
 
 	CALL_ORIGINAL(ecx, edx, state, pInfo, pCustomBoneToWorld);
 }
@@ -145,19 +144,18 @@ MAKE_HOOK(
 	C_BaseAnimating_DrawModel, Signatures::C_BaseAnimating_DrawModel.Get(),
 	int, __fastcall, void *ecx, void *edx, int flags)
 {
-	bool clean_ss{ CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot() };
+	const bool clean_ss = CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot();
 
 	if (CFG::Materials_ViewModel_Active
 		&& !clean_ss
 		&& (flags & STUDIO_RENDER)
 		&& reinterpret_cast<DWORD>(_ReturnAddress()) == Signatures::m_hViewmodelAttachment_DrawModel.Get())
 	{
-		if (auto local{ H::Entities->GetLocal() })
+		if (const auto pLocal = H::Entities->GetLocal())
 		{
-			if (!local->IsUbered() && !local->deadflag())
+			if (!pLocal->IsUbered() && !pLocal->deadflag())
 			{
-				auto GetMaterial = [&](int nIndex) -> IMaterial *
-				{
+				auto getMaterial = [&](int nIndex) -> IMaterial* {
 					switch (nIndex)
 					{
 						case 0: return nullptr;
@@ -170,7 +168,7 @@ MAKE_HOOK(
 					}
 				};
 
-				auto mat{ GetMaterial(CFG::Materials_ViewModel_Weapon_Material) };
+				const auto mat = getMaterial(CFG::Materials_ViewModel_Weapon_Material);
 
 				if (mat)
 				{
@@ -184,7 +182,7 @@ MAKE_HOOK(
 
 				if (mat)
 				{
-					auto base{ CFG::Color_Weapon };
+					const auto& base = CFG::Color_Weapon;
 
 					if (mat != F::Materials->m_pGlow)
 					{
@@ -195,20 +193,20 @@ MAKE_HOOK(
 					{
 						if (F::Materials->m_pGlowEnvmapTint && F::Materials->m_pGlowSelfillumTint)
 						{
-							auto sheen{ CFG::Color_Weapon_Sheen };
+							const auto& sheen = CFG::Color_Weapon_Sheen;
 
 							I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
 
 							F::Materials->m_pGlowSelfillumTint
-								->SetVecValue(ColorUtils::ToFloat(base.r), ColorUtils::ToFloat(base.g), ColorUtils::ToFloat(base.b));
+							            ->SetVecValue(ColorUtils::ToFloat(base.r), ColorUtils::ToFloat(base.g), ColorUtils::ToFloat(base.b));
 
 							F::Materials->m_pGlowEnvmapTint
-								->SetVecValue(ColorUtils::ToFloat(sheen.r), ColorUtils::ToFloat(sheen.g), ColorUtils::ToFloat(sheen.b));
+							            ->SetVecValue(ColorUtils::ToFloat(sheen.r), ColorUtils::ToFloat(sheen.g), ColorUtils::ToFloat(sheen.b));
 						}
 					}
 				}
 
-				auto result{ CALL_ORIGINAL(ecx, edx, flags) };
+				const auto result = CALL_ORIGINAL(ecx, edx, flags);
 
 				I::RenderView->SetColorModulation(1.0f, 1.0f, 1.0f);
 
@@ -226,6 +224,6 @@ MAKE_HOOK(
 			}
 		}
 	}
-	
+
 	return CALL_ORIGINAL(ecx, edx, flags);
 }

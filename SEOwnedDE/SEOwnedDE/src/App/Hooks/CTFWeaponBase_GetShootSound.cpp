@@ -4,36 +4,36 @@
 
 MAKE_HOOK(
 	CTFWeaponBase_GetShootSound, Signatures::CTFWeaponBase_GetShootSound.Get(),
-	const char *, __fastcall, void *ecx, void *edx, int iIndex)
+	const char*, __fastcall, C_TFWeaponBase* ecx, void* edx, int iIndex)
 {
 	if (CFG::Misc_MVM_Giant_Weapon_Sounds)
 	{
-		if (auto pWeapon = reinterpret_cast<C_TFWeaponBase *>(ecx))
+		if (const auto pWeapon = ecx)
 		{
-			if (auto pLocal = H::Entities->GetLocal())
+			if (const auto pLocal = H::Entities->GetLocal())
 			{
 				if (pWeapon->m_hOwner().Get() == pLocal)
 				{
-					int nOldTeam = pWeapon->m_iTeamNum();
+					const int nOldTeam = pWeapon->m_iTeamNum();
 					pWeapon->m_iTeamNum() = TF_TEAM_PVE_INVADERS_GIANTS;
-					auto ret = CALL_ORIGINAL(ecx, edx, iIndex);
+					const auto ret = CALL_ORIGINAL(ecx, edx, iIndex);
 					pWeapon->m_iTeamNum() = nOldTeam;
 
 					//credits: KGB
 
-					static auto FireHash = HASH_CT("Weapon_FlameThrower.Fire");
+					static auto fireHash = HASH_CT("Weapon_FlameThrower.Fire");
 
-					if (HASH_RT(ret) == FireHash)
+					if (HASH_RT(ret) == fireHash)
 						return "MVM.GiantPyro_FlameStart";
 
-					static auto FireLoopHash = HASH_CT("Weapon_FlameThrower.FireLoop");
+					static auto fireLoopHash = HASH_CT("Weapon_FlameThrower.FireLoop");
 
-					if (HASH_RT(ret) == FireLoopHash)
+					if (HASH_RT(ret) == fireLoopHash)
 						return "MVM.GiantPyro_FlameLoop";
 
-					static auto GrenadeHash = HASH_CT("Weapon_GrenadeLauncher.Single");
+					static auto grenadeHash = HASH_CT("Weapon_GrenadeLauncher.Single");
 
-					if (HASH_RT(ret) == GrenadeHash)
+					if (HASH_RT(ret) == grenadeHash)
 						return "MVM.GiantDemoman_Grenadeshoot";
 
 					return ret;

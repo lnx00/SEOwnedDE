@@ -4,15 +4,15 @@
 
 MAKE_HOOK(
 	CViewRender_PerformScreenOverlay, Memory::RelToAbs(Signatures::CViewRender_PerformScreenOverlay.Get()),
-	void, __fastcall, void *ecx, void *edx, int x, int y, int w, int h)
+	void, __fastcall, void* ecx, void* edx, int x, int y, int w, int h)
 {
 	if (CFG::Visuals_Remove_Screen_Overlay)
 	{
-		auto ShouldDoOverrides = [&]()
+		auto shouldDoOverrides = [&]()
 		{
 			if (CFG::Visuals_Removals_Mode == 1)
 			{
-				if (auto pLocal = H::Entities->GetLocal())
+				if (const auto pLocal = H::Entities->GetLocal())
 				{
 					if (pLocal->m_iObserverMode() == OBS_MODE_IN_EYE)
 					{
@@ -24,7 +24,7 @@ MAKE_HOOK(
 			return true;
 		};
 
-		if (ShouldDoOverrides())
+		if (shouldDoOverrides())
 		{
 			return;
 		}

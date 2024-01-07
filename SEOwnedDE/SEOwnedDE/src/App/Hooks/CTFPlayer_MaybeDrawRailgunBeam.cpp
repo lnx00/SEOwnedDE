@@ -6,11 +6,11 @@
 
 MAKE_HOOK(
 	CTFPlayer_MaybeDrawRailgunBeam, Signatures::CTFPlayer_MaybeDrawRailgunBeam.Get(),
-	void, __fastcall, void *ecx, void *edx, void *pFilter, C_TFWeaponBase *pWeapon, const Vector &vStartPos, const Vector &vEndPos)
+	void, __fastcall, C_TFPlayer* ecx, void* edx, void* pFilter, C_TFWeaponBase* pWeapon, const Vector& vStartPos, const Vector& vEndPos)
 {
 	if (CFG::Visuals_Tracer_Type)
 	{
-		if (auto pLocal = H::Entities->GetLocal())
+		if (const auto pLocal = H::Entities->GetLocal())
 		{
 			if (ecx == pLocal)
 				return;

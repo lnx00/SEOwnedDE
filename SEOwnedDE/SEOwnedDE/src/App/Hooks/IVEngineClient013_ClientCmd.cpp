@@ -4,33 +4,33 @@
 
 MAKE_HOOK(
 	IVEngineClient013_ClientCmd, Memory::GetVFunc(I::EngineClient, 7),
-	void, __fastcall, void *ecx, void *edx, const char *szCmdString)
+	void, __fastcall, IVEngineClient013* ecx, void* edx, const char* szCmdString)
 {
-	auto RunFakeTaunt = [&]()
+	auto runFakeTaunt = [&]()
 	{
 		if (!CFG::Misc_Fake_Taunt)
 			return false;
 
-		static const auto Hash0 = HASH_CT("taunt 0");
-		static const auto Hash1 = HASH_CT("taunt 1");
-		static const auto Hash2 = HASH_CT("taunt 2");
-		static const auto Hash3 = HASH_CT("taunt 3");
-		static const auto Hash4 = HASH_CT("taunt 4");
-		static const auto Hash5 = HASH_CT("taunt 5");
-		static const auto Hash6 = HASH_CT("taunt 6");
-		static const auto Hash7 = HASH_CT("taunt 7");
-		static const auto Hash8 = HASH_CT("taunt 8");
-		static const auto Hash9 = HASH_CT("taunt");
+		static constexpr auto Hash0 = HASH_CT("taunt 0");
+		static constexpr auto Hash1 = HASH_CT("taunt 1");
+		static constexpr auto Hash2 = HASH_CT("taunt 2");
+		static constexpr auto Hash3 = HASH_CT("taunt 3");
+		static constexpr auto Hash4 = HASH_CT("taunt 4");
+		static constexpr auto Hash5 = HASH_CT("taunt 5");
+		static constexpr auto Hash6 = HASH_CT("taunt 6");
+		static constexpr auto Hash7 = HASH_CT("taunt 7");
+		static constexpr auto Hash8 = HASH_CT("taunt 8");
+		static constexpr auto Hash9 = HASH_CT("taunt");
 
 		if ((HASH_RT(szCmdString) == Hash1
-			|| HASH_RT(szCmdString) == Hash2
-			|| HASH_RT(szCmdString) == Hash3
-			|| HASH_RT(szCmdString) == Hash4
-			|| HASH_RT(szCmdString) == Hash5
-			|| HASH_RT(szCmdString) == Hash6
-			|| HASH_RT(szCmdString) == Hash7
-			|| HASH_RT(szCmdString) == Hash8
-			|| HASH_RT(szCmdString) == Hash9)
+				|| HASH_RT(szCmdString) == Hash2
+				|| HASH_RT(szCmdString) == Hash3
+				|| HASH_RT(szCmdString) == Hash4
+				|| HASH_RT(szCmdString) == Hash5
+				|| HASH_RT(szCmdString) == Hash6
+				|| HASH_RT(szCmdString) == Hash7
+				|| HASH_RT(szCmdString) == Hash8
+				|| HASH_RT(szCmdString) == Hash9)
 			&& G::bStartedFakeTaunt)
 			return true;
 
@@ -40,33 +40,33 @@ MAKE_HOOK(
 		if (G::bStartedFakeTaunt)
 			return true;
 
-		auto pLocal = H::Entities->GetLocal();
+		const auto pLocal = H::Entities->GetLocal();
 
 		if (!pLocal)
 			return false;
 
-		auto pWeapon = H::Entities->GetWeapon();
+		const auto pWeapon = H::Entities->GetWeapon();
 
 		if (!pWeapon)
 			return false;
 
-		auto pAnimState = pLocal->GetAnimState();
+		const auto pAnimState = pLocal->GetAnimState();
 
 		if (!pAnimState)
 			return false;
 
-		auto &GestureSlotCustom = pAnimState->m_aGestureSlots[GESTURE_SLOT_VCD];
+		auto& gestureSlotCustom = pAnimState->m_aGestureSlots[GESTURE_SLOT_VCD];
 
-		auto pAnimLayer = GestureSlotCustom.m_pAnimLayer;
+		const auto pAnimLayer = gestureSlotCustom.m_pAnimLayer;
 
 		if (!pAnimLayer)
 			return false;
 
-		auto GetSequenceName = [&](std::string &strOut) -> bool
+		auto getSequenceName = [&](std::string& strOut) -> bool
 		{
-			int nWeaponId = pWeapon->GetWeaponID();
-			int nClass = pLocal->m_iClass();
-			int nItemIdx = pWeapon->m_iItemDefinitionIndex();
+			const int nWeaponId = pWeapon->GetWeaponID();
+			const int nClass = pLocal->m_iClass();
+			const int nItemIdx = pWeapon->m_iItemDefinitionIndex();
 
 			if (nWeaponId == TF_WEAPON_LUNCHBOX && nClass == TF_CLASS_SCOUT)
 				return false;
@@ -187,14 +187,14 @@ MAKE_HOOK(
 
 		std::string sSequence = {};
 
-		if (!GetSequenceName(sSequence))
+		if (!getSequenceName(sSequence))
 			return false;
 
-		GestureSlotCustom.m_bActive = true;
-		GestureSlotCustom.m_bAutoKill = true;
-		GestureSlotCustom.m_iGestureSlot = GESTURE_SLOT_VCD;
-		GestureSlotCustom.m_iActivity = ACT_MP_VCD;
-		
+		gestureSlotCustom.m_bActive = true;
+		gestureSlotCustom.m_bAutoKill = true;
+		gestureSlotCustom.m_iGestureSlot = GESTURE_SLOT_VCD;
+		gestureSlotCustom.m_iActivity = ACT_MP_VCD;
+
 		pAnimLayer->m_nSequence = SDKUtils::LookupSequence(pLocal->GetModelPtr(), sSequence.c_str());
 		pAnimLayer->m_flPrevCycle = 0.0f;
 		pAnimLayer->m_flWeight = 1.0f;
@@ -215,7 +215,7 @@ MAKE_HOOK(
 		return true;
 	};
 
-	if (RunFakeTaunt())
+	if (runFakeTaunt())
 		return;
 
 	CALL_ORIGINAL(ecx, edx, szCmdString);

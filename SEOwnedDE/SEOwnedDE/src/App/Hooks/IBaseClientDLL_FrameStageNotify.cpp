@@ -7,38 +7,38 @@
 
 MAKE_HOOK(
 	IBaseClientDLL_FrameStageNotify, Memory::GetVFunc(I::BaseClientDLL, 35),
-	void, __fastcall, void *ecx, void *edx, ClientFrameStage_t curStage)
+	void, __fastcall, void* ecx, void* edx, ClientFrameStage_t curStage)
 {
 	CALL_ORIGINAL(ecx, edx, curStage);
 
 	switch (curStage)
 	{
-		case ClientFrameStage_t::FRAME_NET_UPDATE_START:
+		case FRAME_NET_UPDATE_START:
 		{
 			H::Entities->ClearCache();
 
 			break;
 		}
 
-		case ClientFrameStage_t::FRAME_NET_UPDATE_END:
+		case FRAME_NET_UPDATE_END:
 		{
 			H::Entities->UpdateCache();
 
-			if (auto pLocal = H::Entities->GetLocal())
+			if (const auto pLocal = H::Entities->GetLocal())
 			{
-				for (auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
+				for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
 				{
 					if (!pEntity || pEntity == pLocal)
 						continue;
 
-					auto pPlayer = pEntity->As<C_TFPlayer>();
+					const auto pPlayer = pEntity->As<C_TFPlayer>();
 
-					if (auto nDifference = std::clamp(TIME_TO_TICKS(pPlayer->m_flSimulationTime() - pPlayer->m_flOldSimulationTime()), 0, 22))
+					if (const auto nDifference = std::clamp(TIME_TO_TICKS(pPlayer->m_flSimulationTime() - pPlayer->m_flOldSimulationTime()), 0, 22))
 					{
 						//deal with animations, local player is dealt with in RunCommand
 						if (CFG::Misc_Accuracy_Improvements)
 						{
-							float flOldFrameTime = I::GlobalVars->frametime;
+							const float flOldFrameTime = I::GlobalVars->frametime;
 
 							I::GlobalVars->frametime = I::Prediction->m_bEnginePaused ? 0.0f : TICK_INTERVAL;
 
@@ -75,14 +75,16 @@ MAKE_HOOK(
 			F::LagRecords->UpdateRecords();
 
 			if (G::mapVelFixRecords.size() > 64)
+			{
 				G::mapVelFixRecords.clear();
+			}
 
-			for (auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
+			for (const auto pEntity : H::Entities->GetGroup(EEntGroup::PLAYERS_ALL))
 			{
 				if (!pEntity)
 					continue;
 
-				auto pPlayer = pEntity->As<C_TFPlayer>();
+				const auto pPlayer = pEntity->As<C_TFPlayer>();
 
 				if (pPlayer->deadflag())
 					continue;
@@ -93,7 +95,7 @@ MAKE_HOOK(
 			break;
 		}
 
-		case ClientFrameStage_t::FRAME_RENDER_START:
+		case FRAME_RENDER_START:
 		{
 			H::Input->Update();
 
@@ -111,13 +113,14 @@ MAKE_HOOK(
 
 					if (G::bStartedFakeTaunt)
 					{
-						if (auto pLocal = H::Entities->GetLocal())
+						if (const auto pLocal = H::Entities->GetLocal())
 						{
-							if (auto pAnimState = pLocal->GetAnimState())
+							if (const auto pAnimState = pLocal->GetAnimState())
 							{
-								const auto &GS = pAnimState->m_aGestureSlots[GESTURE_SLOT_VCD];
+								const auto& gs = pAnimState->m_aGestureSlots[GESTURE_SLOT_VCD];
 
-								if (GS.m_pAnimLayer && (GS.m_pAnimLayer->m_flCycle >= 1.0f || GS.m_pAnimLayer->m_nSequence <= 0)) {
+								if (gs.m_pAnimLayer && (gs.m_pAnimLayer->m_flCycle >= 1.0f || gs.m_pAnimLayer->m_nSequence <= 0))
+								{
 									G::bStartedFakeTaunt = false;
 									pLocal->m_nForceTauntCam() = 0;
 								}
@@ -125,7 +128,6 @@ MAKE_HOOK(
 						}
 					}
 				}
-
 				else
 				{
 					G::bStartedFakeTaunt = false;
@@ -134,8 +136,10 @@ MAKE_HOOK(
 					{
 						bWasEnabled = false;
 
-						if (auto pLocal = H::Entities->GetLocal())
+						if (const auto pLocal = H::Entities->GetLocal())
+						{
 							pLocal->m_nForceTauntCam() = 0;
+						}
 					}
 				}
 			}

@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	CRendering3dView_EnableWorldFog, Signatures::CRendering3dView_EnableWorldFog.Get(),
-	void, __fastcall, void *ecx, void *edx)
+	void, __fastcall, void* ecx, void* edx)
 {
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
 	{
@@ -35,7 +35,7 @@ MAKE_SIGNATURE(CSkyboxView_GetSkyboxFogEnable, "client.dll", "55 8B EC 83 EC 10 
 
 MAKE_HOOK(
 	CSkyboxView_GetSkyboxFogEnable, Signatures::CSkyboxView_GetSkyboxFogEnable.Get(),
-	bool, __fastcall, void *ecx, void *edx)
+	bool, __fastcall, void* ecx, void* edx)
 {
 	if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
 	{

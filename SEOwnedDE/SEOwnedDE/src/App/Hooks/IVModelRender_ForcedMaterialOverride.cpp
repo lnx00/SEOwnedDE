@@ -5,7 +5,7 @@
 
 MAKE_HOOK(
 	IVModelRender_ForcedMaterialOverride, Memory::GetVFunc(I::ModelRender, 1),
-	void, __fastcall, void *ecx, void *edx, IMaterial *mat, OverrideType_t type)
+	void, __fastcall, IVModelRender* ecx, void* edx, IMaterial* mat, OverrideType_t type)
 {
 	if (F::Materials->IsRendering() && !F::Materials->IsRenderingOriginalMat() && !F::Materials->IsUsedMaterial(mat))
 		return;

@@ -4,15 +4,15 @@
 
 MAKE_HOOK(
 	CTFPlayerShared_InCond, Signatures::CTFPlayerShared_InCond.Get(),
-	bool, __fastcall, void *ecx, void *edx, ETFCond cond)
+	bool, __fastcall, void* ecx, void* edx, ETFCond cond)
 {
 	if (cond == TF_COND_DISGUISED || cond == TF_COND_DISGUISING)
 	{
 		if (CFG::Misc_Accuracy_Improvements)
 		{
-			if (C_TFPlayer *pOuter = *reinterpret_cast<C_TFPlayer **>(reinterpret_cast<DWORD>(ecx) + 392))
+			if (C_TFPlayer* pOuter = *reinterpret_cast<C_TFPlayer**>(reinterpret_cast<DWORD>(ecx) + 392))
 			{
-				if (auto pLocal = H::Entities->GetLocal())
+				if (const auto pLocal = H::Entities->GetLocal())
 				{
 					if (pOuter->m_iTeamNum() != pLocal->m_iTeamNum())
 						return false;
@@ -23,11 +23,11 @@ MAKE_HOOK(
 
 	if (cond == TF_COND_ZOOMED)
 	{
-		auto ShouldDoOverrides = [&]() -> bool
+		auto shouldDoOverrides = [&]() -> bool
 		{
 			if (CFG::Visuals_Removals_Mode == 1)
 			{
-				if (auto pLocal = H::Entities->GetLocal())
+				if (const auto pLocal = H::Entities->GetLocal())
 				{
 					if (pLocal->m_iObserverMode() == OBS_MODE_IN_EYE)
 						return false;
@@ -37,9 +37,9 @@ MAKE_HOOK(
 			return true;
 		};
 
-		if (ShouldDoOverrides())
+		if (shouldDoOverrides())
 		{
-			DWORD dwRetAddr = reinterpret_cast<DWORD>(_ReturnAddress());
+			const DWORD dwRetAddr = reinterpret_cast<DWORD>(_ReturnAddress());
 
 			if (CFG::Visuals_Remove_Scope)
 			{

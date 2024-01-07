@@ -4,7 +4,7 @@
 
 MAKE_HOOK(
 	CTFGameMovement_PlayerMove, Signatures::CTFGameMovement_PlayerMove.Get(),
-	void, __fastcall, void* ecx, void* edx)
+	void, __fastcall, CTFGameMovement* ecx, void* edx)
 {
 	if (F::MovementSimulation->IsRunning())
 	{
