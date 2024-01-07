@@ -234,6 +234,7 @@
     <ClInclude Include="src\App\Features\Aimbot\AimbotMelee\AimbotMelee.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.h" />
     <ClInclude Include="src\App\Features\Crits\Crits.h" />
+    <ClInclude Include="src\SDK\TF2\renderutils.h" />
     <ClInclude Include="src\Utils\Storage\Storage.h" />
     <ClInclude Include="src\SDK\Helpers\AimUtils\AimUtils.h" />
     <ClInclude Include="src\App\Features\Triggerbot\AutoVaccinator\AutoVaccinator.h" />

@@ -25,6 +25,7 @@
 #include "TF2/client.h"
 #include "TF2/iviewrender_beams.h"
 #include "TF2/vphysics.h"
+#include "TF2/renderutils.h"
 
 #include "TF2/keyvalues.h"
 #include "TF2/c_baseobject.h"

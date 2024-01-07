@@ -9,6 +9,9 @@ public:
 	void ViewModelSway();
 	void DetailProps();
 	void ShiftBar();
+
+	void SniperLines();
+	void ProjectileArc();
 };
 
 MAKE_SINGLETON_SCOPED(CMiscVisuals, MiscVisuals, F);

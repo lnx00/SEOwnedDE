@@ -310,5 +310,6 @@
     <ClInclude Include="src\App\Features\Triggerbot\AutoVaccinator\AutoVaccinator.h" />
     <ClInclude Include="src\Utils\Storage\Storage.h" />
     <ClInclude Include="src\App\Features\Aimbot\AimbotCommon\AimbotCommon.h" />
+    <ClInclude Include="src\SDK\TF2\renderutils.h" />
   </ItemGroup>
 </Project>
