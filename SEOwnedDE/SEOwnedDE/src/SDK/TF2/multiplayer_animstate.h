@@ -207,7 +207,7 @@ public:
 	virtual void SetDebug(bool bDebug) = 0;
 };
 
-__declspec(align(4)) class CInterpolatedVar
+class CInterpolatedVar
 {
 public:
 	IInterpolatedVar *vtable;

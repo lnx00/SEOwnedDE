@@ -22,22 +22,20 @@
 
 namespace Utils
 {
-    static std::wstring ConvertUtf8ToWide(const std::string &str)
+    static std::wstring ConvertUtf8ToWide(const std::string& ansi)
     {
-        int count = MultiByteToWideChar(CP_UTF8, 0, str.data(), str.length(), NULL, 0);
-        std::wstring s(count, 0);
-        MultiByteToWideChar(CP_UTF8, 0, str.data(), str.length(), &s[0], count);
-        return s;
+        const int size = MultiByteToWideChar(CP_UTF8, 0, ansi.c_str(), -1, nullptr, 0);
+		std::wstring result(size, L'\0');
+		MultiByteToWideChar(CP_UTF8, 0, ansi.c_str(), -1, result.data(), size);
+		return result;
     }
 
-    static std::string ConvertWideToUTF8(const std::wstring &str)
+    static std::string ConvertWideToUTF8(const std::wstring& unicode)
     {
-        int len = 0;
-        int slength = static_cast<int>(str.length()) + 1;
-        len = WideCharToMultiByte(CP_ACP, 0, str.c_str(), slength, 0, 0, 0, 0);
-        std::string s(len, 0);
-        WideCharToMultiByte(CP_ACP, 0, str.c_str(), slength, &s[0], len, 0, 0);
-        return s;
+        const int size = WideCharToMultiByte(CP_UTF8, 0, unicode.c_str(), -1, nullptr, 0, nullptr, nullptr);
+		std::string result(size, '\0');
+		WideCharToMultiByte(CP_UTF8, 0, unicode.c_str(), -1, result.data(), size, nullptr, nullptr);
+		return result;
     }
 
     static int RandInt(int min, int max)
