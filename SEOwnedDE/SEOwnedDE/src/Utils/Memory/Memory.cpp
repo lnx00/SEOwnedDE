@@ -49,7 +49,7 @@ std::vector<int> pattern_to_byte(const char *pattern)
 	return bytes;
 }
 
-DWORD Memory::FindSignature(const char *szModule, const char *szPattern)
+std::uintptr_t Memory::FindSignature(const char *szModule, const char *szPattern)
 {
 	if (const auto hMod = GetModuleHandleA(szModule))
 	{
@@ -100,7 +100,7 @@ DWORD Memory::FindSignature(const char *szModule, const char *szPattern)
 
 			/// All good, now return the right address
 			if (byte_sequence_found)
-				return { reinterpret_cast<uintptr_t>(&image_bytes[i]) };
+				return { reinterpret_cast<std::uintptr_t>(&image_bytes[i]) };
 		}
 
 #if defined DEBUG_SIG

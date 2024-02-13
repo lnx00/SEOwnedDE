@@ -6,7 +6,7 @@
 
 namespace Memory
 {
-	DWORD FindSignature(const char *szModule, const char *szPattern);
+	std::uintptr_t FindSignature(const char *szModule, const char *szPattern);
 	PVOID FindInterface(const char *szModule, const char *szObject);
 
 	inline void *GetVFunc(void *pBaseClass, unsigned int unIndex)
@@ -16,6 +16,6 @@ namespace Memory
 
 	inline std::uintptr_t RelToAbs(const std::uintptr_t address)
 	{
-		return *reinterpret_cast<std::uintptr_t *>(address + 1) + address + 5;
+		return *reinterpret_cast<std::int32_t*>(address + 0x3) + address + 0x7;
 	}
 }

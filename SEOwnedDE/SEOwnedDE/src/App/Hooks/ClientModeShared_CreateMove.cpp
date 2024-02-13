@@ -52,9 +52,7 @@ MAKE_HOOK(
 		return CALL_ORIGINAL(ecx, edx, flInputSampleTime, pCmd);
 	}
 
-	uintptr_t _bp;
-	__asm mov _bp, ebp;
-	auto pSendPacket = reinterpret_cast<bool*>(***reinterpret_cast<uintptr_t***>(_bp) - 0x1);
+	auto* pSendPacket = *reinterpret_cast<bool**>((reinterpret_cast<uintptr_t>(_AddressOfReturnAddress()) - sizeof(uintptr_t)) - 0x1);
 
 	Vec3 vOldAngles = pCmd->viewangles;
 	float flOldSide = pCmd->sidemove;
