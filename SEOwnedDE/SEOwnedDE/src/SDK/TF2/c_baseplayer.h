@@ -65,45 +65,45 @@ public:
 	NETVAR(m_szLastPlaceName, const char *, "CBasePlayer", "m_szLastPlaceName");
 
 	float &m_flWaterJumpTime() {
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + 0x1120);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + 0x1120);
 	}
 
 	float &m_flSwimSoundTime() {
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + 0x1128);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + 0x1128);
 	}
 
 	Vec3 &m_vecLadderNormal() {
-		return *reinterpret_cast<Vec3 *>(reinterpret_cast<DWORD>(this) + 0x112C);
+		return *reinterpret_cast<Vec3 *>(reinterpret_cast<std::uintptr_t>(this) + 0x112C);
 	}
 
 	void SetCurrentCommand(CUserCmd *pCmd) {
 		static int nOffset = NetVars::GetNetVar("CBasePlayer", "m_hConstraintEntity") - 4;
-		*reinterpret_cast<CUserCmd **>(reinterpret_cast<DWORD>(this) + nOffset) = pCmd;
+		*reinterpret_cast<CUserCmd **>(reinterpret_cast<std::uintptr_t>(this) + nOffset) = pCmd;
 	}
 
 	int &m_nButtons() {
 		static int nOffset = NetVars::GetNetVar("CBasePlayer", "m_hConstraintEntity") - 8;
-		return *reinterpret_cast<int *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<int *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	int &m_surfaceProps() {
 		static int nOffset = 4768;
-		return *reinterpret_cast<int *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<int *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	void *&m_pSurfaceData() {
 		static int nOffset = 4772;
-		return *reinterpret_cast<void **>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<void **>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	float &m_surfaceFriction() {
 		static int nOffset = 4776;
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	char &m_chTextureType() {
 		static int nOffset = 4780;
-		return *reinterpret_cast<char *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<char *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	int GetAmmoCount(int iAmmoType) {
@@ -112,6 +112,6 @@ public:
 
 	int m_afButtonLast() {
 		static int nOffset = NetVars::GetNetVar("CBasePlayer", "m_hConstraintEntity") - 20;
-		return *reinterpret_cast<int *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<int *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 };

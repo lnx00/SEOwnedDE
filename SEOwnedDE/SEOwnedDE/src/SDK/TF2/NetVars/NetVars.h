@@ -1,5 +1,6 @@
 #pragma once
 #include "../cdll_int.h"
+#include <cstdint>
 
 namespace NetVars
 {
@@ -10,5 +11,5 @@ namespace NetVars
 #define NETVAR(_name, type, table, name) type &_name() \
 { \
 	static int nOffset = NetVars::GetNetVar(table, name); \
-	return *reinterpret_cast<type *>(reinterpret_cast<DWORD>(this) + nOffset); \
+	return *reinterpret_cast<type *>(std::uintptr_t(this) + nOffset); \
 }

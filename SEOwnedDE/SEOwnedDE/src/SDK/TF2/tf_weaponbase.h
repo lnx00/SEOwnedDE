@@ -46,7 +46,7 @@ typedef enum
 #define MAX_WEAPON_PREFIX 16
 #define MAX_WEAPON_AMMO_NAME 32
 
-__declspec(align(4)) class FileWeaponInfo_t
+class FileWeaponInfo_t
 {
 public:
 	void *m_pVtable;
@@ -105,7 +105,7 @@ public:
 	bool bShowUsageHint; // if true, then when you receive the weapon, show a hint about it
 };
 
-__declspec(align(4)) struct WeaponData_t
+struct WeaponData_t
 {
 	int   m_nDamage;
 	int   m_nBulletsPerShot;
@@ -144,7 +144,7 @@ __declspec(align(4)) struct WeaponData_t
 	};
 };
 
-__declspec(align(4)) class CTFWeaponInfo : public FileWeaponInfo_t
+class CTFWeaponInfo : public FileWeaponInfo_t
 {
 public:
 	WeaponData_t m_WeaponData[2];                    //0x06F8
@@ -213,7 +213,7 @@ public:
 
 	float &m_flSmackTime() {
 		static int nOffset = NetVars::GetNetVar("CTFWeaponBase", "m_nInspectStage") + 0x1C;
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	bool CanFireCriticalShot(C_BasePlayer *pOwner, bool bIsHeadshot = false)
@@ -267,7 +267,7 @@ public:
 
 	CTFWeaponInfo *GetWeaponInfo() {
 		static int nOffset = NetVars::GetNetVar("CTFWeaponBase", "m_flEffectBarRegenTime") + 0x10;
-		return *reinterpret_cast<CTFWeaponInfo **>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<CTFWeaponInfo **>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 	
 	bool IsEnergyWeapon() {
@@ -298,7 +298,7 @@ public:
 	}
 
 	int &m_iCurrentSeed() {
-		return *reinterpret_cast<int *>(reinterpret_cast<DWORD>(this) + 0xB5C);
+		return *reinterpret_cast<int *>(reinterpret_cast<std::uintptr_t>(this) + 0xB5C);
 	}
 
 	void GetProjectileFireSetup(void *pPlayer, Vector vecOffset, Vector *vecSrc, QAngle *angForward, bool bHitTeammates = true, float flEndDist = 2000.0f) {
@@ -399,7 +399,7 @@ public:
 	CUtlVector<CHandle<C_TFGrenadePipebombProjectile>> &m_Pipebombs()
 	{
 		static int nOffset = NetVars::GetNetVar("CTFPipebombLauncher", "m_flChargeBeginTime") - 28;
-		return *reinterpret_cast<CUtlVector<CHandle<C_TFGrenadePipebombProjectile>> *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<CUtlVector<CHandle<C_TFGrenadePipebombProjectile>> *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 };
 

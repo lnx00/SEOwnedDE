@@ -1,6 +1,5 @@
 #pragma once
-
-using DWORD = unsigned long;
+#include <cstdint>
 
 #include "../Singleton/Singleton.h"
 #include <vector>
@@ -8,7 +7,7 @@ using DWORD = unsigned long;
 class CSignature
 {
 private:
-	DWORD m_dwVal = 0x0;
+	std::uintptr_t m_dwVal = 0x0;
 	const char *m_pszDLLName = {};
 	const char *m_pszSignature = {};
 	int m_nOffset = 0;
@@ -19,7 +18,7 @@ public:
 
 	void Initialize();
 
-	inline DWORD Get()
+	inline std::uintptr_t Get()
 	{
 		return m_dwVal;
 	}

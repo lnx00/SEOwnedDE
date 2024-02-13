@@ -72,11 +72,11 @@ public:
 	virtual bool IsSteamControllerActive() = 0;
 
 	CUserCmd *GetCommands() {
-		return *reinterpret_cast<CUserCmd **>(reinterpret_cast<DWORD>(this) + 0xFC);
+		return *reinterpret_cast<CUserCmd **>(reinterpret_cast<std::uintptr_t>(this) + 0xFC);
 	}
 
 	CVerifiedUserCmd *GetVerifiedCommands() {
-		return *reinterpret_cast<CVerifiedUserCmd **>(reinterpret_cast<DWORD>(this) + 0x100);
+		return *reinterpret_cast<CVerifiedUserCmd **>(reinterpret_cast<std::uintptr_t>(this) + 0x100);
 	}
 };
 

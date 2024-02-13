@@ -178,7 +178,7 @@ public:
 	NETVAR(m_bViewingCYOAPDA, bool, "CTFPlayer", "m_bViewingCYOAPDA");
 
 	int GetMoveType() {
-		return *reinterpret_cast<int *>(reinterpret_cast<DWORD>(this) + 420);
+		return *reinterpret_cast<int *>(reinterpret_cast<std::uintptr_t>(this) + 420);
 	}
 
 	Vec3 GetEyeAngles() {
@@ -259,7 +259,7 @@ public:
 
 	float &m_flInvisibility() {
 		static int nOffset = NetVars::GetNetVar("CTFPlayer", "m_flInvisChangeCompleteTime") - 8;
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	bool IsInvisible()
@@ -326,7 +326,7 @@ public:
 
 	C_TFWeaponBase *GetWeaponFromSlot(int nSlot) {
 		static int nOffset = NetVars::GetNetVar("CBaseCombatCharacter", "m_hMyWeapons");
-		int hWeapon = *reinterpret_cast<int *>(reinterpret_cast<DWORD>(this) + (nOffset + (nSlot * 0x4)));
+		int hWeapon = *reinterpret_cast<int *>(reinterpret_cast<std::uintptr_t>(this) + (nOffset + (nSlot * 0x4)));
 		return reinterpret_cast<C_TFWeaponBase *>(I::ClientEntityList->GetClientEntityFromHandle(hWeapon));
 	}
 
@@ -336,29 +336,29 @@ public:
 
 	float &m_flLastMovementStunChange() {
 		static int nOffset = 7072;
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	float &m_flStunLerpTarget() {
 		static int nOffset = 7068;
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	bool &m_bStunNeedsFadeOut() {
 		static int nOffset = 7064;
-		return *reinterpret_cast<bool *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<bool *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	float &m_flPrevTauntYaw() {
 		static int nOffset = NetVars::GetNetVar("CTFPlayer", "m_flTauntYaw") + 4;
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	CMultiPlayerAnimState *GetAnimState()
 	{
 		static auto offset{ NetVars::GetNetVar("CTFPlayer", "m_hItem") - 52 };
 
-		return *reinterpret_cast<CMultiPlayerAnimState **>(reinterpret_cast<DWORD>(this) + offset);
+		return *reinterpret_cast<CMultiPlayerAnimState **>(reinterpret_cast<std::uintptr_t>(this) + offset);
 	}
 
 	void UpdateClientSideAnimation() {
@@ -409,6 +409,6 @@ public:
 
 	bool &m_bDissolving() {
 		static int nOffset = NetVars::GetNetVar("CTFRagdoll", "m_bFeignDeath") - 1;
-		return *reinterpret_cast<bool *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<bool *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 };

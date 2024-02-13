@@ -72,7 +72,7 @@ public:
 	float m_flCreationTime()
 	{
 		static int nOffset = NetVars::GetNetVar("CTFGrenadePipebombProjectile", "m_iType") + 4;
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 };
 

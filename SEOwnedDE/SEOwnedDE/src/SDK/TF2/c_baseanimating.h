@@ -148,16 +148,16 @@ public:
 
 	std::array<float, 24> &m_flPoseParameter() {
 		static int nOffset = NetVars::GetNetVar("CBaseAnimating", "m_flPoseParameter");
-		return *reinterpret_cast<std::array<float, 24>*>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<std::array<float, 24>*>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	CUtlVector<matrix3x4_t> *GetCachedBoneData() {
-		return reinterpret_cast<CUtlVector<matrix3x4_t> *>(reinterpret_cast<DWORD>(this) + 0x848); //0x844?
+		return reinterpret_cast<CUtlVector<matrix3x4_t> *>(reinterpret_cast<std::uintptr_t>(this) + 0x848); //0x844?
 	}
 
 	CStudioHdr *GetModelPtr() {
 		static int nOffset = NetVars::GetNetVar("CBaseAnimating", "m_nMuzzleFlashParity") + 12;
-		return *reinterpret_cast<CStudioHdr **>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<CStudioHdr **>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	float FrameAdvance(float flInterval) {

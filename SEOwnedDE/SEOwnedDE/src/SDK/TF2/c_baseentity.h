@@ -116,7 +116,7 @@ public:
 
 	float &m_flOldSimulationTime() {
 		static int nOffset = (NetVars::GetNetVar("CBaseEntity", "m_flSimulationTime") + 4);
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	C_BaseEntity *GetMoveParent()
@@ -167,27 +167,27 @@ public:
 
 	unsigned char &m_MoveType() {
 		static int nOffset = 420;
-		return *reinterpret_cast<unsigned char *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<unsigned char *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	unsigned char &m_MoveCollide() {
 		static int nOffset = 421;
-		return *reinterpret_cast<unsigned char *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<unsigned char *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	float &m_flGravity() {
 		static int nOffset = 400;
-		return *reinterpret_cast<float *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<float *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	unsigned char &m_nWaterLevel_C_BaseEntity() {
 		static int nOffset = 424;
-		return *reinterpret_cast<unsigned char *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<unsigned char *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	unsigned char &m_nWaterType() {
 		static int nOffset = 425;
-		return *reinterpret_cast<unsigned char *>(reinterpret_cast<DWORD>(this) + nOffset);
+		return *reinterpret_cast<unsigned char *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
 	}
 
 	void SetAbsOrigin(const Vec3 &absOrigin) {

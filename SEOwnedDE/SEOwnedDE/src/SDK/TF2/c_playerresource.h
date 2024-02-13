@@ -24,7 +24,7 @@ public:
 	int GetPing(int playerindex)
 	{
 		static int nOffset = NetVars::GetNetVar("CPlayerResource", "m_iPing");
-		return *reinterpret_cast<int *>((reinterpret_cast<DWORD>(this) + nOffset) + (playerindex * 4));
+		return *reinterpret_cast<int *>((reinterpret_cast<std::uintptr_t>(this) + nOffset) + (playerindex * 4));
 	}
 
 //public:
