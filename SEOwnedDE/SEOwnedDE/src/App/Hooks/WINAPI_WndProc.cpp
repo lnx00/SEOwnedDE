@@ -2,7 +2,7 @@
 
 #include "../Features/Menu/Menu.h"
 
-LONG __stdcall Hooks::WINAPI_WndProc::Func(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT __stdcall Hooks::WINAPI_WndProc::Func(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (F::Menu->IsOpen() && H::Input->IsGameFocused())
 	{

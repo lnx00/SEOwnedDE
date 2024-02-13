@@ -4,7 +4,7 @@ MAKE_HOOK(
 	C_BaseEntity_SetAbsVelocity, Signatures::C_BaseEntity_SetAbsVelocity.Get(),
 	void, __fastcall, C_BasePlayer* ecx, void* edx, const Vector& vecAbsVelocity)
 {
-	if (reinterpret_cast<DWORD>(_ReturnAddress()) == Signatures::C_BasePlayer_PostDataUpdate_SetAbsVelocityCall.Get())
+	if (reinterpret_cast<std::uintptr_t>(_ReturnAddress()) == Signatures::C_BasePlayer_PostDataUpdate_SetAbsVelocityCall.Get())
 	{
 		if (const auto pBasePlayer = ecx->As<C_TFPlayer>())
 		{

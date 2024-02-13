@@ -8,7 +8,7 @@ MAKE_HOOK(
 {
 	if (CFG::Visuals_Ragdolls_Active && CFG::Visuals_Ragdolls_No_Gib)
 	{
-		if (reinterpret_cast<DWORD>(_ReturnAddress()) == Signatures::C_TFRagdoll_CreateTFRagdoll_C_TFPlayer_BRenderAsZombie_Call.Get())
+		if (reinterpret_cast<std::uintptr_t>(_ReturnAddress()) == Signatures::C_TFRagdoll_CreateTFRagdoll_C_TFPlayer_BRenderAsZombie_Call.Get())
 			return true;
 	}
 

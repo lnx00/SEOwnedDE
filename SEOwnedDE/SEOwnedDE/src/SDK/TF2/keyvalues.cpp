@@ -204,9 +204,9 @@ const wchar_t *KeyValues::GetWString(const char *keyName, const wchar_t *default
 				break;
 			case TYPE_STRING:
 			{
-				int bufSize = strlen(dat->m_sValue) + 1;
+				const auto bufSize = strlen(dat->m_sValue) + 1;
 				wchar_t *pWBuf = new wchar_t[bufSize];
-				int result = UTF8ToUnicode(dat->m_sValue, pWBuf, bufSize * sizeof(wchar_t));
+				const int result = UTF8ToUnicode(dat->m_sValue, pWBuf, static_cast<int>(bufSize)* sizeof(wchar_t));
 				if (result >= 0)
 				{
 					SetWString(keyName, pWBuf);

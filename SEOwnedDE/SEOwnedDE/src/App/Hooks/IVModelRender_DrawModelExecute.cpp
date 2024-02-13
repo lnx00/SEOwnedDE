@@ -149,7 +149,7 @@ MAKE_HOOK(
 	if (CFG::Materials_ViewModel_Active
 		&& !clean_ss
 		&& (flags & STUDIO_RENDER)
-		&& reinterpret_cast<DWORD>(_ReturnAddress()) == Signatures::m_hViewmodelAttachment_DrawModel.Get())
+		&& reinterpret_cast<std::uintptr_t>(_ReturnAddress()) == Signatures::m_hViewmodelAttachment_DrawModel.Get())
 	{
 		if (const auto pLocal = H::Entities->GetLocal())
 		{

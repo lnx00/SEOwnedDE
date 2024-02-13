@@ -10,7 +10,7 @@ MAKE_HOOK(
 	{
 		if (CFG::Misc_Accuracy_Improvements)
 		{
-			if (C_TFPlayer* pOuter = *reinterpret_cast<C_TFPlayer**>(reinterpret_cast<DWORD>(ecx) + 392))
+			if (C_TFPlayer* pOuter = *reinterpret_cast<C_TFPlayer**>(reinterpret_cast<std::uintptr_t>(ecx) + 392))
 			{
 				if (const auto pLocal = H::Entities->GetLocal())
 				{
@@ -39,7 +39,7 @@ MAKE_HOOK(
 
 		if (shouldDoOverrides())
 		{
-			const DWORD dwRetAddr = reinterpret_cast<DWORD>(_ReturnAddress());
+			const auto dwRetAddr = reinterpret_cast<std::uintptr_t>(_ReturnAddress());
 
 			if (CFG::Visuals_Remove_Scope)
 			{

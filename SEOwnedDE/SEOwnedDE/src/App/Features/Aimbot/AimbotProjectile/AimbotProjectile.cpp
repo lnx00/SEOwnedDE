@@ -1198,7 +1198,7 @@ bool CAimbotProjectile::ShouldFire(CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFWeapo
 		//fucking fuck
 		if (pWeapon->GetWeaponID() == TF_WEAPON_FLAME_BALL)
 		{
-			const auto flGauge = reinterpret_cast<float*>(reinterpret_cast<DWORD>(pLocal) + GAUGE_OFFSET);
+			const auto flGauge = reinterpret_cast<float*>(reinterpret_cast<std::uintptr_t>(pLocal) + GAUGE_OFFSET);
 
 			if (!flGauge || *flGauge < 100.0f)
 				pCmd->buttons &= ~IN_ATTACK;
@@ -1253,7 +1253,7 @@ void CAimbotProjectile::HandleFire(CUserCmd* pCmd, C_TFWeaponBase* pWeapon, C_TF
 
 	else if (nWeaponID == TF_WEAPON_FLAME_BALL)
 	{
-		const auto flGauge = reinterpret_cast<float*>(reinterpret_cast<DWORD>(pLocal) + GAUGE_OFFSET);
+		const auto flGauge = reinterpret_cast<float*>(reinterpret_cast<std::uintptr_t>(pLocal) + GAUGE_OFFSET);
 
 		if (flGauge && *flGauge >= 100.0f)
 			pCmd->buttons |= IN_ATTACK;
@@ -1283,7 +1283,7 @@ bool CAimbotProjectile::IsFiring(const CUserCmd* pCmd, C_TFPlayer* pLocal, C_TFW
 
 	if (nWeaponID == TF_WEAPON_FLAME_BALL)
 	{
-		const auto flGauge = reinterpret_cast<float*>(reinterpret_cast<DWORD>(pLocal) + GAUGE_OFFSET);
+		const auto flGauge = reinterpret_cast<float*>(reinterpret_cast<std::uintptr_t>(pLocal) + GAUGE_OFFSET);
 		return flGauge && *flGauge >= 100.0f && (pCmd->buttons & IN_ATTACK);
 	}
 

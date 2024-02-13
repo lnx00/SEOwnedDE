@@ -121,9 +121,9 @@ PVOID Memory::FindInterface(const char *szModule, const char *szObject)
 	if (!hmModule)
 		return nullptr;
 
-	auto dwCreateInterface = reinterpret_cast<DWORD>(GetProcAddress(hmModule, "CreateInterface"));
+	auto dwCreateInterface = reinterpret_cast<std::uintptr_t>(GetProcAddress(hmModule, "CreateInterface"));
 	auto dwShortJmp = dwCreateInterface + 0x5;
-	auto dwJmp = (dwShortJmp + *reinterpret_cast<DWORD *>(dwShortJmp)) + 0x4;
+	auto dwJmp = (dwShortJmp + *reinterpret_cast<std::uintptr_t *>(dwShortJmp)) + 0x4;
 
 	auto pList = **reinterpret_cast<InterfaceInit_t ***>(dwJmp + 0x6);
 
