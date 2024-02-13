@@ -2,7 +2,7 @@
 
 DWORD WINAPI MainThread(LPVOID lpParam)
 {
-	while (!GetModuleHandleA("mss32.dll"))
+	while (!GetModuleHandleA("XAudio2_7.dll"))
 	{
 		Sleep(500);
 	}
