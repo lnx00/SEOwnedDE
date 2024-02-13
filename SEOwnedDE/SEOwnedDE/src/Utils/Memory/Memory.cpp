@@ -104,7 +104,7 @@ std::uintptr_t Memory::FindSignature(const char *szModule, const char *szPattern
 		}
 
 #if defined DEBUG_SIG
-		MessageBox(nullptr, std::format("find_ida_sig {} failed\n", szPattern).c_str(), "", 0);
+		//MessageBox(nullptr, std::format("find_ida_sig {} failed\n", szPattern).c_str(), "", 0);
 #endif
 
 		/// Byte sequence wasn't found
@@ -114,9 +114,11 @@ std::uintptr_t Memory::FindSignature(const char *szModule, const char *szPattern
 	return 0x0;
 }
 
+using CreateInterfaceFn = void*(*)(const char* pName, int* pReturnCode);
+
 PVOID Memory::FindInterface(const char *szModule, const char *szObject)
 {
-	auto hmModule = GetModuleHandleA(szModule);
+	/*auto hmModule = GetModuleHandleA(szModule);
 
 	if (!hmModule)
 		return nullptr;
@@ -135,5 +137,13 @@ PVOID Memory::FindInterface(const char *szModule, const char *szObject)
 		pList = pList->m_pNextInterface;
 	}
 
-	return nullptr;
+	return nullptr;*/
+
+	const auto hModule = GetModuleHandleA(szModule);
+	if (!hModule) { return nullptr; }
+
+	const auto createFn = reinterpret_cast<CreateInterfaceFn>(GetProcAddress(hModule, "CreateInterface"));
+	if (!createFn) { return nullptr; }
+
+	return createFn(szObject, nullptr);
 }

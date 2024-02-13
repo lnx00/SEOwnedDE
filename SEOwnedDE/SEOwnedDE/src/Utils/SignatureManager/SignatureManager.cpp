@@ -17,7 +17,7 @@ void CSignature::Initialize()
 {
 	m_dwVal = Memory::FindSignature(m_pszDLLName, m_pszSignature);
 
-	AssertCustom(!m_dwVal, std::string("CSignature::Initialize() Failed to initialize (" + std::string(m_pszName) + ")").c_str());
+	//AssertCustom(!m_dwVal, std::string("CSignature::Initialize() Failed to initialize (" + std::string(m_pszName) + ")").c_str());
 
 	m_dwVal += m_nOffset;
 }
