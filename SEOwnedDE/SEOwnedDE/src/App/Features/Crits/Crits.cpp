@@ -23,13 +23,13 @@ bool IsFiring(const CUserCmd* pCmd, C_TFWeaponBase* weapon)
 
 int FindCritCmd(const CUserCmd* pCmd, C_TFWeaponBase* pWeapon, bool bCrit)
 {
-	const int nBackupRandomSeed = *I::RandomSeed;
+	const int nBackupRandomSeed = *SDKUtils::RandomSeed();
 	int nCommandNumber = pCmd->command_number;
 	int nCritCommand = nCommandNumber;
 
 	for (int n = 0; n < 4096; n++)
 	{
-		*I::RandomSeed = MD5_PseudoRandom(nCommandNumber) & 0x7FFFFFFF;
+		*SDKUtils::RandomSeed() = MD5_PseudoRandom(nCommandNumber) & 0x7FFFFFFF;
 
 		bool bCalc = false;
 
@@ -51,7 +51,7 @@ int FindCritCmd(const CUserCmd* pCmd, C_TFWeaponBase* pWeapon, bool bCrit)
 		nCommandNumber++;
 	}
 
-	*I::RandomSeed = nBackupRandomSeed;
+	*SDKUtils::RandomSeed() = nBackupRandomSeed;
 	return nCritCommand;
 }
 

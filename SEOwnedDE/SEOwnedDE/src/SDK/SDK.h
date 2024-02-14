@@ -44,7 +44,7 @@
 
 #define PRINT(...) I::CVar->ConsoleColorPrintf({ 20, 220, 55, 255 }, __VA_ARGS__)
 
-MAKE_INTERFACE_SIGNATURE(int, RandomSeed, "client.dll", "FF FF FF C7 05 ? ? ? ? ? ? ? ? C3 8B 41", 0x2, 1);
+//MAKE_INTERFACE_SIGNATURE(int, RandomSeed, "client.dll", "C7 05 ? ? ? ? ? ? ? ? C3 8B 41", 0x2, 1);
 MAKE_INTERFACE_SIGNATURE(CTFGameMovement, TFGameMovement, "client.dll", "48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8D 05 ? ? ? ? 48 C7 05 ? ? ? ? ? ? ? ? 48 8D 0D ? ? ? ? 48 89 05 ? ? ? ? C6 05", 0, 1);
 
 class IViewRender
@@ -59,6 +59,13 @@ MAKE_INTERFACE_NULL(IViewRender, ViewRender);
 
 namespace SDKUtils
 {
+
+	inline int* RandomSeed()
+	{
+		static auto dest = Memory::FindSignature("client.dll", "C7 05 ? ? ? ? ? ? ? ? C3 8B 41") + 0x2;
+		return *reinterpret_cast<int**>(dest);
+	}
+
 	inline void GetProjectileFireSetupRebuilt(C_TFPlayer *player, Vec3 offset, const Vec3 &ang_in, Vec3 &pos_out, Vec3 &ang_out, bool pipes)
 	{
 		static auto cl_flipviewmodels{ I::CVar->FindVar("cl_flipviewmodels") };

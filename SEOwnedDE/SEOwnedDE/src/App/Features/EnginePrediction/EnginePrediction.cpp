@@ -32,7 +32,7 @@ void CEnginePrediction::Start(CUserCmd* pCmd)
 		pLocal->SetCurrentCommand(pCmd);
 
 		static constexpr int MAX_INT = std::numeric_limits<int>::max();
-		*I::RandomSeed = MD5_PseudoRandom(pCmd->command_number) & MAX_INT;
+		*SDKUtils::RandomSeed() = MD5_PseudoRandom(pCmd->command_number) & MAX_INT;
 
 		m_fOldCurrentTime = I::GlobalVars->curtime;
 		m_fOldFrameTime = I::GlobalVars->frametime;
@@ -82,6 +82,6 @@ void CEnginePrediction::End()
 
 		pLocal->SetCurrentCommand(nullptr);
 
-		*I::RandomSeed = -1;
+		*SDKUtils::RandomSeed() = -1;
 	}
 }
