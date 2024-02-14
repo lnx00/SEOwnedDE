@@ -4,7 +4,7 @@
 
 bool C_TFPlayer::IsPlayerOnSteamFriendsList()
 {
-	auto result{ reinterpret_cast<bool(__thiscall *)(void *, void *)>(Signatures::C_TFPlayer_IsPlayerOnSteamFriendsList.Get())(this, this) };
+	auto result{ reinterpret_cast<bool(__fastcall *)(void *, void *)>(Signatures::C_TFPlayer_IsPlayerOnSteamFriendsList.Get())(this, this) };
 
 	if (!result)
 	{

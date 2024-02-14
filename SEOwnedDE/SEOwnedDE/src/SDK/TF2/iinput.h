@@ -80,4 +80,4 @@ public:
 	}
 };
 
-MAKE_INTERFACE_SIGNATURE(IInput, Input, "client.dll", "8B 0D ? ? ? ? 56 8B 01 FF 50 24 8B 45 FC 5F 5E 5B C7 40 ? ? ? ? ? 8B E5 5D C2 04 00", 2, 2);
+MAKE_INTERFACE_SIGNATURE(IInput, Input, "client.dll", "48 8B 0D ? ? ? ? 48 8B 01 FF 90 ? ? ? ? 85 C0 0F 84 ? ? ? ? F3 0F 10 05", 0, 1);

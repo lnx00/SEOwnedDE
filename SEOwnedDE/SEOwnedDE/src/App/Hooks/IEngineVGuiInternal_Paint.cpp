@@ -22,15 +22,15 @@ MAKE_HOOK(
 
 		I::MatSystemSurface->StartDrawing();
 		{
-			//F::ESP->Run();
+			F::ESP->Run();
 			F::TeamWellBeing->Run();
-			//F::MiscVisuals->ShiftBar();
-			//F::Radar->Run();
-			//F::SpectatorList->Run();
-			//F::MiscVisuals->AimbotFOVCircle();
-			//F::SpyCamera->Run();
-			//F::SpyWarning->Run();
-			//F::SeedPred->Paint();
+			F::MiscVisuals->ShiftBar();
+			F::Radar->Run();
+			F::SpectatorList->Run();
+			F::MiscVisuals->AimbotFOVCircle();
+			F::SpyCamera->Run();
+			F::SpyWarning->Run();
+			F::SeedPred->Paint();
 			F::Menu->Run();
 		}
 		I::MatSystemSurface->FinishDrawing();
