@@ -75,4 +75,4 @@ public:
 	}
 };
 
-MAKE_INTERFACE_SIGNATURE(CClientModeShared, ClientModeShared, "client.dll", "8B 0D ? ? ? ? 8B 02 D9 05", 2, 2);
+MAKE_INTERFACE_SIGNATURE(CClientModeShared, ClientModeShared, "client.dll", "48 8B 0D ? ? ? ? 48 8B 10 48 8B 19 48 8B C8 FF 92", 0, 1);

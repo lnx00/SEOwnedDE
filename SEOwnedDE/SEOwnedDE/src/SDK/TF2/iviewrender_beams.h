@@ -156,4 +156,4 @@ public:
 		float brightness) = 0;
 };
 
-MAKE_INTERFACE_SIGNATURE(IViewRenderBeams, ViewRenderBeams, "client.dll", "8B 0D ? ? ? ? 56 8B 01 FF 50 18 0F B7 96 ? ? ? ? BF ? ? ? ? 66 3B D7 74 13 8B 0D ? ? ? ? 52 8B", 2, 2);
+MAKE_INTERFACE_SIGNATURE(IViewRenderBeams, ViewRenderBeams, "client.dll", "48 8B 0D ? ? ? ? 48 8B D3 48 8B 01 FF 50 ? 0F B7 93", 0, 1);

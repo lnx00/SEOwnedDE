@@ -28,11 +28,11 @@ void CInterfaceManager::InitializeAllInterfaces()
 
 		else
 		{
-			auto dwAddress = Memory::FindSignature(Interface->m_pszDLLName, Interface->m_pszVersion);
+			auto dwDest = Memory::FindSignature(Interface->m_pszDLLName, Interface->m_pszVersion);
 
-			if (!dwAddress)
+			if (!dwDest)
 			{
-				AssertCustom(!dwAddress,
+				AssertCustom(!dwDest,
 					std::string("CInterfaceManager::InitializeAllInterfaces() Failed to initialize (" 
 					+ std::string(Interface->m_pszDLLName) 
 					+ " " 
@@ -42,6 +42,7 @@ void CInterfaceManager::InitializeAllInterfaces()
 				continue;
 			}
 
+			auto dwAddress = Memory::RelToAbs(dwDest);
 			*Interface->m_pPtr = reinterpret_cast<void *>(dwAddress + Interface->m_nOffset);
 
 			for (int n = 0; n < Interface->m_nDereferenceCount; n++)
