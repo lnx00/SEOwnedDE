@@ -16,27 +16,6 @@ MAKE_HOOK(
 		case FRAME_NET_UPDATE_START:
 		{
 			H::Entities->ClearCache();
-			break;
-		}
-
-		case FRAME_NET_UPDATE_END:
-		{
-			H::Entities->UpdateCache();
-			break;
-		}
-
-		case FRAME_RENDER_START:
-		{
-			H::Input->Update();
-			break;
-		}
-	}
-
-	/*switch (curStage)
-	{
-		case FRAME_NET_UPDATE_START:
-		{
-			H::Entities->ClearCache();
 
 			break;
 		}
@@ -169,5 +148,5 @@ MAKE_HOOK(
 		}
 
 		default: break;
-	}*/
+	}
 }
