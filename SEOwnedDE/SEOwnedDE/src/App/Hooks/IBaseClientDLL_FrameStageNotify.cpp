@@ -11,9 +11,25 @@ MAKE_HOOK(
 {
 	CALL_ORIGINAL(ecx, curStage);
 
-	if (curStage == FRAME_RENDER_START)
+	switch (curStage)
 	{
-		H::Input->Update();
+		case FRAME_NET_UPDATE_START:
+		{
+			H::Entities->ClearCache();
+			break;
+		}
+
+		case FRAME_NET_UPDATE_END:
+		{
+			H::Entities->UpdateCache();
+			break;
+		}
+
+		case FRAME_RENDER_START:
+		{
+			H::Input->Update();
+			break;
+		}
 	}
 
 	/*switch (curStage)

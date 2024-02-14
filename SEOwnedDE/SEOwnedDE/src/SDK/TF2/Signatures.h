@@ -73,7 +73,7 @@ MAKE_SIGNATURE(CTFWeaponBase_GetTracerType, "client.dll", "55 8B EC 51 53 56 57 
 MAKE_SIGNATURE(CTFPlayer_FireBullet, "client.dll", "55 8B EC 81 EC ? ? ? ? 53 56 57 8B F9 8B 5D", 0);
 MAKE_SIGNATURE(CTFPlayer_MaybeDrawRailgunBeam, "client.dll", "55 8B EC 56 8B 75 0C 57 6A 01 6A 00 56 68 ? ? ? ? 6A 00 8B F9 E8 ? ? ? ? 83 C4 14 85 C0", 0);
 MAKE_SIGNATURE(CTFWeaponBase_GetShootSound, "client.dll", "55 8B EC 53 8B 5D 08 57 8B F9 80 BF ? ? ? ? ? 0F 84 ? ? ? ? 8B 07", 0);
-MAKE_SIGNATURE(BInEndOfMatch, "client.dll", "E8 ? ? ? ? 84 C0 75 04 B2 01", 0);
+MAKE_SIGNATURE(BInEndOfMatch, "client.dll", "48 83 EC ? 48 8B 05 ? ? ? ? 48 85 C0 74 ? 83 78 ? ? 75", 0); //
 MAKE_SIGNATURE(CMultiPlayerAnimState_ResetGestureSlot, "client.dll", "55 8B EC 56 8B 75 08 57 56 8B F9 E8 ? ? ? ? 84 C0 74 43 C1 E6 04", 0);
 MAKE_SIGNATURE(CViewRender_DrawViewModels, "client.dll", "55 8B EC 81 EC ? ? ? ? 8B 15 ? ? ? ? 53 8B D9", 0);
 MAKE_SIGNATURE(C_BaseEntity_EstimateAbsVelocity, "client.dll", "55 8B EC 83 EC 0C 56 8B F1 E8 ? ? ? ? 3B F0 75 2B 8B CE", 0);

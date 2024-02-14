@@ -23,7 +23,7 @@ MAKE_HOOK(
 		I::MatSystemSurface->StartDrawing();
 		{
 			//F::ESP->Run();
-			//F::TeamWellBeing->Run();
+			F::TeamWellBeing->Run();
 			//F::MiscVisuals->ShiftBar();
 			//F::Radar->Run();
 			//F::SpectatorList->Run();

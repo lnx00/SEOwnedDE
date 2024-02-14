@@ -222,7 +222,7 @@ namespace SDKUtils
 	}
 
 	static bool BInEndOfMatch() {
-		return reinterpret_cast<bool(__cdecl *)()>(Memory::RelToAbs(Signatures::BInEndOfMatch.Get()))();
+		return reinterpret_cast<bool(__cdecl *)()>(Signatures::BInEndOfMatch.Get())();
 	}
 
 	static int LookupSequence(CStudioHdr *pstudiohdr, const char *label) {
