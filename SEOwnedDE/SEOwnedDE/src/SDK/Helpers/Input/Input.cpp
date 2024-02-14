@@ -19,7 +19,8 @@ bool CInput::IsPressedAndHeld(short key)
 
 void CInput::Update()
 {
-	static auto TF2Window = FindWindowA(0, "Team Fortress 2");
+	//static auto TF2Window = FindWindowA(0, "Team Fortress 2 - Direct3D 9 - 64 Bit");
+	static auto TF2Window = FindWindowA("Valve001", nullptr);
 
 	m_bGameFocused = GetForegroundWindow() == TF2Window;
 

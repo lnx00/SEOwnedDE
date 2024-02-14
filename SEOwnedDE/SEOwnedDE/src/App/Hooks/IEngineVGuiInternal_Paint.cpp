@@ -12,9 +12,9 @@
 
 MAKE_HOOK(
 	IEngineVGuiInternal_Paint, Memory::GetVFunc(I::EngineVGui, 14),
-	void, __fastcall, void *ecx, void *edx, int mode)
+	void, __fastcall, void *ecx, int mode)
 {
-	CALL_ORIGINAL(ecx, edx, mode);
+	CALL_ORIGINAL(ecx, mode);
 
 	if (mode & PAINT_UIPANELS)
 	{
@@ -22,15 +22,15 @@ MAKE_HOOK(
 
 		I::MatSystemSurface->StartDrawing();
 		{
-			F::ESP->Run();
-			F::TeamWellBeing->Run();
-			F::MiscVisuals->ShiftBar();
-			F::Radar->Run();
-			F::SpectatorList->Run();
-			F::MiscVisuals->AimbotFOVCircle();
-			F::SpyCamera->Run();
-			F::SpyWarning->Run();
-			F::SeedPred->Paint();
+			//F::ESP->Run();
+			//F::TeamWellBeing->Run();
+			//F::MiscVisuals->ShiftBar();
+			//F::Radar->Run();
+			//F::SpectatorList->Run();
+			//F::MiscVisuals->AimbotFOVCircle();
+			//F::SpyCamera->Run();
+			//F::SpyWarning->Run();
+			//F::SeedPred->Paint();
 			F::Menu->Run();
 		}
 		I::MatSystemSurface->FinishDrawing();

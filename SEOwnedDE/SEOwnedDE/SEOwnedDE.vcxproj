@@ -191,6 +191,8 @@
     <ClCompile Include="src\App\Features\Aimbot\AimbotMelee\AimbotMelee.cpp" />
     <ClCompile Include="src\App\Features\Aimbot\AimbotProjectile\AimbotProjectile.cpp" />
     <ClCompile Include="src\App\Features\Crits\Crits.cpp" />
+    <ClCompile Include="src\App\Hooks\IBaseClientDLL_FrameStageNotify.cpp" />
+    <ClCompile Include="src\App\Hooks\IEngineVGuiInternal_Paint.cpp" />
     <ClCompile Include="src\Utils\Storage\Storage.cpp" />
     <ClCompile Include="src\SDK\Helpers\AimUtils\AimUtils.cpp" />
     <ClCompile Include="src\App\Features\Triggerbot\AutoVaccinator\AutoVaccinator.cpp" />

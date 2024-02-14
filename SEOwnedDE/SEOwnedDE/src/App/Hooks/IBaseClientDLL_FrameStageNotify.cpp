@@ -7,11 +7,16 @@
 
 MAKE_HOOK(
 	IBaseClientDLL_FrameStageNotify, Memory::GetVFunc(I::BaseClientDLL, 35),
-	void, __fastcall, void* ecx, void* edx, ClientFrameStage_t curStage)
+	void, __fastcall, void* ecx, ClientFrameStage_t curStage)
 {
-	CALL_ORIGINAL(ecx, edx, curStage);
+	CALL_ORIGINAL(ecx, curStage);
 
-	switch (curStage)
+	if (curStage == FRAME_RENDER_START)
+	{
+		H::Input->Update();
+	}
+
+	/*switch (curStage)
 	{
 		case FRAME_NET_UPDATE_START:
 		{
@@ -148,5 +153,5 @@ MAKE_HOOK(
 		}
 
 		default: break;
-	}
+	}*/
 }

@@ -5,8 +5,8 @@
 MAKE_SIGNATURE(KeyValues_LoadFromBuffer, "engine.dll", "4C 89 4C 24 ? 48 89 4C 24 ? 55 56", 0);
 MAKE_SIGNATURE(KeyValues_Initialize, "engine.dll", "FF 15 ? ? ? ? 89 03 48 8B C3 48 83 C4", 0);
 MAKE_SIGNATURE(KeyValues_FindKey, "client.dll", "E8 ? ? ? ? 89 44 9F 04", 0);
-MAKE_SIGNATURE(CMatSystemSurface_StartDrawing, "vguimatsurface.dll", "55 8B EC 64 A1 ? ? ? ? 6A FF 68 ? ? ? ? 50 64 89 25 ? ? ? ? 83 EC 14", 0);
-MAKE_SIGNATURE(CMatSystemSurface_FinishDrawing, "vguimatsurface.dll", "55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 64 89 25 ? ? ? ? 51 56 6A 00", 0);
+MAKE_SIGNATURE(CMatSystemSurface_StartDrawing, "vguimatsurface.dll", "40 53 56 57 48 83 EC ? 48 8B F9 80 3D", 0); //
+MAKE_SIGNATURE(CMatSystemSurface_FinishDrawing, "vguimatsurface.dll", "40 53 48 83 EC ? 33 C9", 0); //
 MAKE_SIGNATURE(C_TFPlayer_IsPlayerOnSteamFriendsList, "client.dll", "55 8B EC 81 EC ? ? ? ? E8 ? ? ? ? 85 C0 74 7E 8B 4D 08 85 C9 74 77", 0);
 MAKE_SIGNATURE(InCond_HudScopePaint, "client.dll", "E8 ? ? ? ? 84 C0 74 2E 8B CE E8 ? ? ? ? 85 C0 74 1A", 5);
 MAKE_SIGNATURE(InCond_ViewModelShouldDraw, "client.dll", "8D 88 ? ? ? ? E8 ? ? ? ? 84 C0 74 03 32 C0 C3", 11);
