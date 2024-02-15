@@ -36,7 +36,7 @@ MAKE_SIGNATURE(CBaseCombatWeapon_HasAmmo, "client.dll", "56 8B F1 83 BE ? ? ? ? 
 MAKE_SIGNATURE(CBasePlayer_GetAmmoCount, "client.dll", "55 8B EC 56 8B 75 08 57 8B F9 83 FE FF 75 08 5F 33 C0 5E 5D", 0);
 MAKE_SIGNATURE(C_BaseEntity_SetAbsOrigin, "client.dll", "55 8B EC 56 57 8B F1 E8 ? ? ? ? 8B 7D 08 F3 0F 10 07", 0);
 MAKE_SIGNATURE(C_BaseEntity_SetAbsAngles, "client.dll", "55 8B EC 83 EC 60 56 57 8B F1 E8 ? ? ? ? 8B 7D 08 F3 0F 10 07 0F 2E 86 ? ? ? ? 9F F6 C4 44 7A 28", 0);
-MAKE_SIGNATURE(C_TFPlayer_UpdateClientSideAnimation, "client.dll", "55 8B EC 83 EC 0C 56 57 8B F1 E8 ? ? ? ? 8B F8 85 FF 74 10 8B 17 8B CF 8B 92 ? ? ? ? FF D2", 0);
+MAKE_SIGNATURE(C_TFPlayer_UpdateClientSideAnimation, "client.dll", "48 89 5C 24 ? 57 48 83 EC ? 48 8B D9 E8 ? ? ? ? 48 8B F8 48 85 C0 74 ? 48 8B 00 48 8B CF FF 90 ? ? ? ? 84 C0 75 ? 33 FF 48 3B DF", 0); //
 MAKE_SIGNATURE(CTFViewModel_CalcViewModelView, "client.dll", "55 8B EC 83 EC 70 8B 55 0C 53 8B 5D 08 89 4D FC 8B 02 89 45 E8 8B 42 04 89 45 EC 8B 42 08 89 45 F0 56 57", 0);
 MAKE_SIGNATURE(INetChannel_SendNetMsg, "engine.dll", "55 8B EC 57 8B F9 8D 8F ? ? ? ? E8 ? ? ? ? 85 C0 75 07 B0 01 5F 5D C2 0C 00", 0);
 MAKE_SIGNATURE(WriteUsercmd, "client.dll", "55 8B EC 83 EC 08 53 8B 5D 0C 56 8B 75 10 57 8B 7D 08 8B 46 04 40 39 43 04 8B 47 0C", 0);

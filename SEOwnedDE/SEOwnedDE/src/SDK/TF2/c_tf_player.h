@@ -362,7 +362,7 @@ public:
 	}
 
 	void UpdateClientSideAnimation() {
-		reinterpret_cast<void(__thiscall *)(void *)>(Signatures::C_TFPlayer_UpdateClientSideAnimation.Get())(this);
+		reinterpret_cast<void(__fastcall *)(void *)>(Signatures::C_TFPlayer_UpdateClientSideAnimation.Get())(this);
 	}
 
 	float GetCritMult()

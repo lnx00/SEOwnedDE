@@ -101,7 +101,7 @@ public:
 
 static C_TF_PlayerResource *GetTFPlayerResource()
 {
-	static auto dwPlayerResource = Memory::FindSignature("client.dll", "8B 0D ? ? ? ? 6A 01 FF B6 ? ? ? ? E8 ? ? ? ? 8B 17 8B CF 8B F0 FF 92 ? ? ? ? 33 C9");
+	static auto dwPlayerResource = Memory::RelToAbs(Memory::FindSignature("client.dll", "48 8B 0D ? ? ? ? E8 ? ? ? ? 49 8B 16"));
 	//Assert(dwPlayerResource == 0x0);
-	return **reinterpret_cast<C_TF_PlayerResource ***>(dwPlayerResource + 2);
+	return *reinterpret_cast<C_TF_PlayerResource **>(dwPlayerResource);
 }

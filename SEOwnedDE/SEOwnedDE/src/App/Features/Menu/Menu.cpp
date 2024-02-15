@@ -2627,7 +2627,7 @@ void CMenu::Run()
 	if (H::Input->IsPressed(VK_INSERT))
 		I::MatSystemSurface->SetCursorAlwaysVisible(m_bOpen = !m_bOpen);
 
-	//Indicators();
+	Indicators();
 
 	if (m_bOpen)
 	{
@@ -2639,7 +2639,7 @@ void CMenu::Run()
 
 		H::LateRender->DrawAll();
 
-		//Snow();
+		Snow();
 	}
 }
 

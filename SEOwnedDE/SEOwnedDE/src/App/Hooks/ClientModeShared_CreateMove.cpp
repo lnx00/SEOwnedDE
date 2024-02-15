@@ -14,7 +14,7 @@
 
 MAKE_HOOK(
 	ClientModeShared_CreateMove, Memory::GetVFunc(I::ClientModeShared, 21),
-	bool, __fastcall, CClientModeShared* ecx, void* edx, float flInputSampleTime, CUserCmd* pCmd)
+	bool, __fastcall, CClientModeShared* ecx, float flInputSampleTime, CUserCmd* pCmd)
 {
 	G::bSilentAngles = false;
 	G::bPSilentAngles = false;
@@ -22,7 +22,7 @@ MAKE_HOOK(
 
 	if (!pCmd || !pCmd->command_number)
 	{
-		return CALL_ORIGINAL(ecx, edx, flInputSampleTime, pCmd);
+		return CALL_ORIGINAL(ecx, flInputSampleTime, pCmd);
 	}
 
 	I::Prediction->Update
@@ -39,7 +39,7 @@ MAKE_HOOK(
 	{
 		F::Crits->Run(pCmd);
 
-		return F::RapidFire->GetShiftSilentAngles() ? false : CALL_ORIGINAL(ecx, edx, flInputSampleTime, pCmd);
+		return F::RapidFire->GetShiftSilentAngles() ? false : CALL_ORIGINAL(ecx, flInputSampleTime, pCmd);
 	}
 
 	if (Shifting::bRecharging)
@@ -49,10 +49,11 @@ MAKE_HOOK(
 			pCmd->buttons &= ~IN_JUMP;
 		}
 
-		return CALL_ORIGINAL(ecx, edx, flInputSampleTime, pCmd);
+		return CALL_ORIGINAL(ecx, flInputSampleTime, pCmd);
 	}
 
-	auto* pSendPacket = *reinterpret_cast<bool**>((reinterpret_cast<uintptr_t>(_AddressOfReturnAddress()) - sizeof(uintptr_t)) - 0x1);
+	const auto ebp = *reinterpret_cast< std::uintptr_t* >( reinterpret_cast< std::uintptr_t >( _AddressOfReturnAddress( ) ) - sizeof( std::uintptr_t* ) );
+	bool* pSendPacket = reinterpret_cast< bool* >( ebp - 0x1C );
 
 	Vec3 vOldAngles = pCmd->viewangles;
 	float flOldSide = pCmd->sidemove;
@@ -244,5 +245,5 @@ MAKE_HOOK(
 	G::nOldButtons = pCmd->buttons;
 	G::vUserCmdAngles = pCmd->viewangles;
 
-	return (G::bSilentAngles || G::bPSilentAngles) ? false : CALL_ORIGINAL(ecx, edx, flInputSampleTime, pCmd);
+	return (G::bSilentAngles || G::bPSilentAngles) ? false : CALL_ORIGINAL(ecx, flInputSampleTime, pCmd);
 }
