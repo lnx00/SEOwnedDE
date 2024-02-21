@@ -22,7 +22,7 @@ MAKE_SIGNATURE(CTFPlayerShared_IsPlayerDominated, "client.dll", "55 8B EC 56 57 
 MAKE_SIGNATURE(CRendering3dView_EnableWorldFog, "client.dll", "55 8B EC 8B 0D ? ? ? ? 83 EC 0C 8B 01 53 56 FF 90 ? ? ? ? 8B F0 85 F6 74 07", 0);
 MAKE_SIGNATURE(CThirdPersonManager_Update, "client.dll", "A1 ? ? ? ? 56 8B F1 85 C0 75 19 8B 0D ? ? ? ? 68 ? ? ? ? 8B 01 FF 50 34 A3 ? ? ? ? 85 C0 74 3F", 0);
 MAKE_SIGNATURE(CBasePlayer_CalcPlayerView, "client.dll", "55 8B EC 83 EC 18 53 56 8B F1 8B 0D ? ? ? ? 57 8B 01", 0);
-MAKE_SIGNATURE(AttribHookValue, "client.dll", "55 8B EC 83 EC 0C 8B 0D ? ? ? ? 53 56 57 33 F6 33 FF 89 75 F4 89 7D F8 8B 41 08 85 C0 74 38", 0);
+MAKE_SIGNATURE(AttribHookValue, "client.dll", "4C 8B DC 49 89 5B ? 49 89 6B ? 56 57 41 54 41 56 41 57 48 83 EC ? 48 8B 3D ? ? ? ? 4C 8D 35", 0); //
 MAKE_SIGNATURE(CBaseEntity_BaseInterpolatePart1, "client.dll", "E8 ? ? ? ? 83 7D FC 00 8B D8", 0);
 MAKE_SIGNATURE(CMultiPlayerAnimState_Update, "client.dll", "55 8B EC 81 EC ? ? ? ? 53 57 8B F9 8B 9F ? ? ? ? 89 5D E0 85 DB", 0);
 MAKE_SIGNATURE(CSequenceTransitioner_CheckForSequenceChange, "client.dll", "E8 ? ? ? ? 8B 87 ? ? ? ? 83 EC 0C", 0);
@@ -78,7 +78,7 @@ MAKE_SIGNATURE(CMultiPlayerAnimState_ResetGestureSlot, "client.dll", "55 8B EC 5
 MAKE_SIGNATURE(CViewRender_DrawViewModels, "client.dll", "55 8B EC 81 EC ? ? ? ? 8B 15 ? ? ? ? 53 8B D9", 0);
 MAKE_SIGNATURE(C_BaseEntity_EstimateAbsVelocity, "client.dll", "55 8B EC 83 EC 0C 56 8B F1 E8 ? ? ? ? 3B F0 75 2B 8B CE", 0);
 MAKE_SIGNATURE(C_BaseEntity_InterpolateServerEntities, "client.dll", "55 8B EC 83 EC 30 8B 0D ? ? ? ? 53", 0);
-MAKE_SIGNATURE(CTFWeaponBaseMelee_CalcIsAttackCriticalHelper, "client.dll", "55 8B EC A1 ? ? ? ? 83 EC 08 83 78 30 00 57", 0);
+MAKE_SIGNATURE(CTFWeaponBaseMelee_CalcIsAttackCriticalHelper, "client.dll", "40 57 48 83 EC ? 48 8B 05 ? ? ? ? 48 8B F9 83 78 ? ? 75", 0); //
 MAKE_SIGNATURE(C_BaseEntity_AddVar, "client.dll", "55 8B EC 83 EC 0C 53 8B D9 56 33 F6 57 8B 4B 20 8B 7D 0C", 0);
 MAKE_SIGNATURE(C_TFPlayer_C_TFPlayer_C_BaseEntity_AddVar_Call, "client.dll", "E8 ? ? ? ? 6A 30 6A 00 56", 5);
 MAKE_SIGNATURE(DoEnginePostProcessing, "client.dll", "55 8B EC 81 EC ? ? ? ? 8B 0D ? ? ? ? 53 33 DB 89 5D 8C 89 5D 90 8B 01", 0);

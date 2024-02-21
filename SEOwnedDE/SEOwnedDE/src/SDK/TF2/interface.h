@@ -45,6 +45,6 @@ private:
 namespace SDKUtils
 {
 	inline float AttribHookValue(float value, const char *name, void *econent) {
-		return reinterpret_cast<float(__cdecl *)(float, const char *, void *, void *, bool)>(Signatures::AttribHookValue.Get())(value, name, econent, nullptr, true);
+		return reinterpret_cast<float(__fastcall *)(float, const char *, void *, void *, bool)>(Signatures::AttribHookValue.Get())(value, name, econent, nullptr, true);
 	}
 }
