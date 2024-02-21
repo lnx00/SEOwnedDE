@@ -191,11 +191,11 @@ public:
 	}
 
 	void SetAbsOrigin(const Vec3 &absOrigin) {
-		reinterpret_cast<void(__thiscall *)(void *, const Vec3 &)>(Signatures::C_BaseEntity_SetAbsOrigin.Get())(this, absOrigin);
+		reinterpret_cast<void(__fastcall *)(void *, const Vec3 &)>(Signatures::C_BaseEntity_SetAbsOrigin.Get())(this, absOrigin);
 	}
 
 	void SetAbsAngles(const Vec3 &absAngles) {
-		reinterpret_cast<void(__thiscall *)(void *, const Vec3 &)>(Signatures::C_BaseEntity_SetAbsAngles.Get())(this, absAngles);
+		reinterpret_cast<void(__fastcall *)(void *, const Vec3 &)>(Signatures::C_BaseEntity_SetAbsAngles.Get())(this, absAngles);
 	}
 
 	void SetAbsVelocity(const Vector &vecAbsVelocity) {
