@@ -331,7 +331,7 @@ public:
 	}
 
 	float TeamFortress_CalculateMaxSpeed(bool bIgnoreSpecialAbility = false) {
-		return reinterpret_cast<float(__thiscall *)(C_TFPlayer *, bool)>(Signatures::TeamFortress_CalculateMaxSpeed.Get())(this, bIgnoreSpecialAbility);
+		return reinterpret_cast<float(__fastcall *)(C_TFPlayer *, bool)>(Signatures::TeamFortress_CalculateMaxSpeed.Get())(this, bIgnoreSpecialAbility);
 	}
 
 	float &m_flLastMovementStunChange() {

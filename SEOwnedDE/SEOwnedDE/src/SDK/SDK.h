@@ -57,16 +57,13 @@ public:
 
 MAKE_INTERFACE_NULL(IViewRender, ViewRender);
 
-inline int RandomSeedHack = 0;
-
 namespace SDKUtils
 {
 
 	inline int* RandomSeed()
 	{
-		//static auto dest = Memory::RelToAbs(Memory::FindSignature("client.dll", "0F B6 1D ? ? ? ? 89 9D"));
-		//return *reinterpret_cast<int**>(dest);
-		return &RandomSeedHack;
+		static auto dest = Memory::RelToAbs(Memory::FindSignature("client.dll", "0F B6 1D ? ? ? ? 89 9D"));
+		return reinterpret_cast<int*>(dest);
 	}
 
 	inline void GetProjectileFireSetupRebuilt(C_TFPlayer *player, Vec3 offset, const Vec3 &ang_in, Vec3 &pos_out, Vec3 &ang_out, bool pipes)
@@ -220,7 +217,7 @@ namespace SDKUtils
 
 	static int SharedRandomInt(const char *sharedname, int iMinVal, int iMaxVal, int additionalSeed)
 	{
-		using fn = int(__cdecl *)(const char *, int, int, int);
+		using fn = int(__fastcall *)(const char *, int, int, int);
 		return reinterpret_cast<fn>(Signatures::SharedRandomInt.Get())(sharedname, iMinVal, iMaxVal, additionalSeed);
 	}
 

@@ -30,7 +30,7 @@ MAKE_SIGNATURE(CL_CheckForPureServerWhitelist, "engine.dll", "55 8B EC 83 3D ? ?
 MAKE_SIGNATURE(CMultiPlayerAnimState_PlayFlinchGesture, "client.dll", "55 8B EC 56 8B F1 8B 46 08 80 78 49 00 75 3D 57 8B 7D 08 81 FF ? ? ? ? 74 24", 0);
 MAKE_SIGNATURE(CHudTFCrosshair_ShouldDraw, "client.dll", "8B 15 ? ? ? ? 57 8B F9 85 D2", 0);
 MAKE_SIGNATURE(CTFGameMovement_ProcessMovement, "client.dll", "55 8B EC 56 57 8B 7D 08 8B F1 85 FF 74 6F 53 8B 5D 0C 85 DB", 0);
-MAKE_SIGNATURE(TeamFortress_CalculateMaxSpeed, "client.dll", "55 8B EC 83 EC 14 83 3D ? ? ? ? ? 56 8B F1 75 09 D9 EE 5E 8B E5 5D C2 04 00", 0);
+MAKE_SIGNATURE(TeamFortress_CalculateMaxSpeed, "client.dll", "88 54 24 ? 53 55", 0); //
 MAKE_SIGNATURE(RenderLine, "engine.dll", "55 8B EC 81 EC ? ? ? ? 56 E8 ? ? ? ? 8B 0D ? ? ? ? 8B 01 FF 90 ? ? ? ? 8B F0 85 F6", 0);
 MAKE_SIGNATURE(CBaseCombatWeapon_HasAmmo, "client.dll", "56 8B F1 83 BE ? ? ? ? ? 75 0D 83 BE ? ? ? ? ? 75 04", 0);
 MAKE_SIGNATURE(CBasePlayer_GetAmmoCount, "client.dll", "48 89 5C 24 ? 57 48 83 EC ? 48 63 DA 48 8B F9 83 FB", 0); //
@@ -53,7 +53,7 @@ MAKE_SIGNATURE(CMaterial_Uncache, "MaterialSystem.dll", "55 8B EC 81 EC ? ? ? ? 
 MAKE_SIGNATURE(C_TFPlayer_AvoidPlayers, "client.dll", "E8 ? ? ? ? 8A 45 FF 5F 5E 8B E5 5D C2 08 00", 0);
 MAKE_SIGNATURE(CL_ReadPackets, "engine.dll", "55 8B EC 83 EC 34 8B 0D ? ? ? ? 53 33 DB 89 5D DC 89 5D E0 8B 41 08", 0);
 MAKE_SIGNATURE(CL_RunPrediction, "engine.dll", "55 8B EC 83 EC 10 8B 0D ? ? ? ? 33 D2 53 33 DB 89 55 F4 89 5D F0", 0);
-MAKE_SIGNATURE(SharedRandomInt, "client.dll", "55 8B EC 83 EC 08 8B 45 14 89 45 F8 A1 ? ? ? ? 89 45 FC 8D 45 14 56 50", 0);
+MAKE_SIGNATURE(SharedRandomInt, "client.dll", "48 89 5C 24 ? 57 48 83 EC ? 8B FA 41 8B D8", 0); //
 MAKE_SIGNATURE(CTFWeaponBase_GetProjectileFireSetup, "client.dll", "53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ? 56 8B F1 57 8B 06 8B 80 ? ? ? ? FF D0 84 C0 74 12", 0);
 MAKE_SIGNATURE(CTFWeaponBase_GetSpreadAngles, "client.dll", "55 8B EC 83 EC 18 56 57 6A 00 68 ? ? ? ? 68 ? ? ? ? 6A 00 8B F9 E8 ? ? ? ? 50 E8 ? ? ? ? 8B F0 83 C4 14 85 F6 74 10 8B 06", 0);
 MAKE_SIGNATURE(C_BaseAnimating_FrameAdvance, "client.dll", "55 8B EC 83 EC 14 56 8B F1 57 80 BE ? ? ? ? ? 0F 85 ? ? ? ? 83 BE ? ? ? ? ? 75 05", 0);
