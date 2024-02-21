@@ -107,7 +107,7 @@ public:
 	}
 
 	int GetAmmoCount(int iAmmoType) {
-		return reinterpret_cast<int(__thiscall *)(void *, int)>(Signatures::CBasePlayer_GetAmmoCount.Get())(this, iAmmoType);
+		return reinterpret_cast<int(__fastcall *)(void *, int)>(Signatures::CBasePlayer_GetAmmoCount.Get())(this, iAmmoType);
 	}
 
 	int m_afButtonLast() {

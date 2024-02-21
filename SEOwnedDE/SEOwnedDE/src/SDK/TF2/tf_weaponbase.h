@@ -323,7 +323,7 @@ public:
 	}
 
 	bool CalcIsAttackCriticalHelper() {
-		return reinterpret_cast<bool(__thiscall *)(void *)>(Signatures::C_TFWeaponBase_CalcIsAttackCriticalHelper.Get())(this);
+		return reinterpret_cast<bool(__fastcall *)(void *)>(Signatures::C_TFWeaponBase_CalcIsAttackCriticalHelper.Get())(this);
 	}
 
 	C_BaseAnimating *GetAppropriateWorldOrViewModel() {

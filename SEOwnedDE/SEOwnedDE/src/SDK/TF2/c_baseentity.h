@@ -212,6 +212,6 @@ public:
 
 	void InvalidateBoneCache()
 	{
-		reinterpret_cast<void(__thiscall *)(void *)>(Signatures::C_BaseEntity_InvalidateBoneCache.Get())(this);
+		reinterpret_cast<void(__fastcall *)(void *)>(Signatures::C_BaseEntity_InvalidateBoneCache.Get())(this);
 	}
 };

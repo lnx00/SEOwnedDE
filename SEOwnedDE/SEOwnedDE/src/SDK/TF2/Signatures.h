@@ -33,7 +33,7 @@ MAKE_SIGNATURE(CTFGameMovement_ProcessMovement, "client.dll", "55 8B EC 56 57 8B
 MAKE_SIGNATURE(TeamFortress_CalculateMaxSpeed, "client.dll", "55 8B EC 83 EC 14 83 3D ? ? ? ? ? 56 8B F1 75 09 D9 EE 5E 8B E5 5D C2 04 00", 0);
 MAKE_SIGNATURE(RenderLine, "engine.dll", "55 8B EC 81 EC ? ? ? ? 56 E8 ? ? ? ? 8B 0D ? ? ? ? 8B 01 FF 90 ? ? ? ? 8B F0 85 F6", 0);
 MAKE_SIGNATURE(CBaseCombatWeapon_HasAmmo, "client.dll", "56 8B F1 83 BE ? ? ? ? ? 75 0D 83 BE ? ? ? ? ? 75 04", 0);
-MAKE_SIGNATURE(CBasePlayer_GetAmmoCount, "client.dll", "55 8B EC 56 8B 75 08 57 8B F9 83 FE FF 75 08 5F 33 C0 5E 5D", 0);
+MAKE_SIGNATURE(CBasePlayer_GetAmmoCount, "client.dll", "48 89 5C 24 ? 57 48 83 EC ? 48 63 DA 48 8B F9 83 FB", 0); //
 MAKE_SIGNATURE(C_BaseEntity_SetAbsOrigin, "client.dll", "55 8B EC 56 57 8B F1 E8 ? ? ? ? 8B 7D 08 F3 0F 10 07", 0);
 MAKE_SIGNATURE(C_BaseEntity_SetAbsAngles, "client.dll", "55 8B EC 83 EC 60 56 57 8B F1 E8 ? ? ? ? 8B 7D 08 F3 0F 10 07 0F 2E 86 ? ? ? ? 9F F6 C4 44 7A 28", 0);
 MAKE_SIGNATURE(C_TFPlayer_UpdateClientSideAnimation, "client.dll", "48 89 5C 24 ? 57 48 83 EC ? 48 8B D9 E8 ? ? ? ? 48 8B F8 48 85 C0 74 ? 48 8B 00 48 8B CF FF 90 ? ? ? ? 84 C0 75 ? 33 FF 48 3B DF", 0); //
@@ -93,9 +93,9 @@ MAKE_SIGNATURE(CViewRender_RenderView, "client.dll", "55 8B EC 81 EC ? ? ? ? 53 
 MAKE_SIGNATURE(C_TFPlayer_UpdateWearables, "client.dll", "56 8B F1 E8 ? ? ? ? 8B 06 8B CE 6A 00 68 ? ? ? ? 68 ? ? ? ? 6A 00 FF 90 ? ? ? ? 50 E8 ? ? ? ? 83 C4 14", 0);
 MAKE_SIGNATURE(C_BaseEntity_CreateShadow, "client.dll", "56 8B F1 8B 46 04 8D 4E 04 57 FF 50 7C 8B C8 85 C9 75 27", 0);
 MAKE_SIGNATURE(R_ComputeLightingOrigin, "engine.dll", "55 8B EC 83 EC 30 56 8B 75 0C 8B 96 ? ? ? ? 85 D2 74 06 8B 54 32 08 EB 02", 0);
-MAKE_SIGNATURE(C_TFWeaponBase_CalcIsAttackCriticalHelper, "client.dll", "55 8B EC 83 EC 18 56 57 6A 00 68 ? ? ? ? 68 ? ? ? ? 6A 00 8B F9 E8 ? ? ? ? 50 E8 ? ? ? ? 8B F0 83 C4 14 89 75 EC 85 F6", 0);
+MAKE_SIGNATURE(C_TFWeaponBase_CalcIsAttackCriticalHelper, "client.dll", "48 89 5C 24 ? 55 56 57 48 81 EC ? ? ? ? 0F 29 74 24", 0); //
 MAKE_SIGNATURE(LookupSequence, "client.dll", "55 8B EC 56 8B 75 08 85 F6 75 05 33 C0 5E 5D C3 8B CE E8 ? ? ? ? 84 C0 74 F0 53 57 8B CE 33 FF", 0);
-MAKE_SIGNATURE(C_BaseEntity_InvalidateBoneCache, "client.dll", "A1 ? ? ? ? 48 C7 81 60 08 00 00 FF FF 7F FF", 0);
+MAKE_SIGNATURE(C_BaseEntity_InvalidateBoneCache, "client.dll", "8B 05 ? ? ? ? FF C8 C7 81", 0); //
 MAKE_SIGNATURE(CEconItemSchema_GetItemDefinition, "client.dll", "E8 ? ? ? ? 0F B6 40 15", 0);
 MAKE_SIGNATURE(CViewRender_PerformScreenOverlay, "client.dll", "E8 ? ? ? ? 8B 0D ? ? ? ? 8B 01 FF 90 ? ? ? ? A1 ? ? ? ? 83 78 30 00 75 61", 0);
 MAKE_SIGNATURE(C_BaseEntity_ResetLatched, "client.dll", "53 8B D9 8B 03 8B 80 ? ? ? ? FF D0 84 C0 75 25 57 8B 7B 20", 0);

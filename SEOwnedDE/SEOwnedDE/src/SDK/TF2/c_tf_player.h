@@ -356,7 +356,7 @@ public:
 
 	CMultiPlayerAnimState *GetAnimState()
 	{
-		static auto offset{ NetVars::GetNetVar("CTFPlayer", "m_hItem") - 52 };
+		static auto offset{ NetVars::GetNetVar("CTFPlayer", "m_hItem") - /*52*/ 104 };
 
 		return *reinterpret_cast<CMultiPlayerAnimState **>(reinterpret_cast<std::uintptr_t>(this) + offset);
 	}
